@@ -232,7 +232,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
 
             {/* Center - Glass Pill Navigation (Desktop only) */}
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
-              <div className="glass-pill">
+              <div className={`glass-pill ${isOverDark ? 'glass-pill-dark' : 'glass-pill-light'}`}>
                 <div className="flex items-center gap-1.5">
                   {navLinks.map((link) => (
                     <a
@@ -244,7 +244,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                       }}
                       onMouseEnter={() => setHoveredLink(link.href)}
                       onMouseLeave={() => setHoveredLink(null)}
-                      className={`glass-pill-link ${activeLink === link.href ? "active" : ""} ${hoveredLink === link.href ? "hovered" : ""}`}
+                      className={`glass-pill-link ${isOverDark ? 'text-white' : ''} ${activeLink === link.href ? "active" : ""} ${hoveredLink === link.href ? "hovered" : ""}`}
                     >
                       {link.label}
                     </a>
@@ -288,10 +288,8 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                 <button
                   onClick={scrollToContact}
                   className={`cursor-pointer glass-pill-link glass-pill-link-standalone text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out ${
-                    activeLink === "#contact" ? "active" : ""
-                  } ${
-                    isOverDark ? "text-white" : "text-[var(--color-charcoal)]"
-                  }`}
+                    isOverDark ? 'glass-pill-link-standalone-dark' : 'glass-pill-link-standalone-light'
+                  } ${activeLink === "#contact" ? "active" : ""}`}
                 >
                   {messages.contact}
                 </button>

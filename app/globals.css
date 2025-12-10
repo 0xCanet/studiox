@@ -478,23 +478,49 @@ section {
    GLASS PILL NAVBAR
    ============================================ */
 
-/* Glass Pill Container */
+/* Glass Pill Container - Base styles */
 .glass-pill {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
   border-radius: 100px;
   padding: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
   overflow: hidden;
   max-width: 100%;
   box-sizing: border-box;
   width: 100%;
+  position: relative;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Navbar on light sections (default) */
+.glass-pill-light {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 122, 48, 0.1),
+    0 0 0 1px rgba(14, 14, 14, 0.05) inset,
+    -1px 0 0 rgba(255, 200, 150, 0.15),
+    1px 0 0 rgba(150, 200, 255, 0.1);
+}
+
+/* Navbar on hero section (dark background) */
+.glass-pill-dark {
+  background: rgba(14, 14, 14, 0.4);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 122, 48, 0.1),
+    -1px 0 0 rgba(255, 200, 150, 0.1),
+    1px 0 0 rgba(150, 200, 255, 0.08);
+}
+
 
 /* Mobile specific adjustments for glass-pill navbar */
 @media (max-width: 1023px) {
@@ -522,7 +548,6 @@ section {
   font-family: var(--font-heading);
   font-weight: 500;
   font-size: 0.9375rem;
-  color: rgba(14, 14, 14, 0.7);
   text-decoration: none;
   padding: 12px 24px;
   border-radius: 100px;
@@ -535,78 +560,201 @@ section {
   outline: none;
 }
 
-/* Standalone glass-pill-link (like Contact button) has glassmorphism background */
-.glass-pill-link-standalone {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: none;
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+/* Links on light sections */
+.glass-pill-light .glass-pill-link {
+  color: var(--color-charcoal);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Hover State */
-.glass-pill-link:hover,
-.glass-pill-link.hovered {
-  background: rgba(255, 122, 48, 0.25);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  color: var(--color-charcoal);
-  border: none;
+/* Links on dark hero section */
+.glass-pill-dark .glass-pill-link,
+.glass-pill-link.text-white {
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Standalone glass-pill-link (Contact button) - Base */
+.glass-pill-link-standalone {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contact button on light sections */
+.glass-pill-link-standalone-light {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(5px) saturate(2);
+  backdrop-filter: blur(5px) saturate(2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 122, 48, 0.2),
-    0 2px 8px rgba(255, 122, 48, 0.15);
-  transform: translateY(-1px);
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 122, 48, 0.1),
+    -1px 0 0 rgba(255, 200, 150, 0.15),
+    1px 0 0 rgba(150, 200, 255, 0.1);
+  color: var(--color-charcoal) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Contact button on dark hero section */
+.glass-pill-link-standalone-dark {
+  background: rgba(14, 14, 14, 0.4);
+  -webkit-backdrop-filter: blur(5px) saturate(2);
+  backdrop-filter: blur(5px) saturate(2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 122, 48, 0.1),
+    -1px 0 0 rgba(255, 200, 150, 0.1),
+    1px 0 0 rgba(150, 200, 255, 0.08);
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Orange variant for View Projects button */
+.glass-pill-link-orange {
+  background: rgba(255, 122, 48, 0.85) !important;
+  -webkit-backdrop-filter: blur(5px) saturate(2);
+  backdrop-filter: blur(5px) saturate(2);
+  border: 1px solid rgba(255, 122, 48, 0.5) !important;
+  box-shadow: 
+    0 8px 32px rgba(255, 122, 48, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    /* Chromatic aberration effect on edges */
+    0 0 0 1px rgba(255, 200, 150, 0.2),
+    -1px 0 0 rgba(255, 200, 150, 0.25),
+    1px 0 0 rgba(255, 150, 100, 0.2);
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover state for orange button - premium effect */
+.glass-pill-link-orange:hover {
+  background: rgba(255, 122, 48, 1) !important;
+  -webkit-backdrop-filter: blur(5px) saturate(2.2);
+  backdrop-filter: blur(5px) saturate(2.2);
+  border-color: rgba(255, 122, 48, 0.7) !important;
+  box-shadow: 
+    0 12px 40px rgba(255, 122, 48, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    /* Enhanced chromatic aberration on hover */
+    0 0 0 1px rgba(255, 200, 150, 0.3),
+    -1px 0 0 rgba(255, 220, 180, 0.3),
+    1px 0 0 rgba(255, 150, 100, 0.25),
+    /* Glow effect */
+    0 0 20px rgba(255, 122, 48, 0.3);
+  transform: translateY(-2px) scale(1.02);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Hover state for white text (on dark background) */
-.glass-pill-link.text-white:hover,
-.glass-pill-link.text-white.hovered {
-  color: white;
+/* Active state for orange button */
+.glass-pill-link-orange:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 
+    0 6px 24px rgba(255, 122, 48, 0.3),
+    inset 0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 2px rgba(255, 122, 48, 0.3);
 }
+
+/* Hover State - Same for all navbar links and contact button */
+.glass-pill-link:hover,
+.glass-pill-link.hovered,
+.glass-pill-link-standalone:hover {
+  background: rgba(255, 122, 48, 0.4);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.3),
+    0 2px 8px rgba(255, 122, 48, 0.25),
+    -1px 0 0 rgba(255, 200, 150, 0.25),
+    1px 0 0 rgba(150, 200, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Text color on hover - light sections */
+.glass-pill-light .glass-pill-link:hover,
+.glass-pill-link-standalone-light:hover {
+  color: var(--color-charcoal) !important;
+}
+
+/* Text color on hover - dark hero section */
+.glass-pill-dark .glass-pill-link:hover,
+.glass-pill-link-standalone-dark:hover {
+  color: white !important;
+}
+
+/* Links inside navbar - no transform to prevent navbar jumping */
+.glass-pill .glass-pill-link:hover,
+.glass-pill .glass-pill-link.hovered {
+  transform: none;
+}
+
+/* Standalone buttons can have slight transform */
+.glass-pill-link-standalone:hover {
+  transform: translateY(-1px);
+}
+
 
 /* Active/Pressed State */
-.glass-pill-link:active {
-  background: rgba(255, 122, 48, 0.3);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  color: var(--color-charcoal);
-  border: none;
-  transform: scale(0.98) translateY(0);
+.glass-pill-link:active,
+.glass-pill-link-standalone:active {
+  background: rgba(255, 122, 48, 0.45);
   box-shadow: 
-    inset 0 2px 4px rgba(255, 122, 48, 0.2),
+    inset 0 2px 4px rgba(255, 122, 48, 0.3),
     inset 0 -1px 2px rgba(0, 0, 0, 0.1),
-    0 1px 4px rgba(255, 122, 48, 0.2);
+    0 1px 4px rgba(255, 122, 48, 0.3);
 }
 
-/* Active state for white text (on dark background) */
-.glass-pill-link.text-white:active {
-  color: white;
+/* Text color on active - light sections */
+.glass-pill-light .glass-pill-link:active,
+.glass-pill-link-standalone-light:active {
+  color: var(--color-charcoal) !important;
+}
+
+/* Text color on active - dark hero section */
+.glass-pill-dark .glass-pill-link:active,
+.glass-pill-link-standalone-dark:active {
+  color: white !important;
+}
+
+/* Links inside navbar - no transform on active to prevent navbar jumping */
+.glass-pill .glass-pill-link:active {
+  transform: none;
 }
 
 /* Selected/Current Page State */
-.glass-pill-link.active {
-  background: rgba(255, 122, 48, 0.28);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  color: var(--color-charcoal);
+.glass-pill-link.active,
+.glass-pill-link-standalone.active {
+  background: rgba(255, 122, 48, 0.4);
   font-weight: 600;
-  border: none;
   box-shadow: 
     inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 122, 48, 0.25),
-    0 2px 10px rgba(255, 122, 48, 0.2);
-  transform: translateY(-1px);
+    inset 0 -1px 0 rgba(255, 122, 48, 0.35),
+    0 2px 10px rgba(255, 122, 48, 0.3),
+    -1px 0 0 rgba(255, 200, 150, 0.25),
+    1px 0 0 rgba(150, 200, 255, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Active state for white text (on dark background) */
-.glass-pill-link.text-white.active {
-  color: white;
+/* Text color on active state - light sections */
+.glass-pill-light .glass-pill-link.active,
+.glass-pill-link-standalone-light.active {
+  color: var(--color-charcoal) !important;
+}
+
+/* Text color on active state - dark hero section */
+.glass-pill-dark .glass-pill-link.active,
+.glass-pill-link-standalone-dark.active {
+  color: white !important;
+}
+
+/* Links inside navbar - no transform on active state to prevent navbar jumping */
+.glass-pill .glass-pill-link.active {
+  transform: none;
 }
 
 /* Focus state for accessibility */

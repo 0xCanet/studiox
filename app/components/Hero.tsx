@@ -363,7 +363,7 @@ export function Hero({ messages }: HeroProps) {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap items-center gap-4"
             >
-              <a href="#work" className="btn bg-white text-[var(--color-charcoal)] hover:bg-[var(--color-accent)] hover:text-white">
+              <a href="#work" className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-white inline-flex items-center">
                 {messages.primaryCta.replace(" →", "")}
                 <svg
                   className="ml-2 w-4 h-4"
