@@ -41,22 +41,51 @@ export function Hero({ messages }: HeroProps) {
     setIsHovering(false);
   };
 
-  // Detect mobile
+  // Detect mobile - improved detection for real devices
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
+      // Check both width and touch capability for better mobile detection
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const isSmallScreen = window.innerWidth < 1024;
+      setIsMobile(isSmallScreen && isTouchDevice);
     };
     
     checkMobile();
+    
+    // Use matchMedia for better performance and accuracy
+    const mediaQuery = window.matchMedia('(max-width: 1023px)');
+    const handleChange = () => checkMobile();
+    
+    // Modern browsers
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+    }
+    
     window.addEventListener('resize', checkMobile);
+    window.addEventListener('orientationchange', checkMobile);
     
     return () => {
       window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('orientationchange', checkMobile);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleChange);
+      } else {
+        mediaQuery.removeListener(handleChange);
+      }
     };
   }, []);
 
-  // Get scroll position from Lenis
-  useLenis(() => {
+  // Get scroll position from Lenis - ONLY apply parallax on mobile
+  useLenis(({ scroll }) => {
+    // Only calculate parallax if on mobile
+    if (!isMobile) {
+      setHeroScrollY(0);
+      return;
+    }
+    
     // Calculate hero-specific scroll offset (only when hero is visible)
     if (sectionRef.current) {
       const rect = sectionRef.current.getBoundingClientRect();
@@ -89,7 +118,7 @@ export function Hero({ messages }: HeroProps) {
       // Section ref not available - reset parallax
       setHeroScrollY(0);
     }
-  });
+  }, [isMobile]);
 
 
   return (
@@ -101,7 +130,8 @@ export function Hero({ messages }: HeroProps) {
         width: '100vw', 
         marginRight: 0, 
         paddingRight: 0, 
-        height: '100vh',
+        height: isMobile ? '100dvh' : '100vh',
+        minHeight: isMobile ? '100dvh' : '100vh',
         transform: 'none',
         position: 'relative'
       }}
@@ -126,8 +156,8 @@ export function Hero({ messages }: HeroProps) {
           style={{
             filter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
             WebkitFilter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
-            transform: heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
-            willChange: heroScrollY > 0 ? 'transform' : 'auto',
+            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
+            willChange: isMobile && heroScrollY > 0 ? 'transform' : 'auto',
           }}
         >
           <video
@@ -152,7 +182,7 @@ export function Hero({ messages }: HeroProps) {
           className="absolute inset-0 pointer-events-none"
           style={{
             zIndex: 5,
-            transform: heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
+            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
             maskImage: isHovering && !isMobile
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
               : "transparent",
@@ -160,7 +190,7 @@ export function Hero({ messages }: HeroProps) {
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
               : "transparent",
             transition: "mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            willChange: heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
+            willChange: isMobile && heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
           }}
         >
           <video
@@ -223,10 +253,14 @@ export function Hero({ messages }: HeroProps) {
         {/* Content */}
         <div 
           ref={textRef}
-          className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-16 z-20"
+          className="absolute inset-0 flex flex-col justify-end z-20"
           style={{
-            transform: heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none',
-            willChange: heroScrollY > 0 ? 'transform' : 'auto',
+            paddingLeft: isMobile ? '24px' : '48px',
+            paddingRight: isMobile ? '24px' : '48px',
+            paddingTop: isMobile ? '20px' : '48px',
+            paddingBottom: isMobile ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : '64px',
+            transform: isMobile && heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none',
+            willChange: isMobile && heroScrollY > 0 ? 'transform' : 'auto',
           }}
         >
           <div className="max-w-4xl">
