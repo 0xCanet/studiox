@@ -305,9 +305,11 @@ export function Hero({ messages }: HeroProps) {
             paddingLeft: isMobile ? '24px' : '48px',
             paddingRight: isMobile ? '24px' : '48px',
             paddingTop: isMobile ? '20px' : '48px',
-            paddingBottom: isMobile ? `calc(60px + ${browserBarHeight}px + env(safe-area-inset-bottom, 0px))` : '64px',
-            transform: isMobile && heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none',
-            willChange: isMobile && heroScrollY > 0 ? 'transform' : 'auto',
+            paddingBottom: isMobile ? `calc(60px + env(safe-area-inset-bottom, 0px))` : '64px',
+            transform: isMobile 
+              ? `translateY(${-browserBarHeight - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
+              : 'none',
+            willChange: isMobile ? 'transform' : 'auto',
           }}
         >
           <div className="max-w-4xl">
