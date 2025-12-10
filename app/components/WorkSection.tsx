@@ -46,7 +46,7 @@ export function WorkSection({ messages }: WorkSectionProps) {
   };
 
   return (
-    <section id="work" className="bg-white py-24 md:py-32 px-5 md:px-8">
+    <section id="work" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-8">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <motion.div

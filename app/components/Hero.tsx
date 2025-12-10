@@ -173,30 +173,41 @@ export function Hero({ messages }: HeroProps) {
     <section 
       ref={sectionRef}
       id="hero" 
-      className="relative h-screen bg-[var(--color-cream)] p-[20px] md:p-[50px] overflow-hidden" 
+      className="relative h-screen bg-[var(--color-cream)] pt-[20px] px-[20px] pb-[20px] md:pt-[50px] md:px-[50px] md:pb-[50px]" 
       style={{ 
-        width: '100vw', 
+        width: '100%', 
+        maxWidth: '100%',
         marginRight: 0, 
-        paddingRight: 0, 
-        height: isMobile ? '100dvh' : '100vh',
-        minHeight: isMobile ? '100dvh' : '100vh',
+        height: isMobile ? '100dvh' : '102vh',
+        minHeight: isMobile ? '100dvh' : '102vh',
         transform: 'none',
-        position: 'relative'
+        position: 'relative',
+        overflowX: 'hidden',
+        boxSizing: 'border-box'
       }}
     >
       <div
         ref={containerRef}
-        className="relative w-full h-full rounded-3xl md:rounded-[32px] overflow-hidden bg-[var(--color-charcoal)]"
+        className="relative w-full rounded-b-3xl md:rounded-[32px] bg-[var(--color-charcoal)] md:mt-[25px] md:ml-[25px] md:mr-[25px] md:mb-0"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ 
-          width: '100%', 
-          maxWidth: '100%',
-          height: '100%',
+          width: isMobile ? '100%' : 'calc(100% - 50px)',
+          maxWidth: isMobile ? '100%' : 'calc(100% - 50px)',
+          height: isMobile ? '100%' : 'calc(100% - 25px)',
+          minHeight: isMobile ? '100%' : 'calc(100% - 25px)',
           transform: 'none',
-          position: 'relative'
+          position: 'relative',
+          boxSizing: 'border-box'
         }}
       >
+        {/* Inner wrapper with overflow-hidden for video content */}
+        <div 
+          className="absolute inset-0 rounded-b-3xl md:rounded-[32px] overflow-hidden"
+          style={{
+            borderRadius: isMobile ? '0 0 1.5rem 1.5rem' : '32px'
+          }}
+        >
         {/* Video Background - Grayscale base */}
         <div 
           ref={videoRef}
@@ -264,7 +275,7 @@ export function Hero({ messages }: HeroProps) {
           className="absolute inset-0 pointer-events-none z-7"
           style={{
             background: isHovering
-              ? `radial-gradient(circle 450px at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.02) 50%, transparent 75%, transparent 100%)`
+              ? `radial-gradient(circle 450px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.08) 0%, rgba(240,238,233,0.05) 25%, rgba(240,238,233,0.02) 50%, transparent 75%, transparent 100%)`
               : "transparent",
             transition: "opacity 0.25s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
             filter: "blur(30px)",
@@ -278,7 +289,7 @@ export function Hero({ messages }: HeroProps) {
           className="absolute inset-0 pointer-events-none z-8"
           style={{
             background: isHovering
-              ? `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.03) 60%, transparent 85%, transparent 100%)`
+              ? `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.15) 0%, rgba(240,238,233,0.08) 30%, rgba(240,238,233,0.03) 60%, transparent 85%, transparent 100%)`
               : "transparent",
             transition: "opacity 0.2s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
             filter: "blur(15px)",
@@ -296,36 +307,53 @@ export function Hero({ messages }: HeroProps) {
             willChange: 'auto'
           }}
         />
+        </div>
 
         {/* Content */}
         <div 
           ref={textRef}
           className="absolute inset-0 flex flex-col justify-end z-20"
           style={{
-            paddingLeft: isMobile ? '24px' : '48px',
-            paddingRight: isMobile ? '24px' : '48px',
-            paddingTop: isMobile ? '20px' : '48px',
-            paddingBottom: isMobile ? `calc(60px + env(safe-area-inset-bottom, 0px))` : '64px',
+            paddingLeft: isMobile ? '20px' : '48px',
+            paddingRight: isMobile ? '20px' : '48px',
+            paddingTop: isMobile ? '32px' : '48px',
+            paddingBottom: isMobile ? `calc(80px + env(safe-area-inset-bottom, 0px))` : '64px',
             transform: isMobile 
               ? `translateY(${-browserBarHeight - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
-              : 'none',
+              : 'translateY(-2vh)',
             willChange: isMobile ? 'transform' : 'auto',
+            overflowX: 'hidden',
+            maxWidth: '100%'
           }}
         >
-          <div className="max-w-4xl">
+          <div className={isMobile ? 'w-full max-w-full' : 'max-w-6xl'}>
             {/* Micro-tagline */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="mb-6"
+              style={{ 
+                maxWidth: '100%',
+                overflow: 'hidden',
+                wordBreak: 'break-word'
+              }}
             >
-              <span className="font-body text-xs tracking-[0.15em] uppercase text-white/70">
+              <span 
+                className="font-body text-xs uppercase text-[#F0EEE9]/70"
+                style={{
+                  letterSpacing: isMobile ? '0.1em' : '0.15em',
+                  display: 'block',
+                  maxWidth: '100%',
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
+                }}
+              >
                 {messages.tagline.split(" • ").map((item, i, arr) => (
-                  <span key={i}>
+                  <span key={i} style={{ whiteSpace: isMobile ? 'normal' : 'nowrap' }}>
                     {item}
                     {i < arr.length - 1 && (
-                      <span className="text-[var(--color-accent)] mx-2">•</span>
+                      <span className="text-[var(--color-accent)]" style={{ margin: isMobile ? '0 0.25rem' : '0 0.5rem' }}>•</span>
                     )}
                   </span>
                 ))}
@@ -337,7 +365,12 @@ export function Hero({ messages }: HeroProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-white text-balance mb-4 md:mb-6"
+              className="text-[#F0EEE9] text-balance mb-4 md:mb-6 hero-h1"
+              style={{ 
+                maxWidth: '100%',
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              }}
             >
               <TextWithOrangeDots>
                 {messages.title}
@@ -349,7 +382,12 @@ export function Hero({ messages }: HeroProps) {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.4 }}
-              className="font-body text-white/80 max-w-2xl mb-8 md:mb-10"
+              className="font-body text-[#F0EEE9]/80 max-w-5xl mb-8 md:mb-10 hero-h2"
+              style={{ 
+                maxWidth: '100%',
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              }}
             >
               <TextWithOrangeDots>
                 {messages.subtitle}
@@ -363,7 +401,7 @@ export function Hero({ messages }: HeroProps) {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-wrap items-center gap-4"
             >
-              <a href="#work" className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-white inline-flex items-center">
+              <a href="#work" className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center">
                 {messages.primaryCta.replace(" →", "")}
                 <svg
                   className="ml-2 w-4 h-4"

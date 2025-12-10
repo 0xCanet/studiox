@@ -179,12 +179,19 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] as const }}
-        className={`fixed top-[20px] md:top-[50px] left-[20px] md:left-[50px] right-[20px] md:right-[50px] z-50 ${
-          !isOverDark && isMobile ? 'glass-pill' : ''
-        }`}
-        style={{ willChange: 'auto', maxWidth: 'calc(100vw - 40px)' }}
+        className={`fixed top-[30px] md:top-[73px] left-[30px] md:left-[73px] right-[30px] md:right-[73px] z-[100] ${
+          isMobile ? 'glass-pill' : ''
+        } ${isMobile && isOverDark ? 'glass-pill-dark' : isMobile ? 'glass-pill-light' : ''}`}
+        style={{ 
+          willChange: 'auto', 
+          maxWidth: 'calc(100% - 60px)',
+          position: 'fixed',
+          top: isMobile ? '30px' : undefined,
+          left: isMobile ? '30px' : undefined,
+          right: isMobile ? '30px' : undefined
+        }}
       >
-        <div className={`${!isOverDark && isMobile ? '' : 'pb-4'}`}>
+        <div className={`${isMobile ? '' : 'pb-4'}`}>
           <div className="flex items-center justify-between w-full">
             {/* Logo - switches color based on background */}
             <a href="#" className="flex-shrink-0 relative z-10 group cursor-pointer">
@@ -244,7 +251,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                       }}
                       onMouseEnter={() => setHoveredLink(link.href)}
                       onMouseLeave={() => setHoveredLink(null)}
-                      className={`glass-pill-link ${isOverDark ? 'text-white' : ''} ${activeLink === link.href ? "active" : ""} ${hoveredLink === link.href ? "hovered" : ""}`}
+                      className={`glass-pill-link ${isOverDark ? 'text-[#F0EEE9]' : ''} ${activeLink === link.href ? "active" : ""} ${hoveredLink === link.href ? "hovered" : ""}`}
                     >
                       {link.label}
                     </a>
@@ -262,21 +269,21 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                     onClick={() => onLanguageChange("en")}
                     className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-500 ease-in-out will-change-auto ${
                       language === "en" 
-                        ? isOverDark ? "text-white" : "text-[var(--color-charcoal)]"
-                        : isOverDark ? "text-white/50" : "text-[var(--color-charcoal)]/40"
+                        ? isOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
+                        : isOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
                     }`}
                     style={{ transform: 'translateZ(0)' }}
                     aria-label="Switch to English"
                   >
                     EN
                   </button>
-                  <span className={`text-sm transition-colors duration-500 ease-in-out will-change-auto ${isOverDark ? "text-white/30" : "text-[var(--color-charcoal)]/20"}`} style={{ transform: 'translateZ(0)' }}>|</span>
+                  <span className={`text-sm transition-colors duration-500 ease-in-out will-change-auto ${isOverDark ? "text-[#F0EEE9]/30" : "text-[var(--color-charcoal)]/20"}`} style={{ transform: 'translateZ(0)' }}>|</span>
             <button
               onClick={() => onLanguageChange("fr")}
                     className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-500 ease-in-out will-change-auto ${
                 language === "fr"
-                        ? isOverDark ? "text-white" : "text-[var(--color-charcoal)]"
-                        : isOverDark ? "text-white/50" : "text-[var(--color-charcoal)]/40"
+                        ? isOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
+                        : isOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
               }`}
                     style={{ transform: 'translateZ(0)' }}
                     aria-label="Passer en français"
@@ -308,7 +315,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                       y: isMenuOpen ? 8 : 0,
                     }}
                     className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-white" : "bg-[var(--color-charcoal)]"
+                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
                     }`}
                   />
                   <motion.span
@@ -317,7 +324,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                       scaleX: isMenuOpen ? 0 : 1,
                     }}
                     className={`block h-0.5 w-full transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-white" : "bg-[var(--color-charcoal)]"
+                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
               }`}
                   />
                   <motion.span
@@ -326,7 +333,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                       y: isMenuOpen ? -8 : 0,
                     }}
                     className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-white" : "bg-[var(--color-charcoal)]"
+                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
                     }`}
                   />
                 </div>

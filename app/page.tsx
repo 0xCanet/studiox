@@ -40,10 +40,10 @@ const messages: Record<
       contact: "Contact",
     },
     hero: {
-      tagline: "Design • Branding • UX/UI • Web2 & Web3",
-      title: "We design what your users remember.",
+      tagline: "Design • Branding • UX/UI • Web2 • Web3 • Visual & Content Creation",
+      title: "If you can imagine\u00A0it, we can create it.",
       subtitle:
-        "We build strong brands and fluid experiences — identity, interface, product, and content.",
+        "We craft strong brands and fluid experiences, designed to\u00A0be\u00A0memorable, from the\u00A0big idea to the\u00A0smallest detail.",
       primaryCta: "View projects →",
       secondaryCta: "Learn more",
     },
@@ -193,10 +193,10 @@ const messages: Record<
       contact: "Contact",
     },
     hero: {
-      tagline: "Design • Branding • UX/UI • Web2 & Web3",
-      title: "Nous créons ce dont vos utilisateurs se souviennent.",
+      tagline: "Design • Branding • UX/UI • Web2 • Web3 • Image & Contenu",
+      title: "Si vous pouvez l'imaginer, nous pouvons le\u00A0créer.",
       subtitle:
-        "Nous construisons des marques fortes et des expériences fluides — identité, interface, produit et contenu.",
+        "Nous concevons des\u00A0marques fortes et des\u00A0expériences fluides, pensées\u00A0pour être mémorables, du\u00A0concept au\u00A0détail.",
       primaryCta: "Voir les projets →",
       secondaryCta: "En savoir plus",
     },
@@ -344,11 +344,11 @@ export default function HomePage() {
   const t = messages[language];
 
   return (
-    <div className="min-h-screen bg-[#F0EEE9] overflow-x-hidden" style={{ width: '100vw', marginRight: 0, paddingRight: 0 }}>
+    <div className="min-h-screen bg-[#F0EEE9] overflow-x-hidden" style={{ width: '100%', maxWidth: '100%', marginRight: 0, paddingRight: 0 }}>
       {/* Skip link */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-[#0E0E0E]"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[#F0EEE9] focus:px-4 focus:py-2 focus:text-[#0E0E0E]"
       >
         {language === "fr" ? "Aller au contenu principal" : "Skip to main content"}
       </a>

@@ -132,7 +132,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" className="bg-white py-24 md:py-32 px-5 md:px-8">
+    <section id="contact" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-8">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <motion.div
@@ -169,7 +169,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
                 </div>
 
                 {/* Calendar */}
-                <div className="bg-white rounded-xl p-4 md:p-5 mb-6">
+                <div className="bg-[#F0EEE9] rounded-xl p-4 md:p-5 mb-6">
                   {/* Month Navigation */}
                   <div className="flex items-center justify-between mb-4">
                     <button
