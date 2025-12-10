@@ -10,7 +10,6 @@ import { WorkSection, type WorkMessages } from "./components/WorkSection";
 import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
 import { Footer, type FooterMessages } from "./components/Footer";
-import { Studi0x } from "./components/Studi0x";
 
 type Language = "en" | "fr";
 
