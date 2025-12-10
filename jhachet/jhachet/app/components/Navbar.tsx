@@ -178,7 +178,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
         ref={navbarRef}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] as const }}
         className={`fixed top-[20px] md:top-[50px] left-[20px] md:left-[50px] right-[20px] md:right-[50px] z-50 ${
           !isOverDark && isMobile ? 'glass-pill' : ''
         }`}
