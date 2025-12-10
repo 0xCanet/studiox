@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 /**
  * Component that renders text with orange dots (periods) as accent color
  * This is Studi.ox's brand identity - all periods should be orange
@@ -11,7 +13,7 @@ export function TextWithOrangeDots({
   ...props
 }: {
   children: string;
-  as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
+  as?: React.ElementType;
   className?: string;
   [key: string]: any;
 }) {
