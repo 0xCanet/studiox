@@ -22,6 +22,7 @@ export function Hero({ messages }: HeroProps) {
   const [isHovering, setIsHovering] = useState(false);
   const [heroScrollY, setHeroScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [browserBarHeight, setBrowserBarHeight] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -40,6 +41,53 @@ export function Hero({ messages }: HeroProps) {
   const handleMouseLeave = () => {
     setIsHovering(false);
   };
+
+  // Calculate browser bar height (address bar, navigation bar, etc.)
+  useEffect(() => {
+    const calculateBrowserBarHeight = () => {
+      if (!isMobile) {
+        setBrowserBarHeight(0);
+        return;
+      }
+
+      // Use Visual Viewport API if available (most accurate)
+      if (window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
+        const barHeight = windowHeight - viewportHeight;
+        setBrowserBarHeight(Math.max(0, barHeight));
+      } else {
+        // Fallback: calculate difference between outer and inner height
+        // This is less accurate but works on older browsers
+        const windowHeight = window.innerHeight;
+        const screenHeight = window.screen.height;
+        // Estimate: usually browser bars take 10-15% of screen height on mobile
+        const estimatedBarHeight = screenHeight > windowHeight ? (screenHeight - windowHeight) : 0;
+        setBrowserBarHeight(estimatedBarHeight);
+      }
+    };
+
+    calculateBrowserBarHeight();
+
+    // Recalculate on resize and orientation change
+    window.addEventListener('resize', calculateBrowserBarHeight);
+    window.addEventListener('orientationchange', calculateBrowserBarHeight);
+    
+    // Visual Viewport API events (more accurate)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', calculateBrowserBarHeight);
+      window.visualViewport.addEventListener('scroll', calculateBrowserBarHeight);
+    }
+
+    return () => {
+      window.removeEventListener('resize', calculateBrowserBarHeight);
+      window.removeEventListener('orientationchange', calculateBrowserBarHeight);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', calculateBrowserBarHeight);
+        window.visualViewport.removeEventListener('scroll', calculateBrowserBarHeight);
+      }
+    };
+  }, [isMobile]);
 
   // Detect mobile - improved detection for real devices
   useEffect(() => {
@@ -181,7 +229,6 @@ export function Hero({ messages }: HeroProps) {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            zIndex: 5,
             transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
             maskImage: isHovering && !isMobile
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
@@ -258,7 +305,7 @@ export function Hero({ messages }: HeroProps) {
             paddingLeft: isMobile ? '24px' : '48px',
             paddingRight: isMobile ? '24px' : '48px',
             paddingTop: isMobile ? '20px' : '48px',
-            paddingBottom: isMobile ? 'calc(60px + env(safe-area-inset-bottom, 0px))' : '64px',
+            paddingBottom: isMobile ? `calc(60px + ${browserBarHeight}px + env(safe-area-inset-bottom, 0px))` : '64px',
             transform: isMobile && heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none',
             willChange: isMobile && heroScrollY > 0 ? 'transform' : 'auto',
           }}
