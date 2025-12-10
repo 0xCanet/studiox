@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 /**
  * Component that renders text with orange dots (periods) as accent color
  * This is Studi.ox's brand identity - all periods should be orange
@@ -30,7 +28,7 @@ export function TextWithOrangeDots({
             </span>
           );
         }
-        return <React.Fragment key={index}>{part}</React.Fragment>;
+        return <span key={index}>{part}</span>;
       })}
     </Component>
   );

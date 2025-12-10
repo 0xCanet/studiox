@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { K2D } from "next/font/google";
+import { K2D, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import { SmoothScroll } from "./components/SmoothScroll";
-import { FontLoader } from "./components/FontLoader";
 
 const k2d = K2D({
   variable: "--font-k2d",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  variable: "--font-ibm-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -30,9 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={k2d.variable} suppressHydrationWarning>
-      <body className={`${k2d.variable} antialiased`} suppressHydrationWarning>
-        <FontLoader />
+    <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+      <body className={`${k2d.variable} ${ibmPlexMono.variable} antialiased`} suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

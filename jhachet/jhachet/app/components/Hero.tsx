@@ -20,7 +20,6 @@ interface HeroProps {
 export function Hero({ messages }: HeroProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
   const [heroScrollY, setHeroScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -57,9 +56,7 @@ export function Hero({ messages }: HeroProps) {
   }, []);
 
   // Get scroll position from Lenis
-  useLenis(({ scroll }) => {
-    setScrollY(scroll);
-    
+  useLenis(() => {
     // Calculate hero-specific scroll offset (only when hero is visible)
     if (sectionRef.current) {
       const rect = sectionRef.current.getBoundingClientRect();
@@ -129,7 +126,7 @@ export function Hero({ messages }: HeroProps) {
           style={{
             filter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
             WebkitFilter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
-            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : (!isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none'),
+            transform: heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
             willChange: heroScrollY > 0 ? 'transform' : 'auto',
           }}
         >
@@ -155,7 +152,7 @@ export function Hero({ messages }: HeroProps) {
           className="absolute inset-0 pointer-events-none"
           style={{
             zIndex: 5,
-            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : (!isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none'),
+            transform: heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
             maskImage: isHovering && !isMobile
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
               : "transparent",
@@ -228,7 +225,7 @@ export function Hero({ messages }: HeroProps) {
           ref={textRef}
           className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-16 z-20"
           style={{
-            transform: isMobile && heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : (!isMobile && heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none'),
+            transform: heroScrollY > 0 ? `translateY(${-heroScrollY * 0.6}px)` : 'none',
             willChange: heroScrollY > 0 ? 'transform' : 'auto',
           }}
         >

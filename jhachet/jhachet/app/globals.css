@@ -19,7 +19,7 @@
 
   /* Typography */
   --font-heading: var(--font-k2d, 'K2D', system-ui, sans-serif);
-  --font-body: 'IBM Plex Sans Mono', monospace;
+  --font-body: var(--font-ibm-plex-mono, 'IBM Plex Sans Mono', monospace);
 
   /* Grid System - consistent spacing across all components */
   --grid-gutter: 20px;
@@ -48,16 +48,8 @@ body {
   overflow-x: hidden;
   max-width: 100%;
   width: 100%;
-  /* Allow content to go behind scrollbar */
   padding-right: 0;
   margin-right: 0;
-}
-
-/* ============================================
-   BASE STYLES - Prevent horizontal scroll
-   ============================================ */
-html {
-  overflow-x: hidden;
 }
 
 /* ============================================
@@ -673,38 +665,6 @@ section {
 }
 
 .lang-btn-minimal:hover:not(.active) {
-  color: var(--color-charcoal);
-}
-
-/* Legacy lang-switch for compatibility */
-.lang-switch {
-  display: flex;
-  gap: 0.25rem;
-  padding: 0.25rem;
-  background: rgba(14, 14, 14, 0.05);
-  border-radius: 8px;
-}
-
-.lang-btn {
-  padding: 0.375rem 0.75rem;
-  font-family: var(--font-heading);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  border: none;
-  background: transparent;
-  border-radius: 6px;
-  cursor: pointer;
-  color: var(--color-muted);
-  transition: all 0.2s ease;
-}
-
-.lang-btn.active {
-  background: white;
-  color: var(--color-charcoal);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.lang-btn:hover:not(.active) {
   color: var(--color-charcoal);
 }
 
