@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable} scrollbar-hidden`} suppressHydrationWarning>
       <body className={`${k2d.variable} ${ibmPlexMono.variable} antialiased`} suppressHydrationWarning>
         <SmoothScroll>{children}</SmoothScroll>
       </body>

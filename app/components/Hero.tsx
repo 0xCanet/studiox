@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
+import { TypewriterText } from "./TypewriterText";
+import { LoadingBarTags } from "./LoadingBarTags";
 
 export interface HeroMessages {
   tagline: string;
@@ -23,6 +25,10 @@ export function Hero({ messages }: HeroProps) {
   const [heroScrollY, setHeroScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [browserBarHeight, setBrowserBarHeight] = useState(0);
+  const [videoVisible, setVideoVisible] = useState(false);
+  const [videoZoom, setVideoZoom] = useState(1.1); // Start zoomed in, then zoom out
+  const [containerZoom, setContainerZoom] = useState(1.15); // Container starts more zoomed, then zooms out
+  const [animationPhase, setAnimationPhase] = useState<"video" | "navbar" | "content">("video");
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
@@ -126,47 +132,147 @@ export function Hero({ messages }: HeroProps) {
     };
   }, []);
 
-  // Get scroll position from Lenis - ONLY apply parallax on mobile
-  useLenis(({ scroll }) => {
-    // Only calculate parallax if on mobile
-    if (!isMobile) {
-      setHeroScrollY(0);
-      return;
-    }
+  // Animation sequence: video (2s) -> navbar -> content
+  useEffect(() => {
+    // Hide scrollbar initially - add class immediately
+    const htmlElement = document.documentElement;
+    htmlElement.classList.add('scrollbar-hidden');
     
-    // Calculate hero-specific scroll offset (only when hero is visible)
-    if (sectionRef.current) {
-      const rect = sectionRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const sectionHeight = rect.height;
+    // Phase 1: Video appears and zooms out over 2 seconds
+    setVideoVisible(true);
+    
+    // Container zoom out animation over 2 seconds (more dramatic)
+    const containerZoomStartTime = Date.now();
+    const containerZoomDuration = 2000;
+    const containerStartZoom = 1.15;
+    const containerEndZoom = 1.0;
+    
+    const containerZoomInterval = setInterval(() => {
+      const elapsed = Date.now() - containerZoomStartTime;
+      const progress = Math.min(elapsed / containerZoomDuration, 1);
+      // Use easeOut cubic for smooth, dynamic animation
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const currentContainerZoom = containerStartZoom - (containerStartZoom - containerEndZoom) * easedProgress;
+      setContainerZoom(currentContainerZoom);
       
-      // Strict condition: only apply parallax when hero section is actively in viewport
-      // Add a small buffer to ensure parallax stops before section leaves viewport
-      const buffer = 10; // 10px buffer
-      
-      if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
-        // Hero section is out of view (with buffer) - completely reset parallax
-        setHeroScrollY(0);
-      } else if (rect.top < viewportHeight && rect.bottom > 0) {
-        // Hero section is in viewport - calculate parallax
-        // Calculate scroll progress within hero section (0 to 1)
-        // When section top is at viewport top: progress = 0
-        // When section bottom reaches viewport top: progress = 1
-        const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-        
-        // Convert to scroll offset, but limit it to prevent overflow
-        // Max parallax: 200px for video, 150px for text
-        const maxParallax = 200;
-        setHeroScrollY(scrollProgress * maxParallax);
-      } else {
-        // Fallback: reset parallax
-        setHeroScrollY(0);
+      if (progress >= 1) {
+        clearInterval(containerZoomInterval);
       }
-    } else {
-      // Section ref not available - reset parallax
-      setHeroScrollY(0);
-    }
-  }, [isMobile]);
+    }, 16); // ~60fps
+    
+    // Video zoom out animation over 2 seconds
+    const zoomStartTime = Date.now();
+    const zoomDuration = 2000;
+    const startZoom = 1.1;
+    const endZoom = 1.0;
+    
+    const zoomInterval = setInterval(() => {
+      const elapsed = Date.now() - zoomStartTime;
+      const progress = Math.min(elapsed / zoomDuration, 1);
+      // Use easeOut cubic for smooth, dynamic animation
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+      const currentZoom = startZoom - (startZoom - endZoom) * easedProgress;
+      setVideoZoom(currentZoom);
+      
+      if (progress >= 1) {
+        clearInterval(zoomInterval);
+      }
+    }, 16); // ~60fps
+    
+    // Show scrollbar after 2 seconds
+    const scrollbarTimeout = setTimeout(() => {
+      const htmlElement = document.documentElement;
+      htmlElement.classList.remove('scrollbar-hidden');
+    }, 2000);
+    
+    // Phase 2: After 2 seconds, navbar appears
+    const navbarTimeout = setTimeout(() => {
+      setAnimationPhase("navbar");
+    }, 2000);
+
+    // Phase 3: Content starts appearing (slightly after navbar)
+    const contentTimeout = setTimeout(() => {
+      setAnimationPhase("content");
+    }, 2200);
+
+    return () => {
+      clearInterval(containerZoomInterval);
+      clearInterval(zoomInterval);
+      clearTimeout(scrollbarTimeout);
+      clearTimeout(navbarTimeout);
+      clearTimeout(contentTimeout);
+      // Cleanup: remove class on unmount
+      document.documentElement.classList.remove('scrollbar-hidden');
+    };
+  }, []);
+
+  // Get scroll position from Lenis - Apply parallax on both mobile and desktop
+  // Use ref to store previous value for smooth interpolation
+  const prevHeroScrollYRef = useRef(0);
+  
+  useLenis(({ scroll }) => {
+    // Use requestAnimationFrame for smooth updates
+    requestAnimationFrame(() => {
+      // Calculate hero-specific scroll offset (only when hero is visible)
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const sectionHeight = rect.height;
+        
+        // Strict condition: only apply parallax when hero section is actively in viewport
+        // Add a small buffer to ensure parallax stops before section leaves viewport
+        const buffer = 10; // 10px buffer
+        
+        let newHeroScrollY = 0;
+        
+        if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
+          // Hero section is out of view (with buffer) - smoothly reset parallax
+          newHeroScrollY = 0;
+        } else if (rect.top < viewportHeight && rect.bottom > 0) {
+          // Hero section is in viewport - calculate parallax
+          // Calculate scroll progress within hero section (0 to 1)
+          // When section top is at viewport top: progress = 0
+          // When section bottom reaches viewport top: progress = 1
+          const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
+          
+          // Convert to scroll offset, but limit it to prevent overflow
+          // Max parallax: 200px for video, 150px for text
+          const maxParallax = 200;
+          newHeroScrollY = scrollProgress * maxParallax;
+        }
+        
+        // Smooth interpolation to prevent jank
+        const currentValue = prevHeroScrollYRef.current;
+        const targetValue = newHeroScrollY;
+        const diff = targetValue - currentValue;
+        
+        // Only update if difference is significant (prevents micro-adjustments)
+        if (Math.abs(diff) > 0.1) {
+          // Different interpolation speed for scrolling down vs up
+          // Faster when scrolling down to prevent lag, smoother when scrolling up
+          const interpolationSpeed = diff > 0 ? 0.25 : 0.15; // 25% when going down, 15% when going up
+          const smoothedValue = currentValue + diff * interpolationSpeed;
+          prevHeroScrollYRef.current = smoothedValue;
+          setHeroScrollY(smoothedValue);
+        } else {
+          // Snap to target if very close
+          prevHeroScrollYRef.current = targetValue;
+          setHeroScrollY(targetValue);
+        }
+      } else {
+        // Section ref not available - smoothly reset parallax
+        const currentValue = prevHeroScrollYRef.current;
+        if (Math.abs(currentValue) > 0.1) {
+          const smoothedValue = currentValue * 0.9; // Smooth decay
+          prevHeroScrollYRef.current = smoothedValue;
+          setHeroScrollY(smoothedValue);
+        } else {
+          prevHeroScrollYRef.current = 0;
+          setHeroScrollY(0);
+        }
+      }
+    });
+  }, []);
 
 
   return (
@@ -196,9 +302,13 @@ export function Hero({ messages }: HeroProps) {
           maxWidth: isMobile ? '100%' : 'calc(100% - 50px)',
           height: isMobile ? '100%' : 'calc(100% - 25px)',
           minHeight: isMobile ? '100%' : 'calc(100% - 25px)',
-          transform: 'none',
+          transform: `scale(${containerZoom})`,
+          transformOrigin: 'center center',
           position: 'relative',
-          boxSizing: 'border-box'
+          boxSizing: 'border-box',
+          willChange: 'transform',
+          transition: 'opacity 0.8s ease-out',
+          opacity: videoVisible ? 1 : 0
         }}
       >
         {/* Inner wrapper with overflow-hidden for video content */}
@@ -209,14 +319,22 @@ export function Hero({ messages }: HeroProps) {
           }}
         >
         {/* Video Background - Grayscale base */}
-        <div 
+        <motion.div 
           ref={videoRef}
           className="absolute inset-0 w-full h-full"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: videoVisible ? 1 : 0,
+          }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           style={{
             filter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
             WebkitFilter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
-            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
-            willChange: isMobile && heroScrollY > 0 ? 'transform' : 'auto',
+            transform: heroScrollY > 0 
+              ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
+              : `scale(${videoZoom})`,
+            transformOrigin: "center center",
+            willChange: 'transform, opacity',
           }}
         >
           <video
@@ -234,13 +352,21 @@ export function Hero({ messages }: HeroProps) {
           >
             <source src="/src/video_01.mp4" type="video/mp4" />
           </video>
-        </div>
+        </motion.div>
 
         {/* Color reveal layer - follows mouse with premium effect - fixed to video */}
-        <div
+        <motion.div
           className="absolute inset-0 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: videoVisible ? 1 : 0,
+          }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           style={{
-            transform: isMobile && heroScrollY > 0 ? `translateY(${heroScrollY * 0.4}px) scale(${1 + heroScrollY * 0.0002})` : 'none',
+            transform: heroScrollY > 0 
+              ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
+              : `scale(${videoZoom})`,
+            transformOrigin: "center center",
             maskImage: isHovering && !isMobile
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
               : "transparent",
@@ -248,7 +374,7 @@ export function Hero({ messages }: HeroProps) {
               ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
               : "transparent",
             transition: "mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            willChange: isMobile && heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
+            willChange: heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
           }}
         >
           <video
@@ -261,14 +387,12 @@ export function Hero({ messages }: HeroProps) {
               transform: 'translateZ(0)',
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
-              willChange: 'auto',
-              filter: 'blur(0.5px)',
-              WebkitFilter: 'blur(0.5px)'
+              willChange: 'auto'
             }}
           >
             <source src="/src/video_01.mp4" type="video/mp4" />
           </video>
-        </div>
+        </motion.div>
 
         {/* Premium glow effect around mouse - multiple layers for depth */}
         <div
@@ -319,88 +443,70 @@ export function Hero({ messages }: HeroProps) {
             paddingTop: isMobile ? '32px' : '48px',
             paddingBottom: isMobile ? `calc(80px + env(safe-area-inset-bottom, 0px))` : '64px',
             transform: isMobile 
-              ? `translateY(${-browserBarHeight - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
-              : 'translateY(-2vh)',
-            willChange: isMobile ? 'transform' : 'auto',
+              ? `translateY(${-browserBarHeight - 10 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
+              : heroScrollY > 0
+                ? `translateY(${-12 - (heroScrollY * 0.6)}px)`
+                : 'translateY(-12px)',
+            willChange: heroScrollY > 0 ? 'transform' : 'auto',
             overflowX: 'hidden',
             maxWidth: '100%'
           }}
         >
           <div className={isMobile ? 'w-full max-w-full' : 'max-w-6xl'}>
-            {/* Micro-tagline */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-6"
-              style={{ 
-                maxWidth: '100%',
-                overflow: 'hidden',
-                wordBreak: 'break-word'
-              }}
-            >
-              <span 
-                className="font-body text-xs uppercase text-[#F0EEE9]/70"
-                style={{
-                  letterSpacing: isMobile ? '0.1em' : '0.15em',
-                  display: 'block',
-                  maxWidth: '100%',
-                  wordWrap: 'break-word',
-                  overflowWrap: 'break-word'
-                }}
-              >
-                {messages.tagline.split(" • ").map((item, i, arr) => (
-                  <span key={i} style={{ whiteSpace: isMobile ? 'normal' : 'nowrap' }}>
-                    {item}
-                    {i < arr.length - 1 && (
-                      <span className="text-[var(--color-accent)]" style={{ margin: isMobile ? '0 0.25rem' : '0 0.5rem' }}>•</span>
-                    )}
-                  </span>
-                ))}
-              </span>
-            </motion.div>
+            {/* Micro-tagline with letter-by-letter animation during video */}
+            <div className="mb-6" style={{ 
+              maxWidth: '100%',
+              overflow: 'hidden',
+              wordBreak: 'break-word'
+            }}>
+              <LoadingBarTags
+                tags={messages.tagline.split(" • ")}
+                duration={
+                  // Calculate total duration: 
+                  // Delay before content phase: 2200ms (2s video + 200ms navbar)
+                  // H1: messages.title.length * 30ms
+                  // Delay between H1 and H2: 200ms
+                  // H2: messages.subtitle.length * 25ms
+                  2200 + (messages.title.length * 30) + 200 + (messages.subtitle.length * 25)
+                }
+                delay={0}
+                className="w-full"
+              />
+            </div>
 
-            {/* H1 - White text with orange dots */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-[#F0EEE9] text-balance mb-4 md:mb-6 hero-h1"
-              style={{ 
-                maxWidth: '100%',
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              }}
-            >
-              <TextWithOrangeDots>
-                {messages.title}
-              </TextWithOrangeDots>
-            </motion.h1>
+            {/* H1 - White text with orange dots - Typewriter effect */}
+            {animationPhase === "content" && (
+              <TypewriterText
+                text={messages.title}
+                speed={30}
+                delay={0}
+                as="h1"
+                className="text-[#F0EEE9] text-balance mb-4 md:mb-6 hero-h1"
+              />
+            )}
 
-            {/* H2 / Subtitle - White text with orange dots */}
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="font-body text-[#F0EEE9]/80 max-w-5xl mb-8 md:mb-10 hero-h2"
-              style={{ 
-                maxWidth: '100%',
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              }}
-            >
-              <TextWithOrangeDots>
-                {messages.subtitle}
-              </TextWithOrangeDots>
-            </motion.h2>
+            {/* H2 / Subtitle - White text with orange dots - Typewriter effect */}
+            {animationPhase === "content" && (
+              <TypewriterText
+                text={messages.subtitle}
+                speed={25}
+                delay={messages.title.length * 30 + 200}
+                as="h2"
+                className="font-body text-[#F0EEE9]/80 max-w-5xl mb-8 md:mb-10 hero-h2"
+              />
+            )}
 
             {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-wrap items-center gap-4"
-            >
+            {animationPhase === "content" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: (messages.title.length * 30 + messages.subtitle.length * 25) / 1000 + 0.5
+                }}
+                className="flex flex-wrap items-center gap-4"
+              >
               <a href="#work" className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center">
                 {messages.primaryCta.replace(" →", "")}
                 <svg
@@ -421,6 +527,7 @@ export function Hero({ messages }: HeroProps) {
                 {messages.secondaryCta}
               </a>
             </motion.div>
+            )}
           </div>
         </div>
       </div>

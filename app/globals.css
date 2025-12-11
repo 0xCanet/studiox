@@ -37,41 +37,133 @@ html {
   overflow-y: auto;
   max-width: 100%;
   width: 100%;
-  /* Hide scrollbar on mobile */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  /* Force hide native scrollbar completely */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
 }
 
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-  width: 0px;
+/* Force hide native scrollbar on all browsers - very aggressive rules */
+html::-webkit-scrollbar,
+html *::-webkit-scrollbar,
+body::-webkit-scrollbar,
+body *::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Opera */
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
 }
 
-/* Show scrollbar only on desktop */
+html::-webkit-scrollbar-track,
+html *::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+body *::-webkit-scrollbar-track {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+}
+
+html::-webkit-scrollbar-thumb,
+html *::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+body *::-webkit-scrollbar-thumb {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+html::-webkit-scrollbar-corner,
+html *::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+body *::-webkit-scrollbar-corner {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+}
+
+/* Hide scrollbar during animation - class added on mount, removed after 2s */
+html.scrollbar-hidden {
+  /* Keep content scrollable but completely hide scrollbar during zoom animation */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE and Edge */
+  /* Prevent any scrollbar from appearing during zoom */
+  overflow-y: auto !important; /* Allow scrolling but hide scrollbar */
+}
+
+/* Extra aggressive rules when scrollbar-hidden class is present */
+html.scrollbar-hidden::-webkit-scrollbar,
+html.scrollbar-hidden *::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  -webkit-appearance: none !important;
+}
+
+html.scrollbar-hidden::-webkit-scrollbar-thumb,
+html.scrollbar-hidden *::-webkit-scrollbar-thumb {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+html.scrollbar-hidden::-webkit-scrollbar-track,
+html.scrollbar-hidden *::-webkit-scrollbar-track {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  background: transparent !important;
+}
+
+/* Show custom scrollbar only on desktop, after 2 seconds (when scrollbar-hidden is removed) */
 @media (min-width: 1024px) {
-  html {
-    overflow-y: scroll;
-    scrollbar-width: thin; /* Firefox - ~8px */
-    scrollbar-color: var(--color-charcoal) transparent; /* Firefox: thumb transparent track */
-    -ms-overflow-style: auto; /* IE and Edge */
+  html:not(.scrollbar-hidden) {
+    scrollbar-width: thin !important; /* Firefox - ~8px */
+    scrollbar-color: var(--color-charcoal) transparent !important; /* Firefox: thumb transparent track */
+    -ms-overflow-style: auto !important; /* IE and Edge */
   }
   
-  html::-webkit-scrollbar {
-    display: block;
-    width: 8px;
+  html:not(.scrollbar-hidden)::-webkit-scrollbar {
+    display: block !important;
+    width: 8px !important;
+    height: 8px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: transparent !important;
+    -webkit-appearance: none !important;
   }
   
-  html::-webkit-scrollbar-track {
-    background: transparent;
+  html:not(.scrollbar-hidden)::-webkit-scrollbar-track {
+    display: block !important;
+    background: transparent !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   
-  html::-webkit-scrollbar-thumb {
-    background: var(--color-charcoal);
-    border-radius: 4px;
+  html:not(.scrollbar-hidden)::-webkit-scrollbar-thumb {
+    display: block !important;
+    background: var(--color-charcoal) !important;
+    border-radius: 4px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 8px !important;
+    height: auto !important;
   }
   
-  html::-webkit-scrollbar-thumb:hover {
-    background: var(--color-accent);
+  html:not(.scrollbar-hidden)::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent) !important;
   }
   
   /* Compensate scrollbar width to recenter content */
@@ -576,38 +668,91 @@ section {
   box-sizing: border-box;
   width: 100%;
   position: relative;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transitions for all properties - works in both directions */
+  transition: 
+    background 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background-image 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background-size 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    -webkit-backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    animation 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: background, border-color, box-shadow, backdrop-filter;
 }
 
-/* Navbar on light sections (default) */
+/* Iridescent gradient animation - smooth and subtle */
+@keyframes iridescent-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Smooth fade transition for animation */
+@keyframes fade-in-smooth {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Navbar on light sections (default) - Iridescent glass effect */
 .glass-pill-light {
-  background: rgba(240, 238, 233, 0.5);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(240, 238, 233, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 240, 230, 0.6) 25%,
+    rgba(240, 245, 255, 0.6) 50%,
+    rgba(255, 240, 250, 0.6) 75%,
+    rgba(255, 255, 255, 0.7) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(240, 238, 233, 0.6),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(255, 122, 48, 0.1),
-    0 0 0 1px rgba(14, 14, 14, 0.05) inset,
-    -1px 0 0 rgba(255, 200, 150, 0.15),
-    1px 0 0 rgba(150, 200, 255, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    /* Iridescent edge highlights */
+    0 0 0 1px rgba(255, 122, 48, 0.15),
+    -2px 0 0 rgba(255, 200, 150, 0.25),
+    2px 0 0 rgba(150, 200, 255, 0.2),
+    0 -2px 0 rgba(255, 180, 220, 0.15),
+    0 2px 0 rgba(200, 220, 255, 0.15);
 }
 
-/* Navbar on hero section (dark background) */
+/* Navbar on hero section (dark background) - Iridescent glass effect */
 .glass-pill-dark {
-  background: rgba(14, 14, 14, 0.4);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(240, 238, 233, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(14, 14, 14, 0.5) 0%,
+    rgba(20, 15, 25, 0.45) 25%,
+    rgba(15, 20, 30, 0.45) 50%,
+    rgba(25, 15, 20, 0.45) 75%,
+    rgba(14, 14, 14, 0.5) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid rgba(240, 238, 233, 0.15);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(240, 238, 233, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 122, 48, 0.1),
-    -1px 0 0 rgba(255, 200, 150, 0.1),
-    1px 0 0 rgba(150, 200, 255, 0.08);
+    inset 0 1px 0 rgba(240, 238, 233, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    /* Iridescent edge highlights for dark background */
+    0 0 0 1px rgba(255, 122, 48, 0.12),
+    -2px 0 0 rgba(255, 200, 150, 0.15),
+    2px 0 0 rgba(150, 200, 255, 0.12),
+    0 -2px 0 rgba(255, 180, 220, 0.1),
+    0 2px 0 rgba(200, 220, 255, 0.1);
 }
 
 
@@ -653,6 +798,8 @@ section {
 .glass-pill-light .glass-pill-link {
   color: var(--color-charcoal);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Links on dark hero section */
@@ -660,45 +807,84 @@ section {
 .glass-pill-link.text-white {
   color: var(--color-white);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Standalone glass-pill-link (Contact button) - Base */
 .glass-pill-link-standalone {
   position: relative;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Smooth transitions for all properties - identical to .glass-pill for consistent appearance */
+  transition: 
+    background 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background-image 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background-size 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    border-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    box-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    -webkit-backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    animation 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: background, border-color, box-shadow, backdrop-filter;
 }
 
-/* Contact button on light sections */
+/* Contact button on light sections - Iridescent glass effect */
 .glass-pill-link-standalone-light {
-  background: rgba(240, 238, 233, 0.5);
-  -webkit-backdrop-filter: blur(5px) saturate(2);
-  backdrop-filter: blur(5px) saturate(2);
-  border: 1px solid rgba(240, 238, 233, 0.4);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 240, 230, 0.6) 25%,
+    rgba(240, 245, 255, 0.6) 50%,
+    rgba(255, 240, 250, 0.6) 75%,
+    rgba(255, 255, 255, 0.7) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  /* Exact same box-shadow as .glass-pill-light for identical contour */
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(240, 238, 233, 0.6),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(255, 122, 48, 0.1),
-    -1px 0 0 rgba(255, 200, 150, 0.15),
-    1px 0 0 rgba(150, 200, 255, 0.1);
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.08),
+    /* Iridescent edge highlights - identical to glass-pill-light */
+    0 0 0 1px rgba(255, 122, 48, 0.15),
+    -2px 0 0 rgba(255, 200, 150, 0.25),
+    2px 0 0 rgba(150, 200, 255, 0.2),
+    0 -2px 0 rgba(255, 180, 220, 0.15),
+    0 2px 0 rgba(200, 220, 255, 0.15);
   color: var(--color-charcoal) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Contact button on dark hero section */
+/* Contact button on dark hero section - Iridescent glass effect */
 .glass-pill-link-standalone-dark {
-  background: rgba(14, 14, 14, 0.4);
-  -webkit-backdrop-filter: blur(5px) saturate(2);
-  backdrop-filter: blur(5px) saturate(2);
-  border: 1px solid rgba(240, 238, 233, 0.1);
+  background: linear-gradient(
+    135deg,
+    rgba(14, 14, 14, 0.5) 0%,
+    rgba(20, 15, 25, 0.45) 25%,
+    rgba(15, 20, 30, 0.45) 50%,
+    rgba(25, 15, 20, 0.45) 75%,
+    rgba(14, 14, 14, 0.5) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
+  -webkit-backdrop-filter: blur(5px) saturate(180%);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid rgba(240, 238, 233, 0.15);
+  /* Exact same box-shadow as .glass-pill-dark for identical contour */
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(240, 238, 233, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
-    0 0 0 1px rgba(255, 122, 48, 0.1),
-    -1px 0 0 rgba(255, 200, 150, 0.1),
-    1px 0 0 rgba(150, 200, 255, 0.08);
+    inset 0 1px 0 rgba(240, 238, 233, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    /* Iridescent edge highlights for dark background - identical to glass-pill-dark */
+    0 0 0 1px rgba(255, 122, 48, 0.12),
+    -2px 0 0 rgba(255, 200, 150, 0.15),
+    2px 0 0 rgba(150, 200, 255, 0.12),
+    0 -2px 0 rgba(255, 180, 220, 0.1),
+    0 2px 0 rgba(200, 220, 255, 0.1);
   color: var(--color-white) !important;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
@@ -752,15 +938,54 @@ section {
 
 /* Hover State - Same for all navbar links and contact button */
 .glass-pill-link:hover,
-.glass-pill-link.hovered,
-.glass-pill-link-standalone:hover {
-  background: rgba(255, 122, 48, 0.4);
+.glass-pill-link.hovered {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 48, 0.3) 0%,
+    rgba(255, 150, 100, 0.35) 25%,
+    rgba(255, 122, 48, 0.3) 50%,
+    rgba(255, 180, 150, 0.35) 75%,
+    rgba(255, 122, 48, 0.3) 100%
+  );
+  background-size: 200% 200%;
+  animation: iridescent-shift 8s ease-in-out infinite;
   box-shadow: 
-    inset 0 1px 0 rgba(240, 238, 233, 0.5),
-    inset 0 -1px 0 rgba(255, 122, 48, 0.3),
-    0 2px 8px rgba(255, 122, 48, 0.25),
-    -1px 0 0 rgba(255, 200, 150, 0.25),
-    1px 0 0 rgba(150, 200, 255, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.4),
+    0 4px 16px rgba(255, 122, 48, 0.3),
+    /* Enhanced iridescent edges on hover */
+    -2px 0 0 rgba(255, 200, 150, 0.35),
+    2px 0 0 rgba(150, 200, 255, 0.3),
+    0 -2px 0 rgba(255, 180, 220, 0.25),
+    0 2px 0 rgba(200, 220, 255, 0.25),
+    0 0 20px rgba(255, 122, 48, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contact button hover - must override !important from base styles */
+.glass-pill-link-standalone:hover,
+.glass-pill-link-standalone-light:hover,
+.glass-pill-link-standalone-dark:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 48, 0.3) 0%,
+    rgba(255, 150, 100, 0.35) 25%,
+    rgba(255, 122, 48, 0.3) 50%,
+    rgba(255, 180, 150, 0.35) 75%,
+    rgba(255, 122, 48, 0.3) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 8s ease-in-out infinite !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.4),
+    0 4px 16px rgba(255, 122, 48, 0.3),
+    /* Enhanced iridescent edges on hover */
+    -2px 0 0 rgba(255, 200, 150, 0.35),
+    2px 0 0 rgba(150, 200, 255, 0.3),
+    0 -2px 0 rgba(255, 180, 220, 0.25),
+    0 2px 0 rgba(200, 220, 255, 0.25),
+    0 0 20px rgba(255, 122, 48, 0.2) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -782,20 +1007,30 @@ section {
   transform: none;
 }
 
-/* Standalone buttons can have slight transform */
+/* Standalone buttons (Contact) - same hover behavior as navbar links */
 .glass-pill-link-standalone:hover {
   transform: translateY(-1px);
 }
 
 
 /* Active/Pressed State */
-.glass-pill-link:active,
-.glass-pill-link-standalone:active {
+.glass-pill-link:active {
   background: rgba(255, 122, 48, 0.45);
   box-shadow: 
     inset 0 2px 4px rgba(255, 122, 48, 0.3),
     inset 0 -1px 2px rgba(0, 0, 0, 0.1),
     0 1px 4px rgba(255, 122, 48, 0.3);
+}
+
+/* Contact button active - must override !important from base styles */
+.glass-pill-link-standalone:active,
+.glass-pill-link-standalone-light:active,
+.glass-pill-link-standalone-dark:active {
+  background: rgba(255, 122, 48, 0.45) !important;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 122, 48, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(255, 122, 48, 0.3) !important;
 }
 
 /* Text color on active - light sections */
@@ -816,16 +1051,54 @@ section {
 }
 
 /* Selected/Current Page State */
-.glass-pill-link.active,
-.glass-pill-link-standalone.active {
-  background: rgba(255, 122, 48, 0.4);
+.glass-pill-link.active {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 48, 0.35) 0%,
+    rgba(255, 150, 100, 0.4) 25%,
+    rgba(255, 122, 48, 0.35) 50%,
+    rgba(255, 180, 150, 0.4) 75%,
+    rgba(255, 122, 48, 0.35) 100%
+  );
+  background-size: 200% 200%;
+  animation: iridescent-shift 6s ease infinite;
   font-weight: 600;
   box-shadow: 
-    inset 0 1px 0 rgba(240, 238, 233, 0.5),
-    inset 0 -1px 0 rgba(255, 122, 48, 0.35),
-    0 2px 10px rgba(255, 122, 48, 0.3),
-    -1px 0 0 rgba(255, 200, 150, 0.25),
-    1px 0 0 rgba(150, 200, 255, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.4),
+    0 4px 16px rgba(255, 122, 48, 0.35),
+    /* Iridescent edges for active state */
+    -2px 0 0 rgba(255, 200, 150, 0.3),
+    2px 0 0 rgba(150, 200, 255, 0.25),
+    0 -2px 0 rgba(255, 180, 220, 0.2),
+    0 2px 0 rgba(200, 220, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Contact button active state - must override !important from base styles */
+.glass-pill-link-standalone.active,
+.glass-pill-link-standalone-light.active,
+.glass-pill-link-standalone-dark.active {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 48, 0.35) 0%,
+    rgba(255, 150, 100, 0.4) 25%,
+    rgba(255, 122, 48, 0.35) 50%,
+    rgba(255, 180, 150, 0.4) 75%,
+    rgba(255, 122, 48, 0.35) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 6s ease infinite !important;
+  font-weight: 600;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.4),
+    0 4px 16px rgba(255, 122, 48, 0.35),
+    /* Iridescent edges for active state */
+    -2px 0 0 rgba(255, 200, 150, 0.3),
+    2px 0 0 rgba(150, 200, 255, 0.25),
+    0 -2px 0 rgba(255, 180, 220, 0.2),
+    0 2px 0 rgba(200, 220, 255, 0.2) !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -953,34 +1226,6 @@ footer {
   }
 }
 
-/* ============================================
-   CUSTOM SCROLLBAR
-   ============================================ */
-/* Webkit browsers (Chrome, Safari, Edge) */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent-hover);
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-accent) transparent;
-}
 
 /* ============================================
    ACCESSIBILITY
@@ -990,10 +1235,43 @@ footer {
   outline-offset: 4px;
 }
 
+/* Typewriter cursor animation */
+@keyframes typewriterBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.typewriter-cursor {
+  animation: typewriterBlink 1s infinite;
+}
+
+/* Blinking dot animation for final period */
+@keyframes blinkDot {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.3;
+  }
+}
+
+.blinking-dot {
+  display: inline-block;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  
+  .typewriter-cursor {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }
