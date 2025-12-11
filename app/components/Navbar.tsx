@@ -372,7 +372,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                   className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
                     logoIsOverDark && !isMenuOpen ? "opacity-0" : "opacity-100"
                   }`}
-                  style={{ transform: 'translateZ(0)', width: 'auto' }}
+                  style={{ transform: 'translateZ(0)', width: 'auto', height: 'auto' }}
                   priority
                 />
                 {/* Light logo - visible when IN hero section (default white) AND menu is closed */}
@@ -384,7 +384,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                   className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
                     logoIsOverDark && !isMenuOpen ? "opacity-100" : "opacity-0"
                   }`}
-                  style={{ transform: 'translateZ(0)', width: 'auto' }}
+                  style={{ transform: 'translateZ(0)', width: 'auto', height: 'auto' }}
                   priority
                 />
                 {/* Orange logo overlay - appears on hover */}
@@ -397,6 +397,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
                   style={{ 
                     transform: 'translateZ(0)',
                     width: 'auto',
+                    height: 'auto',
                     filter: 'brightness(0) saturate(100%) invert(48%) sepia(100%) saturate(2000%) hue-rotate(0deg) brightness(1) contrast(1)'
                   }}
                   priority

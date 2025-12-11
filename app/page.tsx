@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { Navbar, type NavbarMessages } from "./components/Navbar";
 import { Hero, type HeroMessages } from "./components/Hero";
-import { ServicesSection, type ServicesMessages } from "./components/ServicesSection";
+import { RouteServicesSection, type RouteServicesMessages } from "./components/RouteServicesSection";
 import { WorkSection, type WorkMessages } from "./components/WorkSection";
 import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
@@ -21,7 +21,7 @@ const messages: Record<
   {
     navbar: NavbarMessages;
     hero: HeroMessages;
-    services: ServicesMessages;
+    services: RouteServicesMessages;
     work: WorkMessages;
     about: AboutMessages;
     contact: ContactMessages;
@@ -53,32 +53,44 @@ const messages: Record<
         "360° design expertise across digital and physical touchpoints.",
       items: [
         {
-          id: "branding",
-          icon: "✦",
-          title: "Brand Identity",
-          description:
-            "Visual identities that resonate. Logos, typography systems, color palettes, and brand guidelines that stand out.",
+          id: "brand",
+          label: "Brand Identity",
+          shortDescription:
+            "Visual identities that resonate. Logos, typography systems, color palettes and brand guidelines that stand out.",
+          xDesktop: 18,
+          yDesktop: 52,
+          orderMobile: 1,
+          animationSrc: "/src/services-1.mp4",
         },
         {
           id: "uxui",
-          icon: "◈",
-          title: "UX/UI Design",
-          description:
-            "Intuitive interfaces and seamless experiences. From wireframes to high-fidelity prototypes and design systems.",
+          label: "UX/UI Design",
+          shortDescription:
+            "Intuitive interfaces and seamless experiences. From research to high-fidelity prototypes and design systems.",
+          xDesktop: 39,
+          yDesktop: 40,
+          orderMobile: 2,
+          animationSrc: "/src/service-2.mp4",
         },
         {
-          id: "web",
-          icon: "◉",
-          title: "Web2 & Web3",
-          description:
-            "Modern web experiences across traditional and decentralized platforms. dApps, NFT projects, and web applications.",
+          id: "web2web3",
+          label: "Web2 & Web3",
+          shortDescription:
+            "Modern web experiences across traditional and decentralized platforms: dApps, NFT projects, and web applications.",
+          xDesktop: 60,
+          yDesktop: 62,
+          orderMobile: 3,
+          animationSrc: "/src/service-3.mp4",
         },
         {
           id: "content",
-          icon: "◎",
-          title: "Content & Social",
-          description:
+          label: "Content & Social",
+          shortDescription:
             "Visual content that captures attention. Social media assets, presentations, and marketing materials.",
+          xDesktop: 80,
+          yDesktop: 38,
+          orderMobile: 4,
+          animationSrc: "/src/service-4.mp4",
         },
       ],
     },
@@ -203,35 +215,47 @@ const messages: Record<
     services: {
       title: "Ce que nous faisons",
       subtitle:
-        "Expertise design 360° sur tous les points de contact digitaux et physiques.",
+        "Design 360° pour créer des marques fortes, des produits fluides et des expériences qui marquent.",
       items: [
         {
-          id: "branding",
-          icon: "✦",
-          title: "Identité de marque",
-          description:
-            "Des identités visuelles qui résonnent. Logos, systèmes typographiques, palettes de couleurs et chartes graphiques qui se démarquent.",
+          id: "brand",
+          label: "Identité de marque",
+          shortDescription:
+            "Des identités visuelles qui marquent et qui durent. Logos, typographies, palettes et systèmes graphiques conçus pour incarner votre ADN — du concept fondateur au déploiement complet.",
+          xDesktop: 18,
+          yDesktop: 52,
+          orderMobile: 1,
+          animationSrc: "/src/services-1.mp4",
         },
         {
           id: "uxui",
-          icon: "◈",
-          title: "Design UX/UI",
-          description:
-            "Interfaces intuitives et expériences fluides. Des wireframes aux prototypes haute-fidélité et design systems.",
+          label: "UX/UI Design",
+          shortDescription:
+            "Interfaces intuitives et expériences fluides. De la recherche UX aux prototypes haute-fidélité : nous concevons des parcours élégants, clairs et efficaces.",
+          xDesktop: 39,
+          yDesktop: 40,
+          orderMobile: 2,
+          animationSrc: "/src/service-2.mp4",
         },
         {
-          id: "web",
-          icon: "◉",
-          title: "Web2 & Web3",
-          description:
-            "Expériences web modernes sur plateformes traditionnelles et décentralisées. dApps, projets NFT et applications web.",
+          id: "web2web3",
+          label: "Web2 & Web3",
+          shortDescription:
+            "Sites modernes, dApps, dashboards et produits digitaux conçus pour la performance et parfaitement intégrés dans votre écosystème.",
+          xDesktop: 60,
+          yDesktop: 62,
+          orderMobile: 3,
+          animationSrc: "/src/service-3.mp4",
         },
         {
           id: "content",
-          icon: "◎",
-          title: "Contenu & Social",
-          description:
-            "Contenu visuel qui capte l'attention. Assets réseaux sociaux, présentations et supports marketing.",
+          label: "Contenu & Social",
+          shortDescription:
+            "Photographie, vidéo, motion design, assets réseaux sociaux et narratifs visuels pour amplifier votre image de marque.",
+          xDesktop: 80,
+          yDesktop: 38,
+          orderMobile: 4,
+          animationSrc: "/src/service-4.mp4",
         },
       ],
     },
@@ -361,7 +385,7 @@ export default function HomePage() {
 
       <main id="main">
         <Hero messages={t.hero} />
-        <ServicesSection messages={t.services} />
+        <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
         <AboutSection messages={t.about} />
         <ContactSection messages={t.contact} />
