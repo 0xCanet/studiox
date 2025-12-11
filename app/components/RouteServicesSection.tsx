@@ -34,16 +34,12 @@ interface RouteServicesSectionProps {
 // ============================================
 interface ServiceCardProps {
   service: ServiceRouteItem;
-  pinX: number;
-  pinY: number;
   isMobile: boolean;
-  relativePinX: number;
-  relativePinY: number;
   fixedPosition: { left: number; top: number };
   parallaxOffset?: number;
 }
 
-function ServiceCard({ service, pinX, pinY, isMobile, relativePinX, relativePinY, fixedPosition, parallaxOffset = 0 }: ServiceCardProps) {
+function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: ServiceCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [parallaxY, setParallaxY] = useState(0);
 
@@ -100,11 +96,13 @@ function ServiceCard({ service, pinX, pinY, isMobile, relativePinX, relativePinY
                 loop
                 muted
                 playsInline
+                preload="metadata"
                 className="w-full h-full object-cover"
                 style={{
                   imageRendering: "pixelated" as any,
                   filter: "sepia(0.2)",
                 }}
+                aria-label={`${service.label} animation`}
               >
                 <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
               </video>
@@ -420,17 +418,6 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     });
   }, []);
 
-  // Get pin positions for cards
-  const getPinPosition = (service: ServiceRouteItem) => {
-    if (!mapContainerRef.current || isMobile) return { x: 0, y: 0 };
-    
-    const containerRect = mapContainerRef.current.getBoundingClientRect();
-    const x = containerRect.left + (containerRect.width * service.xDesktop / 100);
-    const y = containerRect.top + (containerRect.height * service.yDesktop / 100);
-    
-    return { x, y };
-  };
-
   // Get pin position relative to container for better positioning
   const getPinPositionRelative = (service: ServiceRouteItem) => {
     if (!mapContainerRef.current || isMobile) return { x: 0, y: 0 };
@@ -448,7 +435,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
   return (
     <section
       ref={sectionRef}
-      id="services-route"
+      id="services"
       className="relative py-24 md:py-32 px-5 md:px-8 overflow-hidden min-h-screen"
     >
       {/* Background Video with Parallax */}
@@ -470,6 +457,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
             transformOrigin: "center center",
             willChange: "transform",
           }}
+          aria-label="Services section background video"
         />
       </div>
       
@@ -491,12 +479,14 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="text-center mb-16 md:mb-24"
         >
-          <h3 className="section-title text-[#0E0E0E] mb-6 font-heading font-bold">
-            {messages.title}
-          </h3>
-          <p className="font-body text-lg md:text-xl text-[#0E0E0E]/70 max-w-3xl mx-auto leading-relaxed">
-            <TextWithOrangeDots>{messages.subtitle}</TextWithOrangeDots>
-          </p>
+          <h1 className="section-title text-[#0E0E0E] mb-6 font-heading font-bold">
+            {messages.title.replace(/\.$/, '')}
+            <span className="text-[#FF7A30]">.</span>
+          </h1>
+          <h2 className="font-heading font-normal text-lg md:text-xl text-[#0E0E0E] max-w-3xl mx-auto leading-relaxed">
+            <TextWithOrangeDots>{messages.subtitle.replace(/\.$/, '')}</TextWithOrangeDots>
+            <span className="text-[#FF7A30]">.</span>
+          </h2>
         </motion.div>
 
         {/* Desktop: Military Map with Pins and Cards */}
@@ -511,8 +501,6 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
               const sortedByOrder = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
               const pinIndex = sortedByOrder.findIndex(s => s.id === service.id);
               const animationDelay = pinIndex * 0.2;
-              const pinPos = getPinPosition(service);
-              const pinPosRel = getPinPositionRelative(service);
               const fixedPos = cardPositions.get(service.id) || { left: 0, top: 0 };
               
               // Définir un offset de parallaxe différent pour chaque card (de -3 à 3)
@@ -525,10 +513,6 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
                   <Pin service={service} animationDelay={animationDelay} />
                   <ServiceCard
                     service={service}
-                    pinX={pinPos.x}
-                    pinY={pinPos.y}
-                    relativePinX={pinPosRel.x}
-                    relativePinY={pinPosRel.y}
                     isMobile={false}
                     fixedPosition={fixedPos}
                     parallaxOffset={parallaxOffset}
@@ -545,11 +529,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
             <ServiceCard
               key={service.id}
               service={service}
-              pinX={0}
-              pinY={0}
               isMobile={true}
-              relativePinX={0}
-              relativePinY={0}
               fixedPosition={{ left: 0, top: 0 }}
             />
           ))}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 
@@ -18,6 +18,8 @@ export interface ContactMessages {
     confirmBtn: string;
     successTitle: string;
     successMessage: string;
+    prevMonth: string;
+    nextMonth: string;
   };
   form: {
     nameLabel: string;
@@ -46,11 +48,14 @@ export function ContactSection({ messages }: ContactSectionProps) {
     message: "",
   });
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const today = useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }, []);
 
   // Generate calendar days
-  const getDaysInMonth = (date: Date) => {
+  const getDaysInMonth = useCallback((date: Date) => {
     const year = date.getFullYear();
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
@@ -71,65 +76,69 @@ export function ContactSection({ messages }: ContactSectionProps) {
     }
     
     return days;
-  };
+  }, []);
 
-  const isDateSelectable = (date: Date | null) => {
+  const isDateSelectable = useCallback((date: Date | null) => {
     if (!date) return false;
     const dayOfWeek = date.getDay();
     // Only weekdays (Mon-Fri) and not past dates
     return dayOfWeek !== 0 && dayOfWeek !== 6 && date >= today;
-  };
+  }, [today]);
 
-  const formatMonth = (date: Date) => {
+  const formatMonth = useCallback((date: Date) => {
     return `${messages.calendar.monthNames[date.getMonth()]} ${date.getFullYear()}`;
-  };
+  }, [messages.calendar.monthNames]);
 
-  const prevMonth = () => {
+  const prevMonth = useCallback(() => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
     setSelectedDate(null);
     setSelectedTime(null);
-  };
+  }, [currentMonth]);
 
-  const nextMonth = () => {
+  const nextMonth = useCallback(() => {
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
     setSelectedDate(null);
     setSelectedTime(null);
-  };
+  }, [currentMonth]);
 
-  const handleDateClick = (date: Date | null) => {
+  const handleDateClick = useCallback((date: Date | null) => {
     if (date && isDateSelectable(date)) {
       setSelectedDate(date);
       setSelectedTime(null);
     }
-  };
+  }, [isDateSelectable]);
 
-  const handleTimeClick = (time: string) => {
+  const handleTimeClick = useCallback((time: string) => {
     setSelectedTime(time);
-  };
+  }, []);
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = useCallback(() => {
     if (selectedDate && selectedTime) {
       setBookingConfirmed(true);
     }
-  };
+  }, [selectedDate, selectedTime]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
-  };
+    // Create mailto link with form data
+    const subject = encodeURIComponent(`Contact from ${formData.name}`);
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
+    );
+    window.location.href = `mailto:contact@studi0x.agency?subject=${subject}&body=${body}`;
+  }, [formData]);
 
-  const days = getDaysInMonth(currentMonth);
+  const days = useMemo(() => getDaysInMonth(currentMonth), [currentMonth, getDaysInMonth]);
 
-  const isToday = (date: Date | null) => {
+  const isToday = useCallback((date: Date | null) => {
     if (!date) return false;
     return date.toDateString() === today.toDateString();
-  };
+  }, [today]);
 
-  const isSelected = (date: Date | null) => {
+  const isSelected = useCallback((date: Date | null) => {
     if (!date || !selectedDate) return false;
     return date.toDateString() === selectedDate.toDateString();
-  };
+  }, [selectedDate]);
 
   return (
     <section id="contact" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-8">
@@ -142,10 +151,14 @@ export function ContactSection({ messages }: ContactSectionProps) {
           transition={{ duration: 0.7 }}
           className="text-center mb-16 md:mb-20"
         >
-          <h3 className="section-title text-[#0E0E0E] mb-4">{messages.title}</h3>
-          <p className="text-[#0E0E0E]/60 max-w-2xl mx-auto">
-            <TextWithOrangeDots>{messages.subtitle}</TextWithOrangeDots>
-          </p>
+          <h1 className="section-title text-[#0E0E0E] mb-4">
+            {messages.title.replace(/\.$/, '')}
+            <span className="text-[#FF7A30]">.</span>
+          </h1>
+          <h2 className="text-[#0E0E0E] max-w-2xl mx-auto font-heading font-normal text-lg md:text-xl leading-relaxed">
+            <TextWithOrangeDots>{messages.subtitle.replace(/\.$/, '')}</TextWithOrangeDots>
+            <span className="text-[#FF7A30]">.</span>
+          </h2>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
@@ -175,7 +188,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
                     <button
                       onClick={prevMonth}
                       className="p-2 hover:bg-[#F0EEE9] rounded-lg transition-colors"
-                      aria-label="Previous month"
+                      aria-label={messages.calendar.prevMonth}
                     >
                       <svg className="w-5 h-5 text-[#0E0E0E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -187,7 +200,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
                     <button
                       onClick={nextMonth}
                       className="p-2 hover:bg-[#F0EEE9] rounded-lg transition-colors"
-                      aria-label="Next month"
+                      aria-label={messages.calendar.nextMonth}
                     >
                       <svg className="w-5 h-5 text-[#0E0E0E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

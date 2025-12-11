@@ -48,7 +48,7 @@ const messages: Record<
       secondaryCta: "Learn more",
     },
     services: {
-      title: "What we do",
+      title: "What we do.",
       subtitle:
         "360° design expertise across digital and physical touchpoints.",
       items: [
@@ -95,66 +95,79 @@ const messages: Record<
       ],
     },
     work: {
-      title: "Selected work",
+      title: "Selected work.",
       subtitle:
         "A curated collection of projects where strategy meets craft.",
       cta: "View all projects",
+      viewProject: "View Project",
       items: [
         {
-          id: "project-1",
-          title: "Nexus Protocol",
-          category: "Web3 • Branding",
-          tags: ["Identity", "dApp Design", "Token Launch"],
+          id: "sendo-market",
+          title: "Sendo.Market",
+          category: "WEB3 • UX/UI • BRANDING • VIDEO MAKING",
+          tags: ["Creation of a strong brand identity and modern web design for Sendo.Market, with a structured art direction and a clear, product-focused user experience."],
+          video: "/src/sendo-market-video.mp4",
         },
         {
-          id: "project-2",
-          title: "Bloom Studio",
-          category: "Brand Identity",
-          tags: ["Logo", "Visual System", "Guidelines"],
+          id: "scorage",
+          title: "ScoRAGE",
+          category: "BRANDING - WebDesign - Communication",
+          tags: ["Full visual identity and website design for ScoRage™, combining clarity, performance, and a technical tone to support a high-stakes crypto analysis tool."],
+          image: "/images/backgrounds/scorage-banner.png",
         },
         {
-          id: "project-3",
-          title: "Vantage App",
-          category: "Product Design",
-          tags: ["UX Research", "UI Design", "Prototyping"],
+          id: "totem",
+          title: "Totem",
+          category: "Wireframing - UX/UI Design",
+          tags: ["Design of multiple landing pages for Totem, a subsidiary of the Orange Group, featuring a modern and structured UI that highlights their telecom infrastructure solutions."],
+          image: "/images/backgrounds/totem-mockup.png",
         },
         {
-          id: "project-4",
-          title: "Monolith Finance",
-          category: "Web3 • Product",
-          tags: ["DeFi", "Dashboard", "Design System"],
+          id: "academie-mouvement",
+          title: "L'académie du Mouvement",
+          category: "Wireframing - UX/UI Design",
+          tags: ["Production of five landing page mockups focused on wellness and fitness, including gym, swimming, relaxation, baby swimming, and specialized therapeutic spaces."],
+          image: "/images/backgrounds/academie-mouvement.png",
+        },
+        {
+          id: "coming-soon",
+          title: "Coming soon",
+          category: "Coming soon",
+          tags: ["A new project is coming soon, crafted to push the boundaries of experience and design."],
         },
       ],
     },
     about: {
-      title: "About us",
+      title: "About",
       description:
-        "We're a design studio obsessed with craft and impact. We partner with ambitious teams to create brands and products that users actually remember. No templates, no shortcuts — just thoughtful design that works.",
+        "We are a design studio driven by new technologies and WEB3. We support ambitious teams in creating brands and products that truly stay in users' minds — standing by your side from start to finish.",
+      ceoName: "Jessy Canet",
+      ceoTitle: "CEO & Designer @ Studi.0x",
       stats: [
-        { label: "Projects delivered", value: "50+" },
-        { label: "Happy clients", value: "30+" },
-        { label: "Years of experience", value: "8+" },
+        { label: "Projects delivered", value: "25+" },
+        { label: "Happy clients", value: "20+" },
+        { label: "Years of experience", value: "9+" },
       ],
       values: [
         {
           title: "Craft over shortcuts",
           description:
-            "Every pixel matters. We obsess over the details that others overlook.",
+            "Every pixel matters. We obsess over the details others overlook.",
         },
         {
-          title: "Strategy-led design",
+          title: "Strategic design",
           description:
-            "Beautiful design that doesn't convert is just art. We balance aesthetics with business goals.",
+            "Beautiful design without conversion is just art. We balance aesthetics with business objectives.",
         },
         {
           title: "Collaborative spirit",
           description:
-            "Your expertise + our design skills = exceptional results. We work as an extension of your team.",
+            "Your expertise + our design skills = exceptional outcomes. We work as an extension of your team.",
         },
       ],
     },
     contact: {
-      title: "Let's talk",
+      title: "Let's talk.",
       subtitle:
         "Ready to create something memorable? Book a discovery call or drop us a message.",
       calendar: {
@@ -171,6 +184,8 @@ const messages: Record<
         confirmBtn: "Confirm booking",
         successTitle: "You're booked!",
         successMessage: "We'll send you a calendar invite shortly.",
+        prevMonth: "Previous month",
+        nextMonth: "Next month",
       },
       form: {
         nameLabel: "Name",
@@ -187,9 +202,9 @@ const messages: Record<
       copyright: "© 2024 Studi.0x",
       tagline: "Design that users remember.",
       links: [
-        { label: "Instagram", href: "#" },
-        { label: "LinkedIn", href: "#" },
-        { label: "Dribbble", href: "#" },
+        { label: "GitHub", href: "https://github.com/0xCanet" },
+        { label: "X.com", href: "https://x.com/0xCanet" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
       ],
     },
   },
@@ -213,7 +228,7 @@ const messages: Record<
       secondaryCta: "En savoir plus",
     },
     services: {
-      title: "Ce que nous faisons",
+      title: "Ce que nous faisons.",
       subtitle:
         "Design 360° pour créer des marques fortes, des produits fluides et des expériences qui marquent.",
       items: [
@@ -260,45 +275,58 @@ const messages: Record<
       ],
     },
     work: {
-      title: "Projets sélectionnés",
+      title: "Projets sélectionnés.",
       subtitle:
         "Une collection de projets où stratégie et savoir-faire se rencontrent.",
       cta: "Voir tous les projets",
+      viewProject: "Voir le projet",
       items: [
         {
-          id: "project-1",
-          title: "Nexus Protocol",
-          category: "Web3 • Branding",
-          tags: ["Identité", "Design dApp", "Lancement token"],
+          id: "sendo-market",
+          title: "Sendo.Market",
+          category: "WEB3 • UX/UI • BRANDING",
+          tags: ["Création d'une identité de marque forte et d'un webdesign moderne pour Sendo.Market, avec une direction artistique structurée et une expérience claire axée produit."],
+          video: "/src/sendo-market-video.mp4",
         },
         {
-          id: "project-2",
-          title: "Bloom Studio",
-          category: "Identité de marque",
-          tags: ["Logo", "Système visuel", "Charte"],
+          id: "scorage",
+          title: "ScoRAGE",
+          category: "BRANDING - WebDesign - Communication",
+          tags: ["Développement complet de l'identité visuelle et design du site ScoRage™, alliant performance, clarté et tonalité technique pour soutenir un outil d'analyse crypto exigeant."],
+          image: "/images/backgrounds/scorage-banner.png",
         },
         {
-          id: "project-3",
-          title: "Vantage App",
-          category: "Design produit",
-          tags: ["Recherche UX", "Design UI", "Prototypage"],
+          id: "totem",
+          title: "Totem",
+          category: "Wireframing - UX/UI Design",
+          tags: ["Conception de plusieurs landing pages pour Totem, filiale du Groupe Orange, avec une UI moderne et structurée mettant en valeur leurs solutions d'infrastructure télécom."],
+          image: "/images/backgrounds/totem-mockup.png",
         },
         {
-          id: "project-4",
-          title: "Monolith Finance",
-          category: "Web3 • Produit",
-          tags: ["DeFi", "Dashboard", "Design System"],
+          id: "academie-mouvement",
+          title: "L'académie du Mouvement",
+          category: "Wireframing - UX/UI Design",
+          tags: ["Production de cinq maquettes de landing pages autour du bien-être et du sport, incluant fitness, natation, relaxation, bébé nageur et espace de soin spécialisé."],
+          image: "/images/backgrounds/academie-mouvement.png",
+        },
+        {
+          id: "coming-soon",
+          title: "Coming soon",
+          category: "Coming soon",
+          tags: ["Un nouveau projet arrive bientôt, pensé pour repousser les limites en matière d'expérience et de design."],
         },
       ],
     },
     about: {
-      title: "À propos",
+      title: "À propos.",
       description:
-        "Nous sommes un studio de design obsédé par le craft et l'impact. Nous accompagnons des équipes ambitieuses pour créer des marques et produits dont les utilisateurs se souviennent vraiment. Pas de templates, pas de raccourcis — juste du design réfléchi qui fonctionne.",
+        "Nous sommes un studio de design passionné par les nouvelles technologies et le WEB3. Nous accompagnons des équipes ambitieuses pour créer des marques et produits dont les utilisateurs se souviennent vraiment. Du début à la fin à vos côtés.",
+      ceoName: "Jessy Canet",
+      ceoTitle: "CEO & Designer @ Studi.0x",
       stats: [
-        { label: "Projets livrés", value: "50+" },
-        { label: "Clients satisfaits", value: "30+" },
-        { label: "Années d'expérience", value: "8+" },
+        { label: "Projets livrés", value: "25+" },
+        { label: "Clients satisfaits", value: "20+" },
+        { label: "Années d'expérience", value: "9+" },
       ],
       values: [
         {
@@ -319,7 +347,7 @@ const messages: Record<
       ],
     },
     contact: {
-      title: "Discutons",
+      title: "Discutons.",
       subtitle:
         "Prêt à créer quelque chose de mémorable ? Réservez un appel découverte ou envoyez-nous un message.",
       calendar: {
@@ -336,6 +364,8 @@ const messages: Record<
         confirmBtn: "Confirmer le rendez-vous",
         successTitle: "C'est réservé !",
         successMessage: "Nous vous enverrons une invitation calendrier.",
+        prevMonth: "Mois précédent",
+        nextMonth: "Mois suivant",
       },
       form: {
         nameLabel: "Nom",
@@ -352,9 +382,9 @@ const messages: Record<
       copyright: "© 2024 Studi.0x",
       tagline: "Du design dont on se souvient.",
       links: [
-        { label: "Instagram", href: "#" },
-        { label: "LinkedIn", href: "#" },
-        { label: "Dribbble", href: "#" },
+        { label: "GitHub", href: "https://github.com/0xCanet" },
+        { label: "X.com", href: "https://x.com/0xCanet" },
+        { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
       ],
     },
   },

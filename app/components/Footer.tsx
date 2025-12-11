@@ -31,7 +31,7 @@ export function Footer({ messages }: FooterProps) {
           {/* Left - Logo & Tagline */}
           <div>
             <a
-              href="#"
+              href="/"
               className="font-bold text-xl text-[#0E0E0E] hover:text-[#FF7A30] transition-colors inline-block"
             >
               <Studi0x />
@@ -47,6 +47,8 @@ export function Footer({ messages }: FooterProps) {
               <a
                 key={link.label}
                 href={link.href}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className="text-[#0E0E0E]/60 hover:text-[#FF7A30] text-sm font-heading transition-colors"
               >
                 {link.label}

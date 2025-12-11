@@ -20,17 +20,18 @@ interface NavbarProps {
   language: "en" | "fr";
   onLanguageChange: (lang: "en" | "fr") => void;
   messages: NavbarMessages;
+  forceLightMode?: boolean;
 }
 
-export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
+export function Navbar({ language, onLanguageChange, messages, forceLightMode = false }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
-  const [isOverDark, setIsOverDark] = useState(true); // Start as true since hero is dark (white logo/EN/FR)
-  const [logoIsOverDark, setLogoIsOverDark] = useState(true);
-  const [navPillIsOverDark, setNavPillIsOverDark] = useState(true);
-  const [contactIsOverDark, setContactIsOverDark] = useState(true);
-  const [langIsOverDark, setLangIsOverDark] = useState(true);
+  const [isOverDark, setIsOverDark] = useState(!forceLightMode); // Start as light if forceLightMode is true
+  const [logoIsOverDark, setLogoIsOverDark] = useState(!forceLightMode);
+  const [navPillIsOverDark, setNavPillIsOverDark] = useState(!forceLightMode);
+  const [contactIsOverDark, setContactIsOverDark] = useState(!forceLightMode);
+  const [langIsOverDark, setLangIsOverDark] = useState(!forceLightMode);
   const [isMobile, setIsMobile] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const lenis = useLenis();
@@ -40,14 +41,19 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
   const contactRef = useRef<HTMLButtonElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
 
-  // Show navbar after 2 seconds (after video animation)
+  // Show navbar after 2 seconds (after video animation) - skip delay if forceLightMode
   useEffect(() => {
+    if (forceLightMode) {
+      setIsVisible(true);
+      return;
+    }
+    
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [forceLightMode]);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -65,9 +71,12 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
 
   // Detect background color at a specific point - real-time detection
   const detectBackgroundAtPoint = (x: number, y: number): boolean => {
+    // If forceLightMode is enabled, always return false (light mode)
+    if (forceLightMode) return false;
+    
     // Hero section is dark, all other sections are light (#F0EEE9)
     const heroSection = document.getElementById("hero");
-    if (!heroSection) return true; // Default to dark if hero not found
+    if (!heroSection) return false; // Default to light if hero not found (for project pages)
 
     const heroRect = heroSection.getBoundingClientRect();
     // Trigger transition 50px earlier - when hero bottom is 150px from top of viewport
@@ -84,6 +93,16 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
 
   // Initial detection on mount - before refs are available
   useEffect(() => {
+    // If forceLightMode is enabled, set all states to light immediately
+    if (forceLightMode) {
+      setLogoIsOverDark(false);
+      setNavPillIsOverDark(false);
+      setContactIsOverDark(false);
+      setLangIsOverDark(false);
+      setIsOverDark(false);
+      return;
+    }
+    
     // On initial load, we're always over the hero (dark background)
     // Set all states to dark immediately
     setLogoIsOverDark(true);
@@ -91,10 +110,13 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
     setContactIsOverDark(true);
     setLangIsOverDark(true);
     setIsOverDark(true);
-  }, []);
+  }, [forceLightMode]);
 
   // Real-time independent detection for each element
   useEffect(() => {
+    // If forceLightMode is enabled, skip scroll detection
+    if (forceLightMode) return;
+    
     const handleScroll = () => {
       // Use requestAnimationFrame for smooth, real-time updates
       requestAnimationFrame(() => {
@@ -111,6 +133,9 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
           if (heroSection) {
             const heroRect = heroSection.getBoundingClientRect();
             setLogoIsOverDark(heroRect.bottom > 150);
+          } else {
+            // No hero section found, use light mode
+            setLogoIsOverDark(false);
           }
         }
 
@@ -126,6 +151,8 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
           if (heroSection) {
             const heroRect = heroSection.getBoundingClientRect();
             setNavPillIsOverDark(heroRect.bottom > 150);
+          } else {
+            setNavPillIsOverDark(false);
           }
         }
 
@@ -141,6 +168,8 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
           if (heroSection) {
             const heroRect = heroSection.getBoundingClientRect();
             setContactIsOverDark(heroRect.bottom > 150);
+          } else {
+            setContactIsOverDark(false);
           }
         }
 
@@ -156,6 +185,8 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
           if (heroSection) {
             const heroRect = heroSection.getBoundingClientRect();
             setLangIsOverDark(heroRect.bottom > 150);
+          } else {
+            setLangIsOverDark(false);
           }
         }
 
@@ -171,6 +202,8 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
           if (heroSection) {
             const heroRect = heroSection.getBoundingClientRect();
             setIsOverDark(heroRect.bottom > 150);
+          } else {
+            setIsOverDark(false);
           }
         }
       });
@@ -229,7 +262,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
         lenis.off('scroll', throttledScroll);
       }
     };
-  }, [lenis]);
+  }, [lenis, forceLightMode]);
 
   // Scroll spy - detect which section is in view
   useEffect(() => {
@@ -361,7 +394,7 @@ export function Navbar({ language, onLanguageChange, messages }: NavbarProps) {
         <div className={`${isMobile ? '' : 'pb-4'}`}>
           <div className="flex items-center justify-between w-full">
             {/* Logo - switches color based on background */}
-            <a ref={logoRef} href="#" className="flex-shrink-0 relative z-10 group cursor-pointer">
+            <a ref={logoRef} href="/" className="flex-shrink-0 relative z-10 group cursor-pointer">
               <div className="relative h-7 md:h-8" style={{ width: '160px' }}>
                 {/* Dark logo - visible when OUT of hero section OR menu is open */}
                 <Image

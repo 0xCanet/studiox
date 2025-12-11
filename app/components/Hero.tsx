@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
-import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { TypewriterText } from "./TypewriterText";
 import { LoadingBarTags } from "./LoadingBarTags";
 
@@ -34,7 +33,7 @@ export function Hero({ messages }: HeroProps) {
   const textRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     setMousePosition({
@@ -42,11 +41,11 @@ export function Hero({ messages }: HeroProps) {
       y: e.clientY - rect.top,
     });
     setIsHovering(true);
-  };
+  }, []);
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
-  };
+  }, []);
 
   // Calculate browser bar height (address bar, navigation bar, etc.)
   useEffect(() => {
@@ -210,6 +209,17 @@ export function Hero({ messages }: HeroProps) {
   // Use ref to store previous value for smooth interpolation
   const prevHeroScrollYRef = useRef(0);
   
+  // Memoize tagline tags and duration calculation
+  const taglineTags = useMemo(() => messages.tagline.split(" • "), [messages.tagline]);
+  const taglineDuration = useMemo(() => {
+    // Calculate total duration: 
+    // Delay before content phase: 2200ms (2s video + 200ms navbar)
+    // H1: messages.title.length * 30ms
+    // Delay between H1 and H2: 200ms
+    // H2: messages.subtitle.length * 25ms
+    return 2200 + (messages.title.length * 30) + 200 + (messages.subtitle.length * 25);
+  }, [messages.title.length, messages.subtitle.length]);
+  
   useLenis(({ scroll }) => {
     // Use requestAnimationFrame for smooth updates
     requestAnimationFrame(() => {
@@ -342,6 +352,7 @@ export function Hero({ messages }: HeroProps) {
             loop
             muted
             playsInline
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: 'translateZ(0)',
@@ -349,6 +360,7 @@ export function Hero({ messages }: HeroProps) {
               WebkitBackfaceVisibility: 'hidden',
               willChange: 'auto'
             }}
+            aria-label="Hero background video"
           >
             <source src="/src/video_01.mp4" type="video/mp4" />
           </video>
@@ -382,6 +394,7 @@ export function Hero({ messages }: HeroProps) {
             loop
             muted
             playsInline
+            preload="auto"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: 'translateZ(0)',
@@ -389,6 +402,7 @@ export function Hero({ messages }: HeroProps) {
               WebkitBackfaceVisibility: 'hidden',
               willChange: 'auto'
             }}
+            aria-label="Hero background video"
           >
             <source src="/src/video_01.mp4" type="video/mp4" />
           </video>
@@ -460,15 +474,8 @@ export function Hero({ messages }: HeroProps) {
               wordBreak: 'break-word'
             }}>
               <LoadingBarTags
-                tags={messages.tagline.split(" • ")}
-                duration={
-                  // Calculate total duration: 
-                  // Delay before content phase: 2200ms (2s video + 200ms navbar)
-                  // H1: messages.title.length * 30ms
-                  // Delay between H1 and H2: 200ms
-                  // H2: messages.subtitle.length * 25ms
-                  2200 + (messages.title.length * 30) + 200 + (messages.subtitle.length * 25)
-                }
+                tags={taglineTags}
+                duration={taglineDuration}
                 delay={0}
                 className="w-full"
               />

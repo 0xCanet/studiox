@@ -1,11 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 
 export interface AboutMessages {
   title: string;
   description: string;
+  ceoName: string;
+  ceoTitle: string;
   stats: {
     label: string;
     value: string;
@@ -24,21 +27,77 @@ export function AboutSection({ messages }: AboutSectionProps) {
   return (
     <section id="about" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-8">
       <div className="max-w-[1200px] mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          {/* Left Column - Main Content */}
+        {/* First Row: Portrait (left) + About Content & Values (right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[50px] mb-16">
+          {/* Left Column - Portrait */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7 }}
           >
-            <h3 className="section-title text-[#0E0E0E] mb-6">{messages.title}</h3>
-            <p className="text-[#0E0E0E]/70 text-lg leading-relaxed mb-10">
-              <TextWithOrangeDots>{messages.description}</TextWithOrangeDots>
-            </p>
+            <div className="relative w-full aspect-[3/4] max-w-md lg:max-w-lg mx-auto lg:mx-0 rounded-2xl overflow-hidden">
+              <Image
+                src="/images/backgrounds/portrait-canet.png"
+                alt="Jessy Canet"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+                priority
+              />
+            </div>
+            <div className="mt-6 text-center lg:text-left">
+              <h3 className="font-heading font-bold text-xl text-[#0E0E0E] mb-1">
+                {messages.ceoName}
+              </h3>
+              <p className="text-[#0E0E0E]/60 text-sm font-body">
+                {messages.ceoTitle}
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Right Column - About Content + Values */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="space-y-8"
+          >
+            {/* About Content */}
+            <div>
+              <h1 className="section-title text-[#0E0E0E] mb-6">
+                {messages.title.replace(/\.$/, '')}
+                <span className="text-[#FF7A30]">.</span>
+              </h1>
+              <p className="text-[#0E0E0E]/70 text-lg leading-relaxed">
+                <TextWithOrangeDots>{messages.description}</TextWithOrangeDots>
+              </p>
+            </div>
+
+            {/* Values */}
+            <div className="space-y-6">
+              {messages.values.map((value, index) => (
+                <motion.div
+                  key={value.title}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.15 }}
+                  className="relative pl-6 border-l-2 border-[#FF7A30]/30 hover:border-[#FF7A30] transition-colors"
+                >
+                  <h4 className="font-heading font-semibold text-lg text-[#0E0E0E] mb-2">
+                    {value.title}
+                  </h4>
+                  <p className="text-[#0E0E0E]/60 text-sm leading-relaxed">
+                    <TextWithOrangeDots>{value.description}</TextWithOrangeDots>
+                  </p>
+                </motion.div>
+              ))}
+            </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-4">
               {messages.stats.map((stat, index) => (
                 <motion.div
                   key={stat.label}
@@ -46,6 +105,7 @@ export function AboutSection({ messages }: AboutSectionProps) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="text-center"
                 >
                   <div className="font-heading font-bold text-3xl md:text-4xl text-[#FF7A30] mb-1">
                     {stat.value}
@@ -56,33 +116,6 @@ export function AboutSection({ messages }: AboutSectionProps) {
                 </motion.div>
               ))}
             </div>
-          </motion.div>
-
-          {/* Right Column - Values */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="space-y-8"
-          >
-            {messages.values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="relative pl-6 border-l-2 border-[#FF7A30]/30 hover:border-[#FF7A30] transition-colors"
-              >
-                <h4 className="font-heading font-semibold text-lg text-[#0E0E0E] mb-2">
-                  {value.title}
-                </h4>
-                <p className="text-[#0E0E0E]/60 text-sm leading-relaxed">
-                  <TextWithOrangeDots>{value.description}</TextWithOrangeDots>
-                </p>
-              </motion.div>
-            ))}
           </motion.div>
         </div>
       </div>
