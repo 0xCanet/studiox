@@ -3,6 +3,7 @@ import { K2D, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import "lenis/dist/lenis.css";
 import { SmoothScroll } from "./components/SmoothScroll";
+import { GoogleAnalytics } from "./components/GoogleAnalytics";
 
 const k2d = K2D({
   variable: "--font-k2d",
@@ -102,6 +103,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable} scrollbar-hidden`} suppressHydrationWarning>
       <body className={`${k2d.variable} ${ibmPlexMono.variable} antialiased`} suppressHydrationWarning>
+        <GoogleAnalytics />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

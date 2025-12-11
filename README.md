@@ -31,6 +31,16 @@ npm install
 bun install
 ```
 
+### Environment Variables
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+Replace `G-XXXXXXXXXX` with your Google Analytics Measurement ID (GA4). You can find this in your Google Analytics dashboard under Admin > Data Streams > [Your Stream] > Measurement ID.
+
 Run the development server:
 
 ```bash
