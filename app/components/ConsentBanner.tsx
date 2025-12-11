@@ -63,9 +63,12 @@ const saveConsent = (value: "accepted" | "declined"): void => {
   localStorage.setItem(CONSENT_KEY, JSON.stringify(consentData));
 };
 
-export function ConsentBanner() {
+interface ConsentBannerProps {
+  language: "fr" | "en";
+}
+
+export function ConsentBanner({ language }: ConsentBannerProps) {
   const [showBanner, setShowBanner] = useState(false);
-  const [language, setLanguage] = useState<"fr" | "en">("en");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -79,11 +82,6 @@ export function ConsentBanner() {
   }, []);
 
   useEffect(() => {
-    // Détecter la langue du navigateur
-    const browserLang = navigator.language.toLowerCase();
-    const detectedLang = browserLang.startsWith("fr") ? "fr" : "en";
-    setLanguage(detectedLang);
-
     // Vérifier si le consentement est valide (non expiré)
     const consent = getConsentValue();
     if (!consent) {
@@ -108,12 +106,12 @@ export function ConsentBanner() {
 
   const texts = {
     fr: {
-      message: "Nous utilisons des cookies pour analyser le trafic et améliorer votre expérience.",
+      message: "Nous utilisons des cookies pour analyser le trafic de notre site et améliorer votre expérience. En continuant à naviguer, vous acceptez notre utilisation des cookies.",
       accept: "Accepter",
       decline: "Refuser",
     },
     en: {
-      message: "We use cookies to analyze traffic and improve your experience.",
+      message: "We use cookies to analyze our website traffic and improve your experience. By continuing to browse, you accept our use of cookies.",
       accept: "Accept",
       decline: "Decline",
     },

@@ -9,6 +9,7 @@ import { Footer, type FooterMessages } from "../../components/Footer";
 import { WorkSection, type WorkMessages } from "../../components/WorkSection";
 import { TextWithOrangeDots } from "../../components/TextWithOrangeDots";
 import { PDFViewer } from "../../components/PDFViewer";
+import { ConsentBanner } from "../../components/ConsentBanner";
 
 // Helper function to format description with links
 const formatDescriptionWithLinks = (text: string, language: Language): React.ReactNode => {
@@ -312,10 +313,25 @@ const messages: Record<
 // ============================================
 // MAIN COMPONENT
 // ============================================
+// LANGUAGE DETECTION
+// ============================================
+const detectBrowserLanguage = (): Language => {
+  if (typeof window === "undefined") return "en";
+  
+  const browserLang = navigator.language.toLowerCase();
+  // Détecter si la langue commence par "fr" (fr, fr-FR, fr-CA, etc.)
+  if (browserLang.startsWith("fr")) {
+    return "fr";
+  }
+  // Par défaut, utiliser l'anglais
+  return "en";
+};
+
+// ============================================
 export default function ProjectPage() {
   const params = useParams();
   const slug = params?.slug as string;
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Language>(() => detectBrowserLanguage());
   const t = messages[language];
   
   const project = projects[slug];
@@ -678,6 +694,8 @@ export default function ProjectPage() {
       </main>
 
       <Footer messages={t.footer} />
+      
+      <ConsentBanner language={language} />
     </div>
   );
 }

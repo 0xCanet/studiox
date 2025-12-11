@@ -10,6 +10,7 @@ import { WorkSection, type WorkMessages } from "./components/WorkSection";
 import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
 import { Footer, type FooterMessages } from "./components/Footer";
+import { ConsentBanner } from "./components/ConsentBanner";
 
 type Language = "en" | "fr";
 
@@ -391,10 +392,25 @@ const messages: Record<
 };
 
 // ============================================
+// LANGUAGE DETECTION
+// ============================================
+const detectBrowserLanguage = (): Language => {
+  if (typeof window === "undefined") return "en";
+  
+  const browserLang = navigator.language.toLowerCase();
+  // Détecter si la langue commence par "fr" (fr, fr-FR, fr-CA, etc.)
+  if (browserLang.startsWith("fr")) {
+    return "fr";
+  }
+  // Par défaut, utiliser l'anglais
+  return "en";
+};
+
+// ============================================
 // MAIN COMPONENT
 // ============================================
 export default function HomePage() {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<Language>(() => detectBrowserLanguage());
   const t = messages[language];
 
   return (
@@ -422,6 +438,8 @@ export default function HomePage() {
       </main>
 
       <Footer messages={t.footer} />
+      
+      <ConsentBanner language={language} />
     </div>
   );
 }
