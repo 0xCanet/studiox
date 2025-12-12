@@ -17,8 +17,16 @@ export function TextWithOrangeDots({
   className?: string;
   [key: string]: any;
 }) {
+  // Ensure children is a string
+  const text = typeof children === 'string' ? children : String(children || '');
+  
+  // If text is empty, return empty fragment to avoid hydration issues
+  if (!text) {
+    return <Component className={className} {...props} />;
+  }
+  
   // Split text by periods and wrap each period in an orange span
-  const parts = children.split(/(\.)/g);
+  const parts = text.split(/(\.)/g);
   
   return (
     <Component className={className} {...props}>
@@ -30,7 +38,11 @@ export function TextWithOrangeDots({
             </span>
           );
         }
-        return <span key={index}>{part}</span>;
+        // Only render non-empty parts to avoid hydration issues
+        if (part) {
+          return <span key={index}>{part}</span>;
+        }
+        return null;
       })}
     </Component>
   );

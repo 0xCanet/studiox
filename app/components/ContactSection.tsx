@@ -35,15 +35,21 @@ export interface ContactMessages {
     submitBookingBtn: string;
     successMessage: string;
     successBookingMessage: string;
+    errorRequiredFields: string;
+    errorInvalidEmail: string;
+    errorSubmitFailed: string;
+    errorGeneric: string;
+    submitting: string;
   };
   divider: string;
 }
 
 interface ContactSectionProps {
   messages: ContactMessages;
+  language?: "en" | "fr";
 }
 
-export function ContactSection({ messages }: ContactSectionProps) {
+export function ContactSection({ messages, language = "en" }: ContactSectionProps) {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -136,7 +142,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setSubmitStatus({
         type: "error",
-        message: "Veuillez remplir tous les champs (nom, email, message).",
+        message: messages.form.errorRequiredFields,
       });
       return;
     }
@@ -146,7 +152,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
     if (!emailRegex.test(formData.email.trim())) {
       setSubmitStatus({
         type: "error",
-        message: "Veuillez entrer une adresse email valide.",
+        message: messages.form.errorInvalidEmail,
       });
       return;
     }
@@ -171,6 +177,9 @@ export function ContactSection({ messages }: ContactSectionProps) {
         payload.date = selectedDate.toISOString();
         payload.time = selectedTime;
       }
+      
+      // Add language to payload for API route
+      payload.language = language;
 
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -207,14 +216,14 @@ export function ContactSection({ messages }: ContactSectionProps) {
       } else {
         setSubmitStatus({
           type: "error",
-          message: data.error || "Une erreur est survenue. Veuillez réessayer.",
+          message: data.error || messages.form.errorGeneric,
         });
       }
     } catch (error) {
       console.error("Erreur lors de l'envoi du formulaire:", error);
       setSubmitStatus({
         type: "error",
-        message: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+        message: messages.form.errorSubmitFailed,
       });
     } finally {
       setIsSubmitting(false);
@@ -322,7 +331,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
                         disabled={!isDateSelectable(date)}
                         className={`calendar-day ${isToday(date) ? "today" : ""} ${isSelected(date) ? "selected" : ""}`}
                       >
-                        {date?.getDate()}
+                        {date ? String(date.getDate()) : null}
                       </button>
                     ))}
                   </div>
@@ -467,7 +476,7 @@ export function ContactSection({ messages }: ContactSectionProps) {
                 }`}
               >
                 {isSubmitting 
-                  ? "Envoi..." 
+                  ? messages.form.submitting
                   : isBooking 
                     ? messages.form.submitBookingBtn || messages.calendar.confirmBtn
                     : messages.form.submitBtn

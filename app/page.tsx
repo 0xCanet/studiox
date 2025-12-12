@@ -202,6 +202,11 @@ const messages: Record<
         submitBookingBtn: "Confirm booking",
         successMessage: "Your message has been sent successfully.",
         successBookingMessage: "Your booking has been confirmed.",
+        errorRequiredFields: "Please fill in all required fields (name, email, message).",
+        errorInvalidEmail: "Please enter a valid email address.",
+        errorSubmitFailed: "An error occurred while sending. Please try again.",
+        errorGeneric: "An error occurred. Please try again.",
+        submitting: "Sending...",
       },
       divider: "Or send a message",
     },
@@ -388,6 +393,11 @@ const messages: Record<
         submitBookingBtn: "Confirmer le rendez-vous",
         successMessage: "Votre message a été envoyé avec succès.",
         successBookingMessage: "Votre rendez-vous a été confirmé.",
+        errorRequiredFields: "Veuillez remplir tous les champs (nom, email, message).",
+        errorInvalidEmail: "Veuillez entrer une adresse email valide.",
+        errorSubmitFailed: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+        errorGeneric: "Une erreur est survenue. Veuillez réessayer.",
+        submitting: "Envoi...",
       },
       divider: "Ou envoyez un message",
     },
@@ -446,7 +456,7 @@ export default function HomePage() {
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
         <AboutSection messages={t.about} />
-        <ContactSection messages={t.contact} />
+        <ContactSection messages={t.contact} language={language} />
       </main>
 
       <Footer messages={t.footer} />
