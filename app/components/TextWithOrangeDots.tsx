@@ -12,17 +12,27 @@ export function TextWithOrangeDots({
   className = "",
   ...props
 }: {
-  children: string;
+  children: React.ReactNode;
   as?: React.ElementType;
   className?: string;
   [key: string]: any;
 }) {
-  // Ensure children is a string
-  const text = typeof children === 'string' ? children : String(children || '');
+  // Ensure children is a string - handle React.ReactNode properly
+  let text: string;
+  if (typeof children === 'string') {
+    text = children;
+  } else if (typeof children === 'number') {
+    text = String(children);
+  } else if (children == null) {
+    text = '';
+  } else {
+    // For other React nodes, try to extract text content
+    text = String(children);
+  }
   
-  // If text is empty, return empty fragment to avoid hydration issues
-  if (!text) {
-    return <Component className={className} {...props} />;
+  // If text is empty, return null to avoid hydration issues
+  if (!text || text.trim() === '') {
+    return null;
   }
   
   // Split text by periods and wrap each period in an orange span

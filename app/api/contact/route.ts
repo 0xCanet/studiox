@@ -166,25 +166,43 @@ export async function POST(request: NextRequest) {
           // Gestion des erreurs Resend - comportement identique en dev et prod
           console.error('Erreur Resend:', result.error);
           
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:168',message:'Resend error detected',data:{errorType:typeof result.error,errorMessage:result.error?.message||null,errorString:String(result.error),hasMessage:!!result.error?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'H'})}).catch(()=>{});
+          // #endregion
+          
           // Messages d'erreur spécifiques selon le type d'erreur
           let errorMessage = lang === 'fr' 
             ? 'Erreur lors de l\'envoi de l\'email'
             : 'Error sending email';
+          let errorStatus = 500; // Default to 500 for server errors
           
-          if (result.error.message?.includes('Not authorized to send emails from')) {
-            const domain = fromEmail.split('@')[1];
+          const errorMsg = result.error.message || String(result.error) || '';
+          
+          if (errorMsg.includes('not verified') || errorMsg.includes('Not authorized to send emails from') || errorMsg.includes('associated domain')) {
+            // Extract email from format "Display Name <email@domain.com>" or just "email@domain.com"
+            const emailMatch = fromEmail.match(/<([^>]+)>/) || fromEmail.match(/([^\s<]+@[^\s>]+)/);
+            const email = emailMatch ? emailMatch[1] : fromEmail;
+            const domain = email.split('@')[1] || 'unknown';
             errorMessage = lang === 'fr'
-              ? `Le domaine ${domain} n'est pas autorisé. Vérifiez votre domaine sur resend.com/domains.`
-              : `Domain ${domain} is not authorized. Check your domain on resend.com/domains.`;
-          } else if (result.error.message?.includes('only send testing emails')) {
-            const emailMatch = result.error.message.match(/\(([^)]+@[^)]+)\)/);
+              ? `Le domaine ${domain} n'est pas vérifié. Vérifiez votre domaine sur resend.com/domains.`
+              : `Domain ${domain} is not verified. Check your domain on resend.com/domains.`;
+            errorStatus = 400; // Configuration error - treat as bad request
+          } else if (errorMsg.includes('only send testing emails')) {
+            const emailMatch = errorMsg.match(/\(([^)]+@[^)]+)\)/);
             const allowedEmail = emailMatch ? emailMatch[1] : (lang === 'fr' ? 'votre email de compte' : 'your account email');
             errorMessage = lang === 'fr'
               ? `En mode test, les emails ne peuvent être envoyés qu'à ${allowedEmail}. Vérifiez votre domaine sur resend.com/domains pour envoyer à d'autres destinataires.`
               : `In test mode, emails can only be sent to ${allowedEmail}. Check your domain on resend.com/domains to send to other recipients.`;
+            errorStatus = 400; // Configuration error - treat as bad request
           }
           
-          throw new Error(errorMessage);
+          // Create error with status code information
+          const error = new Error(errorMessage) as Error & { statusCode?: number };
+          error.statusCode = errorStatus;
+          // #region agent log
+          fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:201',message:'Throwing error with statusCode',data:{errorMessage,errorStatus,hasStatusCode:!!error.statusCode,statusCodeValue:error.statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
+          // #endregion
+          throw error;
         } else {
           // Succès
           console.log('✅ Email envoyé avec succès via Resend:', result.data?.id);
@@ -227,9 +245,19 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error);
     const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.';
+    // Use status code from error if available, otherwise default to 500
+    const statusCode = (error instanceof Error && 'statusCode' in error && typeof error.statusCode === 'number') 
+      ? error.statusCode 
+      : 500;
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:246',message:'Determining status code',data:{errorType:typeof error,isError:error instanceof Error,hasStatusCode:'statusCode' in (error||{}),statusCodeValue:(error as any)?.statusCode,computedStatusCode:statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
+    // #endregion
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:251',message:'Returning error response',data:{errorMessage,statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
+    // #endregion
     return NextResponse.json(
       { error: errorMessage },
-      { status: 500 }
+      { status: statusCode }
     );
   }
 }

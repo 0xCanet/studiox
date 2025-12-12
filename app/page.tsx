@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar, type NavbarMessages } from "./components/Navbar";
 import { Hero, type HeroMessages } from "./components/Hero";
 import { RouteServicesSection, type RouteServicesMessages } from "./components/RouteServicesSection";
@@ -432,7 +432,16 @@ const detectBrowserLanguage = (): Language => {
 // MAIN COMPONENT
 // ============================================
 export default function HomePage() {
-  const [language, setLanguage] = useState<Language>(() => detectBrowserLanguage());
+  // Initialize with "en" to match server-side default and prevent hydration mismatch
+  const [language, setLanguage] = useState<Language>("en");
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Detect language after mount to avoid hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+    setLanguage(detectBrowserLanguage());
+  }, []);
+  
   const t = messages[language];
 
   return (
@@ -441,8 +450,9 @@ export default function HomePage() {
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[#F0EEE9] focus:px-4 focus:py-2 focus:text-[#0E0E0E]"
+        suppressHydrationWarning
       >
-        {language === "fr" ? "Aller au contenu principal" : "Skip to main content"}
+        {isMounted && language === "fr" ? "Aller au contenu principal" : "Skip to main content"}
       </a>
 
       <Navbar
