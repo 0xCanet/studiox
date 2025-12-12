@@ -166,10 +166,6 @@ export async function POST(request: NextRequest) {
           // Gestion des erreurs Resend - comportement identique en dev et prod
           console.error('Erreur Resend:', result.error);
           
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:168',message:'Resend error detected',data:{errorType:typeof result.error,errorMessage:result.error?.message||null,errorString:String(result.error),hasMessage:!!result.error?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'H'})}).catch(()=>{});
-          // #endregion
-          
           // Messages d'erreur spécifiques selon le type d'erreur
           let errorMessage = lang === 'fr' 
             ? 'Erreur lors de l\'envoi de l\'email'
@@ -199,9 +195,6 @@ export async function POST(request: NextRequest) {
           // Create error with status code information
           const error = new Error(errorMessage) as Error & { statusCode?: number };
           error.statusCode = errorStatus;
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:201',message:'Throwing error with statusCode',data:{errorMessage,errorStatus,hasStatusCode:!!error.statusCode,statusCodeValue:error.statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
-          // #endregion
           throw error;
         } else {
           // Succès
@@ -249,16 +242,9 @@ export async function POST(request: NextRequest) {
     const statusCode = (error instanceof Error && 'statusCode' in error && typeof error.statusCode === 'number') 
       ? error.statusCode 
       : 500;
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:246',message:'Determining status code',data:{errorType:typeof error,isError:error instanceof Error,hasStatusCode:'statusCode' in (error||{}),statusCodeValue:(error as any)?.statusCode,computedStatusCode:statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
-    // #endregion
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/e3c665d3-9199-4c47-9c8f-66868866d984',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'route.ts:251',message:'Returning error response',data:{errorMessage,statusCode},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'I'})}).catch(()=>{});
-    // #endregion
     return NextResponse.json(
       { error: errorMessage },
       { status: statusCode }
     );
   }
 }
-
