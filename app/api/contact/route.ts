@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     // Configuration Resend
     const resendApiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Studio0x <contact@studio0x.agency>';
     const toEmail = process.env.RESEND_TO_EMAIL || 'contact@studi0x.agency';
 
     if (resendApiKey && resendApiKey.trim()) {
