@@ -20,15 +20,21 @@ export interface ContactMessages {
     successMessage: string;
     prevMonth: string;
     nextMonth: string;
+    fillFormMessage?: string;
   };
   form: {
     nameLabel: string;
     namePlaceholder: string;
     emailLabel: string;
     emailPlaceholder: string;
+    phoneLabel: string;
+    phonePlaceholder: string;
     messageLabel: string;
     messagePlaceholder: string;
     submitBtn: string;
+    submitBookingBtn: string;
+    successMessage: string;
+    successBookingMessage: string;
   };
   divider: string;
 }
@@ -45,8 +51,14 @@ export function ContactSection({ messages }: ContactSectionProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
 
   const today = useMemo(() => {
     const date = new Date();
@@ -112,21 +124,102 @@ export function ContactSection({ messages }: ContactSectionProps) {
     setSelectedTime(time);
   }, []);
 
-  const handleConfirmBooking = useCallback(() => {
-    if (selectedDate && selectedTime) {
-      setBookingConfirmed(true);
-    }
-  }, [selectedDate, selectedTime]);
+  // Déterminer si c'est un rendez-vous
+  const isBooking = selectedDate && selectedTime;
 
-  const handleFormSubmit = useCallback((e: React.FormEvent) => {
+  const handleFormSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    // Create mailto link with form data
-    const subject = encodeURIComponent(`Contact from ${formData.name}`);
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`
-    );
-    window.location.href = `mailto:contact@studi0x.agency?subject=${subject}&body=${body}`;
-  }, [formData]);
+    
+    const isBookingSubmit = selectedDate && selectedTime;
+    
+    // Valider que tous les champs requis sont remplis
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+      setSubmitStatus({
+        type: "error",
+        message: "Veuillez remplir tous les champs (nom, email, message).",
+      });
+      return;
+    }
+
+    // Valider le format de l'email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setSubmitStatus({
+        type: "error",
+        message: "Veuillez entrer une adresse email valide.",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: "" });
+
+    try {
+      const payload: any = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        message: formData.message.trim(),
+      };
+
+      // Ajouter le téléphone s'il est rempli
+      if (formData.phone.trim()) {
+        payload.phone = formData.phone.trim();
+      }
+
+      // Ajouter date et heure si c'est un rendez-vous
+      if (isBookingSubmit && selectedDate && selectedTime) {
+        payload.date = selectedDate.toISOString();
+        payload.time = selectedTime;
+      }
+
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        if (isBookingSubmit) {
+          setBookingConfirmed(true);
+          setSubmitStatus({
+            type: "success",
+            message: messages.form.successBookingMessage || data.message || "Votre rendez-vous a été confirmé.",
+          });
+        } else {
+          setSubmitStatus({
+            type: "success",
+            message: messages.form.successMessage || data.message || "Votre message a été envoyé avec succès.",
+          });
+        }
+        // Réinitialiser le formulaire et le calendrier
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+        setSelectedDate(null);
+        setSelectedTime(null);
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: data.error || "Une erreur est survenue. Veuillez réessayer.",
+        });
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du formulaire:", error);
+      setSubmitStatus({
+        type: "error",
+        message: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [formData, selectedDate, selectedTime, messages.form]);
 
   const days = useMemo(() => getDaysInMonth(currentMonth), [currentMonth, getDaysInMonth]);
 
@@ -257,15 +350,24 @@ export function ContactSection({ messages }: ContactSectionProps) {
                       ))}
                     </div>
 
-                    {selectedTime && (
-                      <motion.button
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        onClick={handleConfirmBooking}
-                        className="btn btn-contact w-full"
+                    {selectedTime && (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) && (
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="mt-3 text-xs text-[#0E0E0E]/60 text-center"
                       >
-                        {messages.calendar.confirmBtn}
-                      </motion.button>
+                        {messages.calendar.fillFormMessage || "Veuillez remplir tous les champs du formulaire à droite pour confirmer le rendez-vous."}
+                      </motion.p>
+                    )}
+                    
+                    {submitStatus.type === "error" && !bookingConfirmed && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg"
+                      >
+                        <p className="text-sm text-red-600">{submitStatus.message}</p>
+                      </motion.div>
                     )}
                   </motion.div>
                 )}
@@ -333,6 +435,17 @@ export function ContactSection({ messages }: ContactSectionProps) {
               </div>
 
               <div>
+                <label className="form-label">{messages.form.phoneLabel} <span className="text-[#0E0E0E]/40 text-sm font-normal">(optionnel)</span></label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  placeholder={messages.form.phonePlaceholder}
+                  className="form-input"
+                />
+              </div>
+
+              <div>
                 <label className="form-label">{messages.form.messageLabel}</label>
                 <textarea
                   value={formData.message}
@@ -344,22 +457,57 @@ export function ContactSection({ messages }: ContactSectionProps) {
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary w-full md:w-auto">
-                {messages.form.submitBtn}
-                <svg
-                  className="ml-2 w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+              <button 
+                type="submit" 
+                disabled={isSubmitting || !formData.name.trim() || !formData.email.trim() || !formData.message.trim()}
+                className={`btn w-full md:w-auto disabled:opacity-50 disabled:cursor-not-allowed ${
+                  formData.name.trim() && formData.email.trim() && formData.message.trim() && !isSubmitting
+                    ? "btn-contact"
+                    : "btn-primary"
+                }`}
+              >
+                {isSubmitting 
+                  ? "Envoi..." 
+                  : isBooking 
+                    ? messages.form.submitBookingBtn || messages.calendar.confirmBtn
+                    : messages.form.submitBtn
+                }
+                {!isSubmitting && (
+                  <svg
+                    className="ml-2 w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                )}
               </button>
+              
+              {submitStatus.type && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-4 rounded-lg ${
+                    submitStatus.type === "success"
+                      ? "bg-green-50 border border-green-200"
+                      : "bg-red-50 border border-red-200"
+                  }`}
+                >
+                  <p
+                    className={`text-sm ${
+                      submitStatus.type === "success" ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {submitStatus.message}
+                  </p>
+                </motion.div>
+              )}
             </form>
           </motion.div>
         </div>
