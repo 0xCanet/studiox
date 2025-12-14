@@ -16,8 +16,8 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
   const parts: React.ReactNode[] = [];
   let keyIndex = 0;
   
-  // Split by patterns: Jessy Canet, Studi.0x, and link patterns like (link x: x.com/0xcanet)
-  const pattern = /(Jessy Canet|Studi\.0x|\(link\s+x\s*:\s*([^)]+)\))/gi;
+  // Split by patterns: Jessy Canet, Studi.ox, and link patterns like (link x: x.com/0xcanet)
+  const pattern = /(Jessy Canet|Studi\.ox|\(link\s+x\s*:\s*([^)]+)\))/gi;
   const matches = Array.from(text.matchAll(pattern));
   let lastIndex = 0;
 
@@ -43,10 +43,10 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
           {matchText}
         </a>
       );
-    } else if (matchText === "Studi.0x") {
+    } else if (matchText === "Studi.ox") {
       parts.push(
         <span key={`bold-${keyIndex++}`} className="font-bold text-[#0E0E0E]">
-          Studi.0x<span className="text-[#FF7A30]">.</span>
+          Studi.ox<span className="text-[#FF7A30]">.</span>
         </span>
       );
     } else if (matchText.startsWith("(link")) {
@@ -162,7 +162,7 @@ const messages: Record<
 > = {
   en: {
     navbar: {
-      logo: "Studi.0x",
+      logo: "Studi.ox",
       links: {
         services: "Services",
         work: "Work",
@@ -172,12 +172,20 @@ const messages: Record<
       contact: "Contact",
     },
     footer: {
-      copyright: "© 2024 Studi.0x",
-      tagline: "Design that users remember.",
-      links: [
-        { label: "GitHub", href: "https://github.com/0xCanet" },
-        { label: "X.com", href: "https://x.com/0xCanet" },
+      copyright: "© 2025 Studi.ox. All rights reserved.",
+      tagline: "The 360° visual & design studio",
+      quickLinksTitle: "Quick links",
+      socialLinksTitle: "Social",
+      quickLinks: [
+        { label: "Services", href: "#services" },
+        { label: "Projects", href: "#work" },
+        { label: "About", href: "#about" },
+        { label: "Contact", href: "#contact" },
+      ],
+      socialLinks: [
         { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
+        { label: "X/Twitter", href: "https://x.com/0xcanet" },
+        { label: "Email", href: "mailto:contact@studi0x.agency" },
       ],
     },
     work: {
@@ -236,22 +244,30 @@ const messages: Record<
   },
   fr: {
     navbar: {
-      logo: "Studi.0x",
+      logo: "Studi.ox",
       links: {
         services: "Services",
         work: "Projets",
         about: "À propos",
-        letsTalk: "Discutons",
+        letsTalk: "Parlez-moi de votre projet",
       },
       contact: "Contact",
     },
     footer: {
-      copyright: "© 2024 Studi.0x",
-      tagline: "Du design dont on se souvient.",
-      links: [
-        { label: "GitHub", href: "https://github.com/0xCanet" },
-        { label: "X.com", href: "https://x.com/0xCanet" },
+      copyright: "© 2025 Studi.ox. Tous droits réservés.",
+      tagline: "L'agence visuelle & design 360°",
+      quickLinksTitle: "Liens rapides",
+      socialLinksTitle: "Réseaux sociaux",
+      quickLinks: [
+        { label: "Services", href: "#services" },
+        { label: "Projets", href: "#work" },
+        { label: "À propos", href: "#about" },
+        { label: "Contact", href: "#contact" },
+      ],
+      socialLinks: [
         { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
+        { label: "X/Twitter", href: "https://x.com/0xcanet" },
+        { label: "Email", href: "mailto:contact@studi0x.agency" },
       ],
     },
     work: {
@@ -469,6 +485,44 @@ export default function ProjectPage() {
                 className="mt-8"
               >
                 <PDFViewer fileUrl="/src/Scorage_pitch_deck_FR.pdf" />
+              </motion.div>
+            )}
+
+            {/* Figma Embed - Only for Totem */}
+            {slug === "totem" && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-8"
+              >
+                <iframe
+                  style={{ border: "1px solid rgba(0, 0, 0, 0.1)" }}
+                  width="100%"
+                  height="450"
+                  src="https://embed.figma.com/design/Vgk2rvqQPmVlbXHS1EUky0/TOTEM-x-Jhachet-x-Dagobert?node-id=83-855&embed-host=share"
+                  allowFullScreen
+                  className="rounded-2xl"
+                />
+              </motion.div>
+            )}
+
+            {/* Figma Embed - Only for Académie du Mouvement */}
+            {slug === "academie-mouvement" && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-8"
+              >
+                <iframe
+                  style={{ border: "1px solid rgba(0, 0, 0, 0.1)" }}
+                  width="100%"
+                  height="450"
+                  src="https://embed.figma.com/design/eU8n0KRnXlg5RDGsFZqRza/Academie-du-mouvement---Landings?node-id=9-1780&embed-host=share"
+                  allowFullScreen
+                  className="rounded-2xl"
+                />
               </motion.div>
             )}
           </div>

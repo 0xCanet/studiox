@@ -21,7 +21,7 @@ export async function generateMetadata({
 
   // Use English description by default, fallback to French if needed
   const description = project.description.en || project.description.fr;
-  const title = `${project.title} — Studi.0x Design Project`;
+  const title = `${project.title} — Studi.ox Design Project`;
   const category = project.category;
 
   // Get image URL if available
@@ -38,11 +38,11 @@ export async function generateMetadata({
 
   return {
     title,
-    description: `${description} ${category ? `— ${category}` : ""}`,
+    description: `${description}${category ? ` • ${category}` : ""}`,
     keywords: [
       project.title,
       category,
-      "Studi.0x",
+      "Studi.ox",
       "design agency",
       "branding",
       "UX/UI",
@@ -53,13 +53,13 @@ export async function generateMetadata({
       description,
       type: "website",
       url: projectUrl,
-      siteName: "Studi.0x",
+      siteName: "Studi.ox",
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${project.title} - Studi.0x Design Project`,
+          alt: `${project.title} - Studi.ox Design Project`,
         },
       ],
     },

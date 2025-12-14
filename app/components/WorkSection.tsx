@@ -152,7 +152,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
   }), []);
 
   return (
-    <section id="work" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-8">
+    <section id="work" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-12">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         {!hideHeader && (

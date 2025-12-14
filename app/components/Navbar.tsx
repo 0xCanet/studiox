@@ -399,7 +399,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 {/* Dark logo - visible when OUT of hero section OR menu is open */}
                 <Image
                   src="/logos/studiox-logo-dark-colored.svg"
-                  alt="Studi.0x"
+                  alt="Studi.ox"
                   width={160}
                   height={28}
                   className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
@@ -411,7 +411,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 {/* Light logo - visible when IN hero section (default white) AND menu is closed */}
                 <Image
                   src="/logos/studiox-logo-light-colored.svg"
-                  alt="Studi.0x"
+                  alt="Studi.ox"
                   width={160}
                   height={28}
                   className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
@@ -423,7 +423,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 {/* Orange logo overlay - appears on hover */}
                 <Image
                   src="/logos/studiox-logo-dark-colored.svg"
-                  alt="Studi.0x"
+                  alt="Studi.ox"
                   width={160}
                   height={28}
                   className="h-7 md:h-8 w-auto absolute top-0 left-0 transition-opacity duration-500 ease-in-out will-change-opacity opacity-0 group-hover:opacity-100"

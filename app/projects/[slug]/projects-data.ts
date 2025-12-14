@@ -124,7 +124,7 @@ export const projects: Record<string, {
       },
     },
     links: [
-      { label: { en: "View Project", fr: "Voir le projet" }, url: "#" },
+      { label: { en: "View on Figma", fr: "Voir sur Figma" }, url: "https://www.figma.com/design/Vgk2rvqQPmVlbXHS1EUky0/TOTEM-x-Jhachet-x-Dagobert?node-id=83-855&t=sXjz6TMphJoInK16-1" },
     ],
   },
   "academie-mouvement": {

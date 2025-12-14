@@ -5,6 +5,112 @@ import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { TypewriterText } from "./TypewriterText";
 import { LoadingBarTags } from "./LoadingBarTags";
+import { TextWithOrangeDots } from "./TextWithOrangeDots";
+
+// Special component for French hero title with specific formatting
+function FrenchHeroTitle() {
+  const [revealedLength, setRevealedLength] = useState(0);
+  const [showCursor, setShowCursor] = useState(true);
+  const [isComplete, setIsComplete] = useState(false);
+
+  const fullText = "Vous méritez une image à la hauteur.";
+  const firstPart = "Vous méritez";
+  const secondPart = " une image à la ";
+  const highlightWord = "hauteur";
+  const highlightStart = firstPart.length + secondPart.length;
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const typeInterval = setInterval(() => {
+      if (currentIndex < fullText.length) {
+        setRevealedLength(currentIndex + 1);
+        currentIndex++;
+      } else {
+        setIsComplete(true);
+        clearInterval(typeInterval);
+      }
+    }, 30);
+
+    return () => clearInterval(typeInterval);
+  }, []);
+
+  useEffect(() => {
+    if (isComplete) {
+      const hideTimeout = setTimeout(() => {
+        setShowCursor(false);
+      }, 1000);
+      return () => clearTimeout(hideTimeout);
+    }
+
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 530);
+
+    return () => clearInterval(cursorInterval);
+  }, [isComplete]);
+
+  return (
+    <h1 className="text-[#F0EEE9] mb-4 md:mb-6 hero-h1" style={{ position: "relative" }}>
+      {/* Hidden text to reserve space */}
+      <span 
+        aria-hidden="true" 
+        style={{ 
+          visibility: "hidden",
+          display: "block",
+          whiteSpace: "pre-wrap",
+          wordWrap: "break-word",
+          height: "auto",
+        }}
+      >
+        <TextWithOrangeDots as="span">{fullText}</TextWithOrangeDots>
+      </span>
+      {/* Visible text */}
+      <span 
+        style={{ 
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          whiteSpace: "pre-wrap",
+          wordWrap: "break-word",
+        }}
+      >
+        {revealedLength > 0 && (
+          <span>
+            <TextWithOrangeDots as="span">
+              {fullText.slice(0, Math.min(revealedLength, firstPart.length))}
+            </TextWithOrangeDots>
+            {revealedLength > firstPart.length && (
+              <>
+                <TextWithOrangeDots as="span">
+                  {secondPart.slice(0, Math.min(revealedLength - firstPart.length, secondPart.length))}
+                </TextWithOrangeDots>
+                {revealedLength > highlightStart && (
+                  <span className="text-[#FF7A30] underline">
+                    {highlightWord.slice(0, Math.min(revealedLength - highlightStart, highlightWord.length))}
+                    {revealedLength >= highlightStart + highlightWord.length && (
+                      <span>.</span>
+                    )}
+                  </span>
+                )}
+              </>
+            )}
+          </span>
+        )}
+        {showCursor && (
+          <span
+            className="inline-block bg-[#F0EEE9] ml-[2px] align-middle typewriter-cursor"
+            style={{
+              width: "2px",
+              height: "1em",
+              borderRadius: "2px",
+            }}
+          />
+        )}
+      </span>
+    </h1>
+  );
+}
 
 export interface HeroMessages {
   tagline: string;
@@ -16,9 +122,10 @@ export interface HeroMessages {
 
 interface HeroProps {
   messages: HeroMessages;
+  onContactClick?: () => void;
 }
 
-export function Hero({ messages }: HeroProps) {
+export function Hero({ messages, onContactClick }: HeroProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [heroScrollY, setHeroScrollY] = useState(0);
@@ -289,7 +396,7 @@ export function Hero({ messages }: HeroProps) {
     <section 
       ref={sectionRef}
       id="hero" 
-      className="relative h-screen bg-[var(--color-cream)] pt-[20px] px-[20px] pb-[20px] md:pt-[50px] md:px-[50px] md:pb-[50px]" 
+      className="relative h-screen bg-[var(--color-cream)] pt-5 px-5 pb-5 md:pt-6 md:px-12 md:pb-12" 
       style={{ 
         width: '100%', 
         maxWidth: '100%',
@@ -304,14 +411,14 @@ export function Hero({ messages }: HeroProps) {
     >
       <div
         ref={containerRef}
-        className="relative w-full rounded-b-3xl md:rounded-[32px] bg-[var(--color-charcoal)] md:mt-[25px] md:ml-[25px] md:mr-[25px] md:mb-0"
+        className="relative w-full rounded-b-3xl md:rounded-[32px] bg-[var(--color-charcoal)] md:mt-6 md:ml-6 md:mr-6 md:mb-0"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ 
-          width: isMobile ? '100%' : 'calc(100% - 50px)',
-          maxWidth: isMobile ? '100%' : 'calc(100% - 50px)',
-          height: isMobile ? '100%' : 'calc(100% - 25px)',
-          minHeight: isMobile ? '100%' : 'calc(100% - 25px)',
+          width: isMobile ? '100%' : 'calc(100% - 48px)',
+          maxWidth: isMobile ? '100%' : 'calc(100% - 48px)',
+          height: isMobile ? '100%' : 'calc(100% - 24px)',
+          minHeight: isMobile ? '100%' : 'calc(100% - 24px)',
           transform: `scale(${containerZoom})`,
           transformOrigin: 'center center',
           position: 'relative',
@@ -455,12 +562,12 @@ export function Hero({ messages }: HeroProps) {
             paddingLeft: isMobile ? '20px' : '48px',
             paddingRight: isMobile ? '20px' : '48px',
             paddingTop: isMobile ? '32px' : '48px',
-            paddingBottom: isMobile ? `calc(80px + env(safe-area-inset-bottom, 0px))` : '64px',
+            paddingBottom: isMobile ? `calc(80px + env(safe-area-inset-bottom, 0px))` : '48px',
             transform: isMobile 
               ? `translateY(${-browserBarHeight - 10 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
               : heroScrollY > 0
-                ? `translateY(${-12 - (heroScrollY * 0.6)}px)`
-                : 'translateY(-12px)',
+                ? `translateY(${-32 - (heroScrollY * 0.6)}px)`
+                : 'translateY(-32px)',
             willChange: heroScrollY > 0 ? 'transform' : 'auto',
             overflowX: 'hidden',
             maxWidth: '100%'
@@ -482,7 +589,9 @@ export function Hero({ messages }: HeroProps) {
             </div>
 
             {/* H1 - White text with orange dots - Typewriter effect */}
-            {animationPhase === "content" && (
+            {animationPhase === "content" && messages.title.includes("Vous méritez") ? (
+              <FrenchHeroTitle />
+            ) : animationPhase === "content" ? (
               <TypewriterText
                 text={messages.title}
                 speed={30}
@@ -490,7 +599,7 @@ export function Hero({ messages }: HeroProps) {
                 as="h1"
                 className="text-[#F0EEE9] text-balance mb-4 md:mb-6 hero-h1"
               />
-            )}
+            ) : null}
 
             {/* H2 / Subtitle - White text with orange dots - Typewriter effect */}
             {animationPhase === "content" && (
@@ -514,7 +623,10 @@ export function Hero({ messages }: HeroProps) {
                 }}
                 className="flex flex-wrap items-center gap-4"
               >
-              <a href="#work" className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center">
+              <button
+                onClick={onContactClick}
+                className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center"
+              >
                 {messages.primaryCta.replace(" →", "")}
                 <svg
                   className="ml-2 w-4 h-4"
@@ -529,7 +641,7 @@ export function Hero({ messages }: HeroProps) {
                     d="M17 8l4 4m0 0l-4 4m4-4H3"
                   />
                 </svg>
-              </a>
+              </button>
               <a href="#about" className="btn btn-ghost">
                 {messages.secondaryCta}
               </a>

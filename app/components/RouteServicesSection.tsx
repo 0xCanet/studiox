@@ -319,19 +319,57 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [cardPositions, setCardPositions] = useState<Map<string, { left: number; top: number }>>(new Map());
 
-  // Positions fixes en dur pour les cards
+  // Positions responsives pour les cards sur desktop
   useEffect(() => {
     if (isMobile) return;
 
-    // Positions fixes fournies par l'utilisateur
-    const fixedPositions = new Map<string, { left: number; top: number }>([
-      ["brand", { left: 14, top: 380.5 }],
-      ["uxui", { left: 406, top: 5 }],
-      ["web2web3", { left: 710, top: 418.25 }],
-      ["content", { left: 1080, top: 59.25 }],
-    ]);
+    const calculatePositions = () => {
+      if (!mapContainerRef.current) return;
 
-    setCardPositions(fixedPositions);
+      const containerWidth = mapContainerRef.current.offsetWidth;
+      const containerHeight = mapContainerRef.current.offsetHeight || 700; // fallback à minHeight
+      
+      // Positions de référence pour un écran de 1400px (largeur max du conteneur)
+      const baseWidth = 1400;
+      const baseHeight = 700;
+      
+      // Calcul du ratio pour adapter les positions
+      const widthRatio = containerWidth / baseWidth;
+      const heightRatio = containerHeight / baseHeight;
+      
+      // Positions de base en pixels pour un écran de 1400px
+      const basePositions: Record<string, { left: number; top: number }> = {
+        brand_identity: { left: 14, top: 380.5 },
+        ux_ui: { left: 406, top: 5 },
+        web2_web3: { left: 710, top: 418.25 },
+        content: { left: 1080, top: 59.25 },
+      };
+
+      // Calculer les nouvelles positions en fonction du ratio
+      const responsivePositions = new Map<string, { left: number; top: number }>();
+      
+      Object.entries(basePositions).forEach(([key, pos]) => {
+        responsivePositions.set(key, {
+          left: pos.left * widthRatio,
+          top: pos.top * heightRatio,
+        });
+      });
+
+      setCardPositions(responsivePositions);
+    };
+
+    // Calculer au montage
+    calculatePositions();
+
+    // Recalculer lors du resize (uniquement desktop)
+    const handleResize = () => {
+      if (!isMobile) {
+        calculatePositions();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isMobile]);
 
   // Detect mobile
@@ -436,7 +474,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     <section
       ref={sectionRef}
       id="services"
-      className="relative py-24 md:py-32 px-5 md:px-8 overflow-hidden min-h-screen"
+      className="relative py-24 md:py-32 px-5 md:px-12 overflow-hidden min-h-screen"
     >
       {/* Background Video with Parallax */}
       <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
@@ -477,7 +515,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-          className="text-center mb-16 md:mb-24"
+          className="text-center mb-12 md:mb-16"
         >
           <h1 className="section-title text-[#0E0E0E] mb-6 font-heading font-bold">
             {messages.title.replace(/\.$/, '')}

@@ -22,11 +22,11 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://studiox.dev"),
   title: {
-    default: "Studi.0x — Design Agency | Branding, UX/UI, Web2 & Web3",
-    template: "%s | Studi.0x",
+    default: "Studi.ox — 360° Visual & Design Studio",
+    template: "%s | Studi.ox",
   },
   description:
-    "We design what your users remember. Strong brands, fluid experiences — identity, interface, product, and content. Full-service 360° design agency specializing in Brand Identity, UX/UI Design, Web2 & Web3, and Content Creation.",
+    "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
   keywords: [
     "design agency",
     "branding",
@@ -43,11 +43,11 @@ export const metadata: Metadata = {
     "visual design",
     "motion design",
     "Jessy Canet",
-    "Studi.0x",
+    "Studi.ox",
   ],
   authors: [{ name: "Jessy Canet", url: "https://x.com/0xcanet" }],
-  creator: "Jessy Canet @ Studi.0x",
-  publisher: "Studi.0x",
+  creator: "Jessy Canet @ Studi.ox",
+  publisher: "Studi.ox",
   robots: {
     index: true,
     follow: true,
@@ -63,25 +63,25 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     alternateLocale: ["fr_FR"],
-    siteName: "Studi.0x",
-    title: "Studi.0x — Design Agency | Branding, UX/UI, Web2 & Web3",
+    siteName: "Studi.ox",
+    title: "Studi.ox — 360° Visual & Design Studio",
     description:
-      "We design what your users remember. Strong brands, fluid experiences — identity, interface, product, and content. Full-service 360° design agency.",
+      "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
     url: "/",
     images: [
       {
         url: "/images/og-default.jpg",
         width: 1200,
         height: 630,
-        alt: "Studi.0x — Design Agency specializing in Branding, UX/UI, Web2 & Web3",
+        alt: "Studi.ox — 360° Visual & Design Studio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Studi.0x — Design Agency",
+    title: "Studi.ox — 360° Visual & Design Studio",
     description:
-      "We design what your users remember. Strong brands, fluid experiences — identity, interface, product, and content.",
+      "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
     creator: "@0xCanet",
     site: "@0xCanet",
   },

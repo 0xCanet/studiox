@@ -9,8 +9,10 @@ import { RouteServicesSection, type RouteServicesMessages } from "./components/R
 import { WorkSection, type WorkMessages } from "./components/WorkSection";
 import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
+import { ContactModal } from "./components/ContactModal";
 import { Footer, type FooterMessages } from "./components/Footer";
 import { ConsentBanner } from "./components/ConsentBanner";
+import { replaceVariablesInObject } from "./lib/i18n-utils";
 
 type Language = "en" | "fr";
 
@@ -31,74 +33,74 @@ const messages: Record<
 > = {
   en: {
     navbar: {
-      logo: "Studi.0x",
+      logo: "Studi.ox",
       links: {
         services: "Services",
-        work: "Work",
+        work: "Projects",
         about: "About",
-        letsTalk: "Let's talk",
+        letsTalk: "Let's talk about your project",
       },
       contact: "Contact",
     },
     hero: {
-      tagline: "Design • Branding • UX/UI • Web2 • Web3 • Visual & Content Creation",
-      title: "If you can imagine\u00A0it, we can create it.",
+      tagline: "Designer 360° | UX/UI • Branding • Web2 & Web3",
+      title: "You deserve a brand image that matches your ambition.",
       subtitle:
-        "We craft strong brands and fluid experiences, designed to\u00A0be\u00A0memorable, from the\u00A0big idea to the\u00A0smallest detail.",
-      primaryCta: "View projects →",
-      secondaryCta: "Learn more",
+        "We help brands clarify and elevate their visual identity, from branding to digital experience.",
+      primaryCta: "Let's talk about your project",
+      secondaryCta: "View projects",
     },
     services: {
       title: "What we do.",
       subtitle:
-        "360° design expertise across digital and physical touchpoints.",
+        "360° design to build strong brands, fluid products and memorable experiences.",
       items: [
         {
-          id: "brand",
+          id: "brand_identity",
           label: "Brand Identity",
           shortDescription:
-            "Visual identities that resonate. Logos, typography systems, color palettes and brand guidelines that stand out.",
+            "Logos, guidelines, color systems and consistent visual languages. Identities that inspire trust.",
           xDesktop: 18,
           yDesktop: 52,
           orderMobile: 1,
           animationSrc: "/src/services-1.mp4",
         },
         {
-          id: "uxui",
+          id: "ux_ui",
           label: "UX/UI Design",
           shortDescription:
-            "Intuitive interfaces and seamless experiences. From research to high-fidelity prototypes and design systems.",
+            "Intuitive, conversion-oriented interfaces. From wireframes to final mockups.",
           xDesktop: 39,
           yDesktop: 40,
           orderMobile: 2,
           animationSrc: "/src/service-2.mp4",
         },
         {
-          id: "web2web3",
-          label: "Web2 & Web3",
-          shortDescription:
-            "Modern web experiences across traditional and decentralized platforms: dApps, NFT projects, and web applications.",
-          xDesktop: 60,
-          yDesktop: 62,
-          orderMobile: 3,
-          animationSrc: "/src/service-3.mp4",
-        },
-        {
           id: "content",
           label: "Content & Social",
           shortDescription:
-            "Visual content that captures attention. Social media assets, presentations, and marketing materials.",
+            "Assets and templates for socials, decks and campaigns. A consistent image across all touchpoints.",
           xDesktop: 80,
           yDesktop: 38,
           orderMobile: 4,
           animationSrc: "/src/service-4.mp4",
         },
+        {
+          id: "web2_web3",
+          label: "Web2 & Web3",
+          shortDescription:
+            "Modern, interactive experiences, from corporate to the crypto ecosystem.",
+          xDesktop: 60,
+          yDesktop: 62,
+          orderMobile: 3,
+          animationSrc: "/src/service-3.mp4",
+        },
       ],
     },
     work: {
-      title: "Selected work.",
+      title: "Selected projects.",
       subtitle:
-        "A curated collection of projects where strategy meets craft.",
+        "A collection of collaborations where strategy meets design.",
       cta: "View all projects",
       viewProject: "View Project",
       items: [
@@ -139,38 +141,48 @@ const messages: Record<
       ],
     },
     about: {
-      title: "About",
-      description:
-        "We are a design studio driven by new technologies and WEB3. We support ambitious teams in creating brands and products that truly stay in users' minds — standing by your side from start to finish.",
-      ceoName: "Jessy Canet",
-      ceoTitle: "CEO & Designer @ Studi.0x",
-      stats: [
-        { label: "Projects delivered", value: "25+" },
-        { label: "Happy clients", value: "20+" },
-        { label: "Years of experience", value: "9+" },
+      heading: "About.",
+      intro: [
+        "Studi.ox is a 360° visual & design studio founded by Jessy Canet. We help brands unlock their potential through strong identities, clear websites and consistent creative direction.",
+        "Our promise: a credible, memorable image that's simple to deploy, without agency friction.",
       ],
-      values: [
+      pillarsTitle: "Our approach",
+      pillars: [
         {
-          title: "Craft over shortcuts",
-          description:
-            "Every pixel matters. We obsess over the details others overlook.",
+          id: "process",
+          title: "Smooth & collaborative process",
+          desc: "Short workshops, fast feedback, one point of contact. You progress with full clarity.",
         },
         {
+          id: "strategy",
           title: "Strategic design",
-          description:
-            "Beautiful design without conversion is just art. We balance aesthetics with business objectives.",
+          desc: "Every design choice serves a purpose: trust, clarity, conversion.",
         },
         {
-          title: "Collaborative spirit",
-          description:
-            "Your expertise + our design skills = exceptional outcomes. We work as an extension of your team.",
+          id: "speed",
+          title: "Fast execution, premium quality",
+          desc: "Clean, production-ready deliverables, without unnecessary delays.",
         },
       ],
+      stats: [
+        { id: "years", value: "10+", label: "years in design" },
+        { id: "clients", value: "20+", label: "clients supported" },
+        { id: "projects", value: "90+", label: "projects delivered" },
+      ],
+      founder: {
+        name: "Jessy Canet",
+        role: "CEO & Designer @ Studi.ox",
+        portraitAlt: "Portrait of Jessy Canet",
+      },
+      cta: {
+        primary: "Let's talk about your project",
+        secondary: "Explore more projects",
+      },
     },
     contact: {
       title: "Let's talk.",
       subtitle:
-        "Ready to create something memorable? Book a discovery call or drop us a message.",
+        "Ready to create something memorable? Book a discovery call or send a message.",
       calendar: {
         title: "Book a discovery call",
         subtitle: "30 minutes to discuss your project",
@@ -193,11 +205,11 @@ const messages: Record<
         nameLabel: "Name",
         namePlaceholder: "Your name or company",
         emailLabel: "Email",
-        emailPlaceholder: "hello@company.com",
+        emailPlaceholder: "Your business email",
         phoneLabel: "Phone",
-        phonePlaceholder: "+1 234 567 890",
+        phonePlaceholder: "Phone (optional)",
         messageLabel: "Message",
-        messagePlaceholder: "Tell us about your project...",
+        messagePlaceholder: "Tell me about your project…",
         submitBtn: "Send message",
         submitBookingBtn: "Confirm booking",
         successMessage: "Your message has been sent successfully.",
@@ -211,85 +223,93 @@ const messages: Record<
       divider: "Or send a message",
     },
     footer: {
-      copyright: "© 2024 Studi.0x",
-      tagline: "Design that users remember.",
-      links: [
-        { label: "GitHub", href: "https://github.com/0xCanet" },
-        { label: "X.com", href: "https://x.com/0xCanet" },
+      copyright: "© 2025 Studi.ox. All rights reserved.",
+      tagline: "The 360° visual & design studio",
+      quickLinksTitle: "Quick links",
+      socialLinksTitle: "Social",
+      quickLinks: [
+        { label: "Services", href: "#services" },
+        { label: "Projects", href: "#work" },
+        { label: "About", href: "#about" },
+        { label: "Contact", href: "#contact" },
+      ],
+      socialLinks: [
         { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
+        { label: "X/Twitter", href: "https://x.com/0xcanet" },
+        { label: "Email", href: "mailto:contact@studi0x.agency" },
       ],
     },
   },
   fr: {
     navbar: {
-      logo: "Studi.0x",
+      logo: "Studi.ox",
       links: {
         services: "Services",
         work: "Projets",
         about: "À propos",
-        letsTalk: "Discutons",
+        letsTalk: "Parlez-moi de votre projet",
       },
       contact: "Contact",
     },
     hero: {
-      tagline: "Design • Branding • UX/UI • Web2 • Web3 • Image & Contenu",
-      title: "Si vous pouvez l'imaginer, nous pouvons le\u00A0créer.",
+      tagline: "Designer 360° | UX/UI • Branding • Web2 & Web3",
+      title: "Vous méritez une image à la hauteur.",
       subtitle:
-        "Nous concevons des\u00A0marques fortes et des\u00A0expériences fluides, pensées\u00A0pour être mémorables, du\u00A0concept au\u00A0détail.",
-      primaryCta: "Voir les projets →",
-      secondaryCta: "En savoir plus",
+        "Nous aidons les marques à clarifier et professionnaliser leur univers visuel, du branding à l'expérience digitale.",
+      primaryCta: "Parlez-moi de votre projet",
+      secondaryCta: "Voir les projets",
     },
     services: {
       title: "Ce que nous faisons.",
       subtitle:
-        "Design 360° pour créer des marques fortes, des produits fluides et des expériences qui marquent.",
+        "Design 360° pour créer des marques fortes, des produits fluides et des expériences mémorables.",
       items: [
         {
-          id: "brand",
+          id: "brand_identity",
           label: "Identité de marque",
           shortDescription:
-            "Des identités visuelles qui marquent et qui durent. Logos, typographies, palettes et systèmes graphiques conçus pour incarner votre ADN — du concept fondateur au déploiement complet.",
+            "Logos, chartes, palettes et systèmes visuels cohérents. Des identités qui inspirent confiance.",
           xDesktop: 18,
           yDesktop: 52,
           orderMobile: 1,
           animationSrc: "/src/services-1.mp4",
         },
         {
-          id: "uxui",
+          id: "ux_ui",
           label: "UX/UI Design",
           shortDescription:
-            "Interfaces intuitives et expériences fluides. De la recherche UX aux prototypes haute-fidélité : nous concevons des parcours élégants, clairs et efficaces.",
+            "Interfaces intuitives et orientées conversion. Du wireframe aux maquettes finales.",
           xDesktop: 39,
           yDesktop: 40,
           orderMobile: 2,
           animationSrc: "/src/service-2.mp4",
         },
         {
-          id: "web2web3",
-          label: "Web2 & Web3",
-          shortDescription:
-            "Sites modernes, dApps, dashboards et produits digitaux conçus pour la performance et parfaitement intégrés dans votre écosystème.",
-          xDesktop: 60,
-          yDesktop: 62,
-          orderMobile: 3,
-          animationSrc: "/src/service-3.mp4",
-        },
-        {
           id: "content",
           label: "Contenu & Social",
           shortDescription:
-            "Photographie, vidéo, motion design, assets réseaux sociaux et narratifs visuels pour amplifier votre image de marque.",
+            "Assets et templates pour réseaux, présentations et campagnes. Image homogène sur tous les canaux.",
           xDesktop: 80,
           yDesktop: 38,
           orderMobile: 4,
           animationSrc: "/src/service-4.mp4",
+        },
+        {
+          id: "web2_web3",
+          label: "Web2 & Web3",
+          shortDescription:
+            "Expériences modernes et interactives, du corporate classique à l'écosystème crypto.",
+          xDesktop: 60,
+          yDesktop: 62,
+          orderMobile: 3,
+          animationSrc: "/src/service-3.mp4",
         },
       ],
     },
     work: {
       title: "Projets sélectionnés.",
       subtitle:
-        "Une collection de projets où stratégie et savoir-faire se rencontrent.",
+        "Une collection de collaborations où stratégie et design se rencontrent.",
       cta: "Voir tous les projets",
       viewProject: "Voir le projet",
       items: [
@@ -330,40 +350,50 @@ const messages: Record<
       ],
     },
     about: {
-      title: "À propos.",
-      description:
-        "Nous sommes un studio de design passionné par les nouvelles technologies et le WEB3. Nous accompagnons des équipes ambitieuses pour créer des marques et produits dont les utilisateurs se souviennent vraiment. Du début à la fin à vos côtés.",
-      ceoName: "Jessy Canet",
-      ceoTitle: "CEO & Designer @ Studi.0x",
-      stats: [
-        { label: "Projets livrés", value: "25+" },
-        { label: "Clients satisfaits", value: "20+" },
-        { label: "Années d'expérience", value: "9+" },
+      heading: "À propos.",
+      intro: [
+        "Studi.ox est une agence visuelle & design 360° fondée par Jessy Canet. Nous aidons les marques à révéler leur potentiel grâce à des identités fortes, des sites clairs et une direction artistique cohérente.",
+        "Notre promesse : une image crédible, mémorable et simple à déployer, sans lourdeur d'agence.",
       ],
-      values: [
+      pillarsTitle: "Notre approche",
+      pillars: [
         {
-          title: "Le craft avant les raccourcis",
-          description:
-            "Chaque pixel compte. Nous sommes obsédés par les détails que d'autres négligent.",
+          id: "process",
+          title: "Processus fluide & collaboratif",
+          desc: "Ateliers courts, feedbacks rapides, un seul interlocuteur. Vous avancez en toute clarté.",
         },
         {
+          id: "strategy",
           title: "Design stratégique",
-          description:
-            "Un beau design qui ne convertit pas n'est que de l'art. Nous équilibrons esthétique et objectifs business.",
+          desc: "Chaque choix esthétique sert un objectif : confiance, lisibilité, conversion.",
         },
         {
-          title: "Esprit collaboratif",
-          description:
-            "Votre expertise + nos compétences design = résultats exceptionnels. Nous travaillons comme une extension de votre équipe.",
+          id: "speed",
+          title: "Exécution rapide, qualité premium",
+          desc: "Livrables propres et prêts à l'emploi, sans délais inutiles.",
         },
       ],
+      stats: [
+        { id: "years", value: "10+", label: "années de design" },
+        { id: "clients", value: "20+", label: "clients accompagnés" },
+        { id: "projects", value: "90+", label: "projets réalisés" },
+      ],
+      founder: {
+        name: "Jessy Canet",
+        role: "CEO & Designer @ Studi.ox",
+        portraitAlt: "Portrait de Jessy Canet",
+      },
+      cta: {
+        primary: "Parlez-moi de votre projet",
+        secondary: "Découvrir plus de projets",
+      },
     },
     contact: {
       title: "Discutons.",
       subtitle:
-        "Prêt à créer quelque chose de mémorable ? Réservez un appel découverte ou envoyez-nous un message.",
+        "Prêt à créer quelque chose de mémorable ? Réservez un appel découverte ou envoyez un message.",
       calendar: {
-        title: "Réserver un appel découverte",
+        title: "Réserver un appel",
         subtitle: "30 minutes pour discuter de votre projet",
         monthNames: [
           "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -384,11 +414,11 @@ const messages: Record<
         nameLabel: "Nom",
         namePlaceholder: "Votre nom ou entreprise",
         emailLabel: "Email",
-        emailPlaceholder: "hello@entreprise.com",
+        emailPlaceholder: "Votre email professionnel",
         phoneLabel: "Téléphone",
-        phonePlaceholder: "+33 6 12 34 56 78",
+        phonePlaceholder: "Téléphone (optionnel)",
         messageLabel: "Message",
-        messagePlaceholder: "Parlez-nous de votre projet...",
+        messagePlaceholder: "Parlez-moi de votre projet…",
         submitBtn: "Envoyer le message",
         submitBookingBtn: "Confirmer le rendez-vous",
         successMessage: "Votre message a été envoyé avec succès.",
@@ -402,12 +432,20 @@ const messages: Record<
       divider: "Ou envoyez un message",
     },
     footer: {
-      copyright: "© 2024 Studi.0x",
-      tagline: "Du design dont on se souvient.",
-      links: [
-        { label: "GitHub", href: "https://github.com/0xCanet" },
-        { label: "X.com", href: "https://x.com/0xCanet" },
+      copyright: "© 2025 Studi.ox. Tous droits réservés.",
+      tagline: "L'agence visuelle & design 360°",
+      quickLinksTitle: "Liens rapides",
+      socialLinksTitle: "Réseaux sociaux",
+      quickLinks: [
+        { label: "Services", href: "#services" },
+        { label: "Projets", href: "#work" },
+        { label: "À propos", href: "#about" },
+        { label: "Contact", href: "#contact" },
+      ],
+      socialLinks: [
         { label: "LinkedIn", href: "https://www.linkedin.com/in/jessy-h/" },
+        { label: "X/Twitter", href: "https://x.com/0xcanet" },
+        { label: "Email", href: "mailto:contact@studi0x.agency" },
       ],
     },
   },
@@ -435,6 +473,7 @@ export default function HomePage() {
   // Initialize with "en" to match server-side default and prevent hydration mismatch
   const [language, setLanguage] = useState<Language>("en");
   const [isMounted, setIsMounted] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
   // Detect language after mount to avoid hydration mismatch
   useEffect(() => {
@@ -442,7 +481,7 @@ export default function HomePage() {
     setLanguage(detectBrowserLanguage());
   }, []);
   
-  const t = messages[language];
+  const t = replaceVariablesInObject(messages[language]);
 
   return (
     <div className="min-h-screen bg-[#F0EEE9] overflow-x-hidden" style={{ width: '100%', maxWidth: '100%', marginRight: 0, paddingRight: 0 }}>
@@ -462,7 +501,7 @@ export default function HomePage() {
       />
 
       <main id="main">
-        <Hero messages={t.hero} />
+        <Hero messages={t.hero} onContactClick={() => setIsContactModalOpen(true)} />
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
         <AboutSection messages={t.about} />
@@ -470,6 +509,13 @@ export default function HomePage() {
       </main>
 
       <Footer messages={t.footer} />
+      
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        messages={t.contact}
+        language={language}
+      />
       
       <ConsentBanner language={language} />
     </div>
