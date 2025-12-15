@@ -11,13 +11,12 @@ import { TextWithOrangeDots } from "../../components/TextWithOrangeDots";
 import { PDFViewer } from "../../components/PDFViewer";
 import { ConsentBanner } from "../../components/ConsentBanner";
 
-// Helper function to format description with links
 const formatDescriptionWithLinks = (text: string, language: Language): React.ReactNode => {
   const parts: React.ReactNode[] = [];
   let keyIndex = 0;
   
-  // Split by patterns: Jessy Canet, Studi.ox, and link patterns like (link x: x.com/0xcanet)
-  const pattern = /(Jessy Canet|Studi\.ox|\(link\s+x\s*:\s*([^)]+)\))/gi;
+  // Split by patterns: Jessy Canet, Studi.0x, and link patterns like (link x: x.com/0xcanet)
+  const pattern = /(Jessy Canet|Studi\.0x|\(link\s+x\s*:\s*([^)]+)\))/gi;
   const matches = Array.from(text.matchAll(pattern));
   let lastIndex = 0;
 
@@ -25,12 +24,10 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
     const matchIndex = match.index!;
     const matchText = match[0];
     
-    // Add text before match
     if (matchIndex > lastIndex) {
       parts.push(<span key={`text-${keyIndex++}`}>{text.slice(lastIndex, matchIndex)}</span>);
     }
     
-    // Handle different match types
     if (matchText === "Jessy Canet") {
       parts.push(
         <a
@@ -43,14 +40,13 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
           {matchText}
         </a>
       );
-    } else if (matchText === "Studi.ox") {
+    } else if (matchText === "Studi.0x") {
       parts.push(
         <span key={`bold-${keyIndex++}`} className="font-bold text-[#0E0E0E]">
-          Studi.ox<span className="text-[#FF7A30]">.</span>
+          Studi<span className="text-[#FF7A30]">.</span>0x
         </span>
       );
     } else if (matchText.startsWith("(link")) {
-      // Extract link text from pattern (link x: x.com/0xcanet)
       const linkText = match[2] || matchText.replace(/\(link\s+x\s*:\s*/, "").replace(/\)/, "");
       parts.push(
         <>
@@ -80,9 +76,7 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
   return <>{parts.length > 0 ? parts : text}</>;
 };
 
-// Helper function to format text with bold keywords and orange dots
 const formatScorageText = (text: string, keywords: string[]): React.ReactNode => {
-  // Escape special regex characters in keywords
   const escapedKeywords = keywords.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
   const boldPattern = new RegExp(`(${escapedKeywords.join('|')})`, 'gi');
   const parts: React.ReactNode[] = [];
@@ -91,7 +85,6 @@ const formatScorageText = (text: string, keywords: string[]): React.ReactNode =>
 
   const matches = Array.from(text.matchAll(boldPattern));
 
-  // Helper to add text with periods in black
   const addTextWithPeriods = (textToAdd: string, prefix: string) => {
     const textParts = textToAdd.split(/(\.)/g);
     textParts.forEach((part, idx) => {
@@ -108,12 +101,10 @@ const formatScorageText = (text: string, keywords: string[]): React.ReactNode =>
   matches.forEach((match) => {
     const matchIndex = match.index!;
     
-    // Add text before match
     if (matchIndex > lastIndex) {
       addTextWithPeriods(text.slice(lastIndex, matchIndex), 'before');
     }
     
-    // Add bold keyword
     parts.push(
       <span key={`bold-${keyIndex++}`} className="font-bold text-[#0E0E0E]">
         {match[0]}
@@ -133,14 +124,8 @@ const formatScorageText = (text: string, keywords: string[]): React.ReactNode =>
 
 type Language = "en" | "fr";
 
-// ============================================
-// PROJECT DATA
-// ============================================
 import { projects } from "./projects-data";
 
-// ============================================
-// MESSAGES i18n
-// ============================================
 const messages: Record<
   Language,
   {
@@ -162,7 +147,7 @@ const messages: Record<
 > = {
   en: {
     navbar: {
-      logo: "Studi.ox",
+      logo: "Studi.0x",
       links: {
         services: "Services",
         work: "Work",
@@ -172,7 +157,7 @@ const messages: Record<
       contact: "Contact",
     },
     footer: {
-      copyright: "© 2025 Studi.ox. All rights reserved.",
+      copyright: "© 2025 Studi.0x. All rights reserved.",
       tagline: "The 360° visual & design studio",
       quickLinksTitle: "Quick links",
       socialLinksTitle: "Social",
@@ -244,7 +229,7 @@ const messages: Record<
   },
   fr: {
     navbar: {
-      logo: "Studi.ox",
+      logo: "Studi.0x",
       links: {
         services: "Services",
         work: "Projets",
@@ -254,7 +239,7 @@ const messages: Record<
       contact: "Contact",
     },
     footer: {
-      copyright: "© 2025 Studi.ox. Tous droits réservés.",
+      copyright: "© 2025 Studi.0x. Tous droits réservés.",
       tagline: "L'agence visuelle & design 360°",
       quickLinksTitle: "Liens rapides",
       socialLinksTitle: "Réseaux sociaux",
@@ -352,7 +337,6 @@ export default function ProjectPage() {
   
   const project = projects[slug];
   
-  // Filter out current project from "other projects" list
   const otherProjects = {
     ...t.work,
     items: t.work.items.filter((item) => item.id !== slug),
@@ -383,10 +367,8 @@ export default function ProjectPage() {
       />
 
       <main>
-        {/* Hero Section */}
         <section className="pt-48 md:pt-56 pb-12 md:pb-16 px-5 md:px-8">
           <div className="max-w-[1200px] mx-auto">
-            {/* Back Link */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -413,7 +395,6 @@ export default function ProjectPage() {
               </Link>
             </motion.div>
 
-            {/* Project Header */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -438,7 +419,6 @@ export default function ProjectPage() {
               </div>
             </motion.div>
 
-            {/* Project Links */}
             {project.links && project.links.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -488,7 +468,6 @@ export default function ProjectPage() {
               </motion.div>
             )}
 
-            {/* Figma Embed - Only for Totem */}
             {slug === "totem" && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -507,7 +486,6 @@ export default function ProjectPage() {
               </motion.div>
             )}
 
-            {/* Figma Embed - Only for Académie du Mouvement */}
             {slug === "academie-mouvement" && (
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -528,7 +506,6 @@ export default function ProjectPage() {
           </div>
         </section>
 
-        {/* Video Presentation Section */}
         {project.video && project.videoDescription && (
           <section className="py-12 md:py-16 px-5 md:px-8 bg-[#F0EEE9]">
             <div className="max-w-[1200px] mx-auto">
@@ -600,11 +577,9 @@ export default function ProjectPage() {
           </section>
         )}
 
-        {/* Project Details */}
         <section className="py-12 md:py-16 px-5 md:px-8 bg-[#F0EEE9]">
           <div className="max-w-[1200px] mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-              {/* Overview */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -632,7 +607,6 @@ export default function ProjectPage() {
                 </p>
               </motion.div>
 
-              {/* Challenge */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -658,7 +632,6 @@ export default function ProjectPage() {
                 </p>
               </motion.div>
 
-              {/* Solution */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -725,7 +698,6 @@ export default function ProjectPage() {
           </div>
         </section>
 
-        {/* Other Projects Section */}
         <section className="py-12 md:py-16 px-5 md:px-8 bg-[#F0EEE9]">
           <div className="max-w-[1200px] mx-auto">
             <motion.div

@@ -1,7 +1,5 @@
-// Utility functions for i18n content with variable replacement
-
 const REPLACEMENTS: Record<string, string> = {
-  SITE_NAME: "Studi.ox",
+  SITE_NAME: "Studi.0x",
   TAGLINE_SHORT_FR: "L'agence visuelle & design 360°",
   TAGLINE_SHORT_EN: "The 360° visual & design studio",
   CONTACT_EMAIL: "hello@studi.ox",
@@ -15,19 +13,12 @@ const REPLACEMENTS: Record<string, string> = {
   YEAR: new Date().getFullYear().toString(),
 };
 
-/**
- * Replaces variables in a string with their values from REPLACEMENTS
- * Example: "${SITE_NAME}" -> "Studi.ox"
- */
 export function replaceVariables(text: string): string {
   return text.replace(/\$\{(\w+)\}/g, (match, key) => {
     return REPLACEMENTS[key] || match;
   });
 }
 
-/**
- * Recursively replaces all variables in an object
- */
 export function replaceVariablesInObject<T>(obj: T): T {
   if (typeof obj === 'string') {
     return replaceVariables(obj) as T;

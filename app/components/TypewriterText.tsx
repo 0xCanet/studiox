@@ -69,68 +69,42 @@ export function TypewriterText({
   const shouldShowBlinkingDot = isComplete && isLastCharDot && isFullyRevealed && as === "h2";
 
   return (
-    <Component className={className} style={{ position: "relative" }}>
-      {/* Hidden text to reserve space and calculate dimensions */}
-      <span 
-        aria-hidden="true" 
-        style={{ 
-          visibility: "hidden",
-          display: "block",
-          whiteSpace: "pre-wrap",
-          wordWrap: "break-word",
-          height: "auto",
-        }}
-      >
-        <TextWithOrangeDots as="span">
-          {text}
-        </TextWithOrangeDots>
-      </span>
-      {/* Visible text with revealed characters - positioned absolutely to overlay */}
-      <span 
-        style={{ 
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          whiteSpace: "pre-wrap",
-          wordWrap: "break-word",
-        }}
-      >
-        {revealedLength > 0 && (
-          <>
-            {isLastCharDot && isFullyRevealed ? (
-              <>
-                <TextWithOrangeDots as="span">
-                  {textWithoutLastChar}
-                </TextWithOrangeDots>
-                <span
-                  className="text-[var(--color-accent)] blinking-dot"
-                  style={{
-                    animation: shouldShowBlinkingDot ? "blinkDot 1s infinite" : "none",
-                  }}
-                >
-                  .
-                </span>
-              </>
-            ) : (
+    <Component className={className} style={{ position: "relative", zIndex: 30 }}>
+      {revealedLength > 0 && (
+        <>
+          {isLastCharDot && isFullyRevealed ? (
+            <>
               <TextWithOrangeDots as="span">
-                {text.slice(0, revealedLength)}
+                {textWithoutLastChar}
               </TextWithOrangeDots>
-            )}
-          </>
-        )}
-        {showCursor && (
-          <span
-            className="inline-block bg-[#F0EEE9] ml-[2px] align-middle typewriter-cursor"
-            style={{
-              width: "2px",
-              height: "1em",
-              borderRadius: "2px",
-              willChange: "opacity",
-            }}
-          />
-        )}
-      </span>
+              <span
+                className="text-[var(--color-accent)] blinking-dot"
+                style={{
+                  animation: shouldShowBlinkingDot ? "blinkDot 1s infinite" : "none",
+                }}
+              >
+                .
+              </span>
+            </>
+          ) : (
+            <TextWithOrangeDots as="span">
+              {text.slice(0, revealedLength)}
+            </TextWithOrangeDots>
+          )}
+        </>
+      )}
+      {showCursor && (
+        <span
+          className="inline-block bg-[#F0EEE9] ml-[2px] align-middle typewriter-cursor"
+          style={{
+            width: "2px",
+            height: "1em",
+            borderRadius: "2px",
+            position: "relative",
+            zIndex: 31,
+          }}
+        />
+      )}
     </Component>
   );
 }

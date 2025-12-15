@@ -23,12 +23,19 @@ export function LoadingBarTags({
 }: LoadingBarTagsProps) {
   const [revealedChars, setRevealedChars] = useState<number[]>([]);
   const [displayChars, setDisplayChars] = useState<string[][]>([]);
-  const hasStartedRef = React.useRef(false);
+  const intervalRef = React.useRef<number | null>(null);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // Only run once
-    if (hasStartedRef.current) return;
-    hasStartedRef.current = true;
+    // Cleanup previous animation
+    if (intervalRef.current !== null) {
+      cancelAnimationFrame(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
 
     // Initialize: each tag starts with 0 revealed characters
     setRevealedChars(tags.map(() => 0));
@@ -39,20 +46,21 @@ export function LoadingBarTags({
       )
     );
 
-    const delayTimeout = setTimeout(() => {
-      const startTime = Date.now();
+    timeoutRef.current = setTimeout(() => {
+      const startTime = performance.now();
       const totalChars = tags.reduce((sum, tag) => sum + tag.length, 0);
       const charsPerMs = totalChars / duration;
+      let animationFrameId: number | null = null;
 
-      const updateInterval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
+      const animate = () => {
+        const elapsed = performance.now() - startTime;
         const totalRevealed = Math.min(
-          Math.floor(elapsed * charsPerMs),
+          elapsed * charsPerMs,
           totalChars
         );
 
         // Distribute revealed characters across tags
-        let remaining = totalRevealed;
+        let remaining = Math.floor(totalRevealed);
         const newRevealedChars = tags.map((tag) => {
           const toReveal = Math.min(remaining, tag.length);
           remaining = Math.max(0, remaining - tag.length);
@@ -61,7 +69,7 @@ export function LoadingBarTags({
 
         setRevealedChars(newRevealedChars);
 
-        // Update random characters for unrevealed positions
+        // Update random characters for unrevealed positions - always generate new random chars
         setDisplayChars((prev) =>
           prev.map((tagChars, tagIndex) =>
             tagChars.map((char, charIndex) =>
@@ -72,50 +80,87 @@ export function LoadingBarTags({
           )
         );
 
-        if (totalRevealed >= totalChars) {
-          clearInterval(updateInterval);
+        if (totalRevealed < totalChars) {
+          animationFrameId = requestAnimationFrame(animate);
+          intervalRef.current = animationFrameId;
+        } else {
+          // Ensure we set the final state
+          setRevealedChars(tags.map((tag) => tag.length));
+          setDisplayChars(tags.map((tag) => tag.split("")));
+          intervalRef.current = null;
         }
-      }, 30); // Update every 30ms for smooth animation
+      };
 
-      return () => clearInterval(updateInterval);
+      animationFrameId = requestAnimationFrame(animate);
+      intervalRef.current = animationFrameId;
     }, delay);
 
-    return () => clearTimeout(delayTimeout);
+    return () => {
+      if (intervalRef.current !== null) {
+        cancelAnimationFrame(intervalRef.current);
+        intervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [tags, duration, delay]);
 
   return (
     <div className={className}>
       <div className="flex flex-wrap items-center gap-2 md:gap-3">
-        {tags.map((tag, index) => (
-          <React.Fragment key={index}>
-            <span
-              className="font-body text-xs uppercase text-[#F0EEE9]/70"
-              style={{
-                letterSpacing: "0.1em",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-              }}
-            >
+        {tags.map((tag, index) => {
+          const revealedCount = revealedChars[index] || 0;
+          const displayText = displayChars[index]?.join("") || tag;
+          
+          // Render character by character to style | in orange
+          const renderedChars = Array.from({ length: Math.max(displayText.length, tag.length) }, (_, charIndex) => {
+            const isRevealed = charIndex < revealedCount;
+            const char = isRevealed ? tag[charIndex] : displayText[charIndex];
+            const isPipe = char === '|';
+            
+            if (isPipe) {
+              return (
+                <span key={charIndex} className="text-[var(--color-accent)]">
+                  {char}
+                </span>
+              );
+            }
+            return <React.Fragment key={charIndex}>{char}</React.Fragment>;
+          });
+
+          return (
+            <React.Fragment key={index}>
               <span
+                className="font-body text-xs uppercase text-[#F0EEE9]/70"
                 style={{
-                  fontFamily: "monospace",
-                  letterSpacing: "0.2em",
-                  whiteSpace: "nowrap",
+                  letterSpacing: "0.1em",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
                 }}
               >
-                {displayChars[index]?.join("") || tag}
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    letterSpacing: "0.2em",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {renderedChars}
+                </span>
               </span>
-            </span>
-            {index < tags.length - 1 && (
-              <span
-                className="text-[var(--color-accent)] font-body text-xs"
-                style={{ margin: "0 0.25rem" }}
-              >
-                •
-              </span>
-            )}
-          </React.Fragment>
-        ))}
+              {index < tags.length - 1 && (
+                <span
+                  className="text-[var(--color-accent)] font-body text-xs"
+                  style={{ margin: "0 0.25rem" }}
+                >
+                  •
+                </span>
+              )}
+            </React.Fragment>
+          );
+        })}
       </div>
     </div>
   );

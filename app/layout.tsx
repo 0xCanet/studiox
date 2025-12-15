@@ -22,8 +22,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://studiox.dev"),
   title: {
-    default: "Studi.ox — 360° Visual & Design Studio",
-    template: "%s | Studi.ox",
+    default: "Studi.0x — 360° Visual & Design Studio",
+    template: "%s | Studi.0x",
   },
   description:
     "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
@@ -43,11 +43,11 @@ export const metadata: Metadata = {
     "visual design",
     "motion design",
     "Jessy Canet",
-    "Studi.ox",
+    "Studi.0x",
   ],
   authors: [{ name: "Jessy Canet", url: "https://x.com/0xcanet" }],
-  creator: "Jessy Canet @ Studi.ox",
-  publisher: "Studi.ox",
+  creator: "Jessy Canet @ Studi.0x",
+  publisher: "Studi.0x",
   robots: {
     index: true,
     follow: true,
@@ -63,8 +63,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     alternateLocale: ["fr_FR"],
-    siteName: "Studi.ox",
-    title: "Studi.ox — 360° Visual & Design Studio",
+    siteName: "Studi.0x",
+    title: "Studi.0x — 360° Visual & Design Studio",
     description:
       "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
     url: "/",
@@ -73,13 +73,13 @@ export const metadata: Metadata = {
         url: "/images/og-default.jpg",
         width: 1200,
         height: 630,
-        alt: "Studi.ox — 360° Visual & Design Studio",
+        alt: "Studi.0x — 360° Visual & Design Studio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Studi.ox — 360° Visual & Design Studio",
+    title: "Studi.0x — 360° Visual & Design Studio",
     description:
       "We help ambitious brands clarify and professionalize their image: branding, UX/UI and digital experience.",
     creator: "@0xCanet",

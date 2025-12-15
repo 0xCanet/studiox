@@ -19,13 +19,11 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://studiox.dev";
   const projectUrl = `${baseUrl}/projects/${slug}`;
 
-  // Use English description by default, fallback to French if needed
   const description = project.description.en || project.description.fr;
-  const title = `${project.title} — Studi.ox Design Project`;
+  const title = `${project.title} — Studi.0x Design Project`;
   const category = project.category;
 
-  // Get image URL if available
-  let imageUrl = `${baseUrl}/images/backgrounds/scorage-banner.png`; // Default fallback
+  let imageUrl = `${baseUrl}/images/backgrounds/scorage-banner.png`;
   if (slug === "scorage") {
     imageUrl = `${baseUrl}/images/backgrounds/scorage-banner.png`;
   } else if (slug === "totem") {
@@ -33,7 +31,7 @@ export async function generateMetadata({
   } else if (slug === "academie-mouvement") {
     imageUrl = `${baseUrl}/images/backgrounds/academie-mouvement.png`;
   } else if (project.video) {
-    imageUrl = `${baseUrl}/og-default.jpg`; // Fallback for video projects
+    imageUrl = `${baseUrl}/og-default.jpg`;
   }
 
   return {
@@ -42,7 +40,7 @@ export async function generateMetadata({
     keywords: [
       project.title,
       category,
-      "Studi.ox",
+      "Studi.0x",
       "design agency",
       "branding",
       "UX/UI",
@@ -53,13 +51,13 @@ export async function generateMetadata({
       description,
       type: "website",
       url: projectUrl,
-      siteName: "Studi.ox",
+      siteName: "Studi.0x",
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: `${project.title} - Studi.ox Design Project`,
+          alt: `${project.title} - Studi.0x Design Project`,
         },
       ],
     },

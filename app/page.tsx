@@ -1,5 +1,3 @@
-// page.tsx — Studi.ox Landing Page with i18n
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -12,13 +10,12 @@ import { ContactSection, type ContactMessages } from "./components/ContactSectio
 import { ContactModal } from "./components/ContactModal";
 import { Footer, type FooterMessages } from "./components/Footer";
 import { ConsentBanner } from "./components/ConsentBanner";
+import { PricingSection } from "./components/PricingSection";
+import { pricingCopy } from "./content/pricing";
 import { replaceVariablesInObject } from "./lib/i18n-utils";
 
 type Language = "en" | "fr";
 
-// ============================================
-// MESSAGES i18n
-// ============================================
 const messages: Record<
   Language,
   {
@@ -33,7 +30,7 @@ const messages: Record<
 > = {
   en: {
     navbar: {
-      logo: "Studi.ox",
+      logo: "Studi.0x",
       links: {
         services: "Services",
         work: "Projects",
@@ -143,7 +140,7 @@ const messages: Record<
     about: {
       heading: "About.",
       intro: [
-        "Studi.ox is a 360° visual & design studio founded by Jessy Canet. We help brands unlock their potential through strong identities, clear websites and consistent creative direction.",
+        "Studi.0x is a 360° visual & design studio founded by Jessy Canet. We help brands unlock their potential through strong identities, clear websites and consistent creative direction.",
         "Our promise: a credible, memorable image that's simple to deploy, without agency friction.",
       ],
       pillarsTitle: "Our approach",
@@ -171,7 +168,7 @@ const messages: Record<
       ],
       founder: {
         name: "Jessy Canet",
-        role: "CEO & Designer @ Studi.ox",
+        role: "CEO & Designer @ Studi.0x",
         portraitAlt: "Portrait of Jessy Canet",
       },
       cta: {
@@ -223,7 +220,7 @@ const messages: Record<
       divider: "Or send a message",
     },
     footer: {
-      copyright: "© 2025 Studi.ox. All rights reserved.",
+      copyright: "© 2025 Studi.0x. All rights reserved.",
       tagline: "The 360° visual & design studio",
       quickLinksTitle: "Quick links",
       socialLinksTitle: "Social",
@@ -242,7 +239,7 @@ const messages: Record<
   },
   fr: {
     navbar: {
-      logo: "Studi.ox",
+      logo: "Studi.0x",
       links: {
         services: "Services",
         work: "Projets",
@@ -253,9 +250,9 @@ const messages: Record<
     },
     hero: {
       tagline: "Designer 360° | UX/UI • Branding • Web2 & Web3",
-      title: "Vous méritez une image à la hauteur.",
+      title: "Vous méritez une image de marque à la hauteur de vos ambitions.",
       subtitle:
-        "Nous aidons les marques à clarifier et professionnaliser leur univers visuel, du branding à l'expérience digitale.",
+        "Nous aidons les marques à clarifier et professionnaliser leur univers visuel. Du branding à l'expérience digitale.",
       primaryCta: "Parlez-moi de votre projet",
       secondaryCta: "Voir les projets",
     },
@@ -352,7 +349,7 @@ const messages: Record<
     about: {
       heading: "À propos.",
       intro: [
-        "Studi.ox est une agence visuelle & design 360° fondée par Jessy Canet. Nous aidons les marques à révéler leur potentiel grâce à des identités fortes, des sites clairs et une direction artistique cohérente.",
+        "Studi.0x est une agence visuelle & design 360° fondée par Jessy Canet. Nous aidons les marques à révéler leur potentiel grâce à des identités fortes, des sites clairs et une direction artistique cohérente.",
         "Notre promesse : une image crédible, mémorable et simple à déployer, sans lourdeur d'agence.",
       ],
       pillarsTitle: "Notre approche",
@@ -380,7 +377,7 @@ const messages: Record<
       ],
       founder: {
         name: "Jessy Canet",
-        role: "CEO & Designer @ Studi.ox",
+        role: "CEO & Designer @ Studi.0x",
         portraitAlt: "Portrait de Jessy Canet",
       },
       cta: {
@@ -432,7 +429,7 @@ const messages: Record<
       divider: "Ou envoyez un message",
     },
     footer: {
-      copyright: "© 2025 Studi.ox. Tous droits réservés.",
+      copyright: "© 2025 Studi.0x. Tous droits réservés.",
       tagline: "L'agence visuelle & design 360°",
       quickLinksTitle: "Liens rapides",
       socialLinksTitle: "Réseaux sociaux",
@@ -451,31 +448,21 @@ const messages: Record<
   },
 };
 
-// ============================================
-// LANGUAGE DETECTION
-// ============================================
 const detectBrowserLanguage = (): Language => {
   if (typeof window === "undefined") return "en";
   
   const browserLang = navigator.language.toLowerCase();
-  // Détecter si la langue commence par "fr" (fr, fr-FR, fr-CA, etc.)
   if (browserLang.startsWith("fr")) {
     return "fr";
   }
-  // Par défaut, utiliser l'anglais
   return "en";
 };
 
-// ============================================
-// MAIN COMPONENT
-// ============================================
 export default function HomePage() {
-  // Initialize with "en" to match server-side default and prevent hydration mismatch
   const [language, setLanguage] = useState<Language>("en");
   const [isMounted, setIsMounted] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   
-  // Detect language after mount to avoid hydration mismatch
   useEffect(() => {
     setIsMounted(true);
     setLanguage(detectBrowserLanguage());
@@ -485,7 +472,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#F0EEE9] overflow-x-hidden" style={{ width: '100%', maxWidth: '100%', marginRight: 0, paddingRight: 0 }}>
-      {/* Skip link */}
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-[#F0EEE9] focus:px-4 focus:py-2 focus:text-[#0E0E0E]"
@@ -505,6 +491,15 @@ export default function HomePage() {
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
         <AboutSection messages={t.about} />
+        <PricingSection
+          lang={language}
+          copy={pricingCopy}
+          onPrimary={(tierId) => {
+            console.log("Primary CTA clicked for tier:", tierId);
+            setIsContactModalOpen(true);
+          }}
+          intensity="subtle"
+        />
         <ContactSection messages={t.contact} language={language} />
       </main>
 

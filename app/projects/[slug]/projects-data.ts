@@ -1,4 +1,3 @@
-// Projects data exported for use in both page and metadata generation
 export const projects: Record<string, {
   title: string;
   category: string;

@@ -46,9 +46,7 @@ export function Footer({ messages }: FooterProps) {
     >
       <div className="max-w-[1200px] mx-auto px-5 md:px-12 py-8 md:py-12">
         <div className="flex flex-col gap-8 md:gap-12">
-          {/* Top Section - Logo, Tagline, Quick Links */}
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-            {/* Left - Logo & Tagline */}
             <div className="flex-shrink-0">
               <a
                 href="/"
@@ -56,7 +54,7 @@ export function Footer({ messages }: FooterProps) {
               >
                 <Image
                   src="/logos/studiox-logo-dark-colored.svg"
-                  alt="Studi.ox"
+                  alt="Studi.0x"
                   width={160}
                   height={28}
                   className="h-7 md:h-8 w-auto transition-opacity duration-300 group-hover:opacity-70"
@@ -68,7 +66,6 @@ export function Footer({ messages }: FooterProps) {
               </p>
             </div>
 
-            {/* Center - Quick Links */}
             <div className="flex flex-col gap-4">
               <h4 className="text-[#0E0E0E]/40 text-[18px] font-heading uppercase tracking-wider mb-2">
                 {messages.quickLinksTitle}
@@ -92,7 +89,6 @@ export function Footer({ messages }: FooterProps) {
               </nav>
             </div>
 
-            {/* Right - Social Links */}
             <div className="flex flex-col gap-4">
               <h4 className="text-[#0E0E0E]/40 text-[18px] font-heading uppercase tracking-wider mb-2">
                 {messages.socialLinksTitle}
@@ -113,7 +109,6 @@ export function Footer({ messages }: FooterProps) {
             </div>
           </div>
 
-          {/* Bottom Section - Copyright */}
           <div className="pt-6 border-t border-[#0E0E0E]/8">
             <p className="text-[#0E0E0E]/40 text-sm font-body">
               <TextWithOrangeDots>{messages.copyright}</TextWithOrangeDots>

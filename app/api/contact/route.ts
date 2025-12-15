@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// Cette route API envoie un email de contact via Resend
 export async function POST(request: NextRequest) {
   try {
     let body;
     try {
       body = await request.json();
     } catch (parseError) {
-      // Default to English for parse errors since we don't have language yet
       return NextResponse.json(
         { error: 'Invalid request format' },
         { status: 400 }
@@ -17,10 +15,8 @@ export async function POST(request: NextRequest) {
     
     const { name, email, phone, message, date, time, language } = body;
     
-    // Default to English if language not provided
     const lang = language === 'fr' ? 'fr' : 'en';
 
-    // Validation
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: lang === 'fr' ? 'Tous les champs sont requis' : 'All fields are required' },
@@ -28,7 +24,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure all values are strings
     const sanitizedName = String(name || '').trim();
     const sanitizedEmail = String(email || '').trim();
     const sanitizedMessage = String(message || '').trim();
@@ -36,7 +31,6 @@ export async function POST(request: NextRequest) {
     const sanitizedDate = date ? String(date).trim() : '';
     const sanitizedTime = time ? String(time).trim() : '';
 
-    // Validation de l'email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(sanitizedEmail)) {
       return NextResponse.json(
@@ -45,7 +39,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Helper function to escape HTML
     const escapeHtml = (text: string): string => {
       const map: Record<string, string> = {
         '&': '&amp;',
@@ -57,14 +50,12 @@ export async function POST(request: NextRequest) {
       return text.replace(/[&<>"']/g, (m) => map[m]);
     };
 
-    // Configuration Resend
     const resendApiKey = process.env.RESEND_API_KEY;
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Studi0x <contact@studi0x.agency>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Studi.0x <contact@studi0x.agency>';
     const toEmail = process.env.RESEND_TO_EMAIL || 'contact@studi0x.agency';
 
     if (resendApiKey && resendApiKey.trim()) {
       try {
-        // Envoyer l'email via Resend
         const resend = new Resend(resendApiKey);
 
         const isBooking = sanitizedDate && sanitizedTime;
@@ -72,7 +63,6 @@ export async function POST(request: NextRequest) {
           ? `Nouveau rendez-vous: ${escapeHtml(sanitizedName)}` 
           : `Nouveau message de contact: ${escapeHtml(sanitizedName)}`;
 
-        // Formater la date si c'est un rendez-vous
         let formattedDate = '';
         if (sanitizedDate && sanitizedTime) {
           try {
@@ -163,10 +153,8 @@ export async function POST(request: NextRequest) {
         });
 
         if (result.error) {
-          // Gestion des erreurs Resend - comportement identique en dev et prod
           console.error('Erreur Resend:', result.error);
           
-          // Messages d'erreur spécifiques selon le type d'erreur
           let errorMessage = lang === 'fr' 
             ? 'Erreur lors de l\'envoi de l\'email'
             : 'Error sending email';
@@ -189,15 +177,13 @@ export async function POST(request: NextRequest) {
             errorMessage = lang === 'fr'
               ? `En mode test, les emails ne peuvent être envoyés qu'à ${allowedEmail}. Vérifiez votre domaine sur resend.com/domains pour envoyer à d'autres destinataires.`
               : `In test mode, emails can only be sent to ${allowedEmail}. Check your domain on resend.com/domains to send to other recipients.`;
-            errorStatus = 400; // Configuration error - treat as bad request
+            errorStatus = 400;
           }
           
-          // Create error with status code information
           const error = new Error(errorMessage) as Error & { statusCode?: number };
           error.statusCode = errorStatus;
           throw error;
         } else {
-          // Succès
           console.log('✅ Email envoyé avec succès via Resend:', result.data?.id);
         }
       } catch (resendError) {
@@ -211,7 +197,6 @@ export async function POST(request: NextRequest) {
           : 'Error sending email via Resend. Please try again.');
       }
     } else {
-      // Mode développement : log les données si Resend n'est pas configuré
       console.log('📧 Nouveau message de contact (mode développement):');
       console.log('Nom:', sanitizedName);
       console.log('Email:', sanitizedEmail);
@@ -238,7 +223,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Erreur lors de l\'envoi du message:', error);
     const errorMessage = error instanceof Error ? error.message : 'Une erreur est survenue lors de l\'envoi du message. Veuillez réessayer.';
-    // Use status code from error if available, otherwise default to 500
     const statusCode = (error instanceof Error && 'statusCode' in error && typeof error.statusCode === 'number') 
       ? error.statusCode 
       : 500;
