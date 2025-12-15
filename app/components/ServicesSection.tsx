@@ -307,10 +307,10 @@ function ServiceCard({
         rotateY,
         transformStyle: "preserve-3d",
       }}
-      className="group relative h-full"
+      className="group relative"
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "0px" }}
       variants={{
         hidden: { opacity: 0, y: 20 },
         visible: {
@@ -326,9 +326,9 @@ function ServiceCard({
     >
       {/* Glassmorphism Card */}
       <div
-        className="relative h-full rounded-2xl p-8 md:p-10 backdrop-blur-[30px] border transition-all duration-300"
+        className="relative rounded-2xl p-8 md:p-10 backdrop-blur-[30px] border transition-all duration-300"
         style={{
-          background: "rgba(255, 255, 255, 0.7)",
+          background: "rgba(240, 238, 233, 0.7)",
           borderColor: "rgba(14, 14, 14, 0.08)",
           borderWidth: "1px",
           transform: isHovered ? "scale(1.015)" : "scale(1)",
@@ -353,12 +353,12 @@ function ServiceCard({
         />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-10 flex flex-col">
           {/* Icon */}
           <motion.div
             className="mb-6 text-[#0E0E0E] transition-colors duration-300"
             animate={{
-              color: isHovered ? "#FF7A30" : "#0E0E0E",
+              color: isHovered ? "var(--color-accent)" : "#0E0E0E",
             }}
             transition={{ duration: 0.3 }}
           >
@@ -371,7 +371,7 @@ function ServiceCard({
           </h4>
 
           {/* Description */}
-          <p className="font-body text-sm md:text-base text-[#0E0E0E]/60 leading-relaxed flex-grow">
+          <p className="font-body text-sm md:text-base text-[#0E0E0E]/60 leading-relaxed">
             <TextWithOrangeDots>{service.description}</TextWithOrangeDots>
           </p>
         </div>
@@ -381,7 +381,7 @@ function ServiceCard({
           className="absolute inset-0 rounded-2xl pointer-events-none"
           style={{
             background: isHovered
-              ? "linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%)"
+              ? "linear-gradient(135deg, rgba(240, 238, 233, 0.4) 0%, transparent 50%)"
               : "transparent",
             transition: "background 0.3s ease",
           }}
@@ -458,7 +458,7 @@ export function ServicesSection({ messages }: ServicesSectionProps) {
     <section
       ref={sectionRef}
       id="services"
-      className="relative py-24 md:py-32 px-5 md:px-8 overflow-hidden min-h-screen"
+      className="relative py-10 md:py-12 lg:py-16 px-5 md:px-8 overflow-hidden"
       style={{
         position: "relative",
       }}
@@ -489,12 +489,12 @@ export function ServicesSection({ messages }: ServicesSectionProps) {
         }}
       />
 
-      <div className="relative max-w-[1400px] mx-auto z-10 pt-8">
+      <div className="relative max-w-[1400px] mx-auto z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "0px" }}
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="text-center mb-16 md:mb-24"
         >
@@ -511,7 +511,7 @@ export function ServicesSection({ messages }: ServicesSectionProps) {
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "0px" }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
         >
           {messages.items.map((service, index) => (

@@ -204,17 +204,17 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "0px" }}
           transition={{ duration: 0.7 }}
           className="text-center mb-12 md:mb-16"
         >
-          <h1 className="section-title text-[#0E0E0E] mb-4">
+          <h1 className="section-title text-text mb-4">
             {titleWithoutDot}
-            <span className="text-[#FF7A30]">.</span>
+            <span className="text-accent">.</span>
           </h1>
-          <h2 className="text-[#0E0E0E] max-w-2xl mx-auto font-heading font-normal text-lg md:text-xl leading-relaxed">
+          <h2 className="text-text max-w-2xl mx-auto font-heading font-normal text-lg md:text-xl leading-relaxed">
             <TextWithOrangeDots>{subtitleWithoutDot}</TextWithOrangeDots>
-            <span className="text-[#FF7A30]">.</span>
+            <span className="text-accent">.</span>
           </h2>
         </motion.div>
       )}
@@ -225,43 +225,43 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
           initial={{ opacity: 0, x: -30 }}
           animate={isModal ? { opacity: 1, x: 0 } : undefined}
           whileInView={!isModal ? { opacity: 1, x: 0 } : undefined}
-          viewport={!isModal ? { once: true, margin: "-100px" } : undefined}
+          viewport={!isModal ? { once: true, margin: "0px" } : undefined}
           transition={{ duration: 0.7 }}
-          className="bg-[#F0EEE9] rounded-2xl p-6 md:p-8"
+          className="bg-surface rounded-2xl p-6 md:p-8"
         >
           {!bookingConfirmed ? (
             <>
               <div className="mb-6">
-                <h4 className="font-heading font-semibold text-xl text-[#0E0E0E] mb-2">
+                <h4 className="font-heading font-semibold text-xl text-text mb-2">
                   {messages.calendar.title}
                 </h4>
-                <p className="text-[#0E0E0E]/60 text-sm">
+                <p className="text-muted text-sm">
                   <TextWithOrangeDots>{messages.calendar.subtitle}</TextWithOrangeDots>
                 </p>
               </div>
 
               {/* Calendar */}
-              <div className="bg-[#F0EEE9] rounded-xl p-4 md:p-5 mb-6">
+              <div className="bg-surface rounded-xl p-4 md:p-5 mb-6">
                 {/* Month Navigation */}
                 <div className="flex items-center justify-between mb-4">
                   <button
                     onClick={prevMonth}
-                    className="p-2 hover:bg-[#F0EEE9] rounded-lg transition-colors"
+                    className="p-2 hover:bg-surface rounded-lg transition-colors"
                     aria-label={messages.calendar.prevMonth}
                   >
-                    <svg className="w-5 h-5 text-[#0E0E0E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                   </button>
-                  <span className="font-heading font-semibold text-[#0E0E0E]">
+                  <span className="font-heading font-semibold text-text">
                     {formatMonth(currentMonth)}
                   </span>
                   <button
                     onClick={nextMonth}
-                    className="p-2 hover:bg-[#F0EEE9] rounded-lg transition-colors"
+                    className="p-2 hover:bg-surface rounded-lg transition-colors"
                     aria-label={messages.calendar.nextMonth}
                   >
-                    <svg className="w-5 h-5 text-[#0E0E0E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </button>
@@ -272,7 +272,7 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
                   {messages.calendar.dayNames.map((day) => (
                     <div
                       key={day}
-                      className="text-center text-xs font-body text-[#0E0E0E]/40 py-2"
+                      className="text-center text-xs font-body text-subtle py-2"
                     >
                       {day}
                     </div>
@@ -306,7 +306,7 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <p className="text-sm text-[#0E0E0E]/60 mb-3 font-body">
+                  <p className="text-sm text-muted mb-3 font-body">
                     {messages.calendar.selectTime}
                   </p>
                   <div className="grid grid-cols-3 gap-2 mb-6">
@@ -328,7 +328,7 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="mt-3 text-xs text-[#0E0E0E]/60 text-center"
+                      className="mt-3 text-xs text-muted text-center"
                     >
                       {messages.calendar.fillFormMessage || "Veuillez remplir tous les champs du formulaire à droite pour confirmer le rendez-vous."}
                     </motion.p>
@@ -352,19 +352,19 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
               animate={{ opacity: 1, scale: 1 }}
               className="text-center py-8"
             >
-              <div className="w-16 h-16 rounded-full bg-[#FF7A30]/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-[#FF7A30]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h4 className="font-heading font-semibold text-xl text-[#0E0E0E] mb-2">
+              <h4 className="font-heading font-semibold text-xl text-text mb-2">
                 {messages.calendar.successTitle}
               </h4>
-              <p className="text-[#0E0E0E]/60 text-sm">
+              <p className="text-muted text-sm">
                 <TextWithOrangeDots>{messages.calendar.successMessage}</TextWithOrangeDots>
               </p>
-              <p className="text-[#FF7A30] font-heading font-semibold mt-4">
-                {selectedDate?.toLocaleDateString()} • {selectedTime}
+              <p className="text-accent font-heading font-semibold mt-4">
+                {selectedDate?.toLocaleDateString()} <span className="text-accent">•</span> {selectedTime}
               </p>
             </motion.div>
           )}
@@ -375,11 +375,11 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
           initial={{ opacity: 0, x: 30 }}
           animate={isModal ? { opacity: 1, x: 0 } : undefined}
           whileInView={!isModal ? { opacity: 1, x: 0 } : undefined}
-          viewport={!isModal ? { once: true, margin: "-100px" } : undefined}
+          viewport={!isModal ? { once: true, margin: "0px" } : undefined}
           transition={{ duration: 0.7 }}
         >
           <div className="mb-6">
-            <span className="text-[#0E0E0E]/40 text-sm font-body">
+            <span className="text-subtle text-sm font-body">
               {messages.divider}
             </span>
           </div>

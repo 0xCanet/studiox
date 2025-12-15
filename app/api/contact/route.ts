@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
+// Design system color - Note: For email HTML, we must use hex value directly
+// as CSS variables are not supported in email clients
+const COLOR_ACCENT = '#FF7A30'; // var(--color-accent)
+
 export async function POST(request: NextRequest) {
   try {
     let body;
@@ -90,13 +94,13 @@ export async function POST(request: NextRequest) {
               <style>
                 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #0E0E0E; }
                 .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                .header { background-color: #FF7A30; color: white; padding: 20px; border-radius: 8px 8px 0 0; }
+                .header { background-color: ${COLOR_ACCENT}; color: #F0EEE9; padding: 20px; border-radius: 8px 8px 0 0; }
                 .content { background-color: #F0EEE9; padding: 30px; border-radius: 0 0 8px 8px; }
                 .field { margin-bottom: 20px; }
                 .label { font-weight: 600; color: #0E0E0E; margin-bottom: 5px; display: block; }
                 .value { color: #0E0E0E; }
-                .message-box { background-color: white; padding: 15px; border-radius: 4px; margin-top: 10px; border-left: 3px solid #FF7A30; }
-                .booking-info { background-color: white; padding: 15px; border-radius: 4px; margin-top: 10px; border-left: 3px solid #FF7A30; }
+                .message-box { background-color: #F0EEE9; padding: 15px; border-radius: 4px; margin-top: 10px; border-left: 3px solid ${COLOR_ACCENT}; }
+                .booking-info { background-color: #F0EEE9; padding: 15px; border-radius: 4px; margin-top: 10px; border-left: 3px solid ${COLOR_ACCENT}; }
               </style>
             </head>
             <body>

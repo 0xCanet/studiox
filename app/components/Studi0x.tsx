@@ -12,7 +12,7 @@ export function Studi0x({
       className={`font-heading ${className}`}
       {...props}
     >
-      Studi<span className="text-[var(--color-accent)]">.</span>0x
+      Studi<span className="text-accent">.</span>0x
     </span>
   );
 }

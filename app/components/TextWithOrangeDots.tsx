@@ -35,7 +35,7 @@ export function TextWithOrangeDots({
       {parts.map((part, index) => {
         if (part === ".") {
           return (
-            <span key={index} className="text-[var(--color-accent)]">
+            <span key={index} className="text-accent">
               .
             </span>
           );

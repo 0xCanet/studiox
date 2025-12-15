@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
+import { Section } from "./Section";
+import { Container } from "./Container";
 
 // ============================================
 // DATA MODEL
@@ -82,7 +84,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         ref={cardRef}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
+        viewport={{ once: true, margin: "0px" }}
         transition={{ duration: 0.5 }}
         className="w-full"
       >
@@ -111,13 +113,15 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                   src={service.animationSrc}
                   alt={`${service.label} animation`}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                   style={{
                     imageRendering: "pixelated" as any,
                   }}
                 />
               )
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-[#FF7A30]/20 to-[#FF7A30]/10 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
                 <div className="text-[#0E0E0E]/20 font-body text-sm text-center px-4">
                   Pixel Art<br />Animation
                 </div>
@@ -126,15 +130,15 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
           </div>
 
           {/* Text Content */}
-          <h4 className="font-bold mb-4 whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: '24px', fontFamily: 'K2D, sans-serif', color: '#FF7A30' }}>
+          <h4 className="font-bold mb-4 whitespace-nowrap overflow-hidden text-ellipsis" style={{ fontSize: '24px', fontFamily: 'K2D, sans-serif', color: 'var(--color-accent)' }}>
             {service.label}
           </h4>
           {service.subtitle && (
-            <p className="font-body text-xs text-[#0E0E0E]/50 mb-5 uppercase tracking-wider">
+            <p className="font-body text-xs text-muted mb-5 uppercase tracking-wider">
               {service.subtitle}
             </p>
           )}
-          <p className="font-body text-sm text-[#0E0E0E]/70 leading-normal">
+          <p className="font-body text-sm text-muted leading-normal">
             <TextWithOrangeDots>{service.shortDescription}</TextWithOrangeDots>
           </p>
         </div>
@@ -147,7 +151,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
       ref={cardRef}
       initial={{ opacity: 0, scale: 0.85, y: 30 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true, margin: "0px" }}
       transition={{ 
         duration: 0.6,
         ease: [0.4, 0, 0.2, 1],
@@ -165,13 +169,13 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         className="glass-pill-light rounded-xl"
         style={{
           padding: '20px',
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 240, 230, 0.6) 25%, rgba(240, 245, 255, 0.6) 50%, rgba(255, 240, 250, 0.6) 75%, rgba(255, 255, 255, 0.7) 100%)",
+          background: "linear-gradient(135deg, rgba(240, 238, 233, 0.7) 0%, rgba(255, 240, 230, 0.6) 25%, rgba(240, 245, 255, 0.6) 50%, rgba(255, 240, 250, 0.6) 75%, rgba(240, 238, 233, 0.7) 100%)",
           backgroundSize: "200% 200%",
           animation: "iridescent-shift 10s ease-in-out infinite",
           WebkitBackdropFilter: "blur(2px) saturate(180%)",
           backdropFilter: "blur(2px) saturate(180%)",
-          border: "1px solid rgba(255, 255, 255, 0.5)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 0 1px rgba(255, 122, 48, 0.15)",
+          border: "1px solid rgba(240, 238, 233, 0.5)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(240, 238, 233, 0.8), 0 0 0 1px rgba(255, 122, 48, 0.15)",
         }}
       >
         {/* Small video thumbnail - reduced size */}
@@ -196,13 +200,15 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                 src={service.animationSrc}
                 alt={`${service.label} animation`}
                 className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
                 style={{
                   imageRendering: "pixelated" as any,
                 }}
               />
             )
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[#FF7A30]/20 to-[#FF7A30]/10 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
               <div className="text-[#0E0E0E]/20 font-body text-xs text-center px-2">
                 Pixel Art
               </div>
@@ -211,15 +217,15 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         </div>
 
         {/* Text Content */}
-        <h4 className="font-bold whitespace-nowrap overflow-hidden text-ellipsis mb-3" style={{ fontSize: '24px', fontFamily: 'K2D, sans-serif', color: '#FF7A30' }}>
+        <h4 className="font-bold whitespace-nowrap overflow-hidden text-ellipsis mb-3" style={{ fontSize: '24px', fontFamily: 'K2D, sans-serif', color: 'var(--color-accent)' }}>
           {service.label}
         </h4>
         {service.subtitle && (
-          <p className="font-body text-[10px] text-[#0E0E0E]/50 mb-4 uppercase tracking-wider">
+          <p className="font-body text-[10px] text-muted mb-4 uppercase tracking-wider">
             {service.subtitle}
           </p>
         )}
-        <p className="font-body text-xs text-[#0E0E0E]/70 leading-normal">
+        <p className="font-body text-xs text-muted leading-normal">
           <TextWithOrangeDots>{service.shortDescription}</TextWithOrangeDots>
         </p>
       </div>
@@ -264,8 +270,8 @@ function Pin({ service, animationDelay }: PinProps) {
         <div
           className="absolute inset-0 rounded-full"
           style={{
-            background: "linear-gradient(135deg, #FF7A30 0%, rgba(255, 122, 48, 0.8) 100%)",
-            boxShadow: "0 0 0 2px rgba(255, 255, 255, 0.9), 0 0 0 3px rgba(255, 122, 48, 0.3), 0 4px 12px rgba(255, 122, 48, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5)",
+            background: "linear-gradient(135deg, var(--color-accent) 0%, rgba(255, 122, 48, 0.8) 100%)",
+            boxShadow: "0 0 0 2px rgba(240, 238, 233, 0.9), 0 0 0 3px rgba(255, 122, 48, 0.3), 0 4px 12px rgba(255, 122, 48, 0.4), inset 0 1px 0 rgba(240, 238, 233, 0.5)",
             border: "none",
           }}
         />
@@ -274,7 +280,7 @@ function Pin({ service, animationDelay }: PinProps) {
         <div
           className="absolute inset-0 rounded-full flex items-center justify-center"
           style={{
-            background: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 1) 0%, rgba(255, 122, 48, 0.3) 70%, transparent 100%)",
+            background: "radial-gradient(circle at 50% 50%, rgba(240, 238, 233, 1) 0%, rgba(255, 122, 48, 0.3) 70%, transparent 100%)",
             transform: "scale(0.5)",
           }}
         >
@@ -283,7 +289,7 @@ function Pin({ service, animationDelay }: PinProps) {
             style={{
               width: "3px",
               height: "3px",
-              background: "#FF7A30",
+              background: "var(--color-accent)",
               boxShadow: "0 0 4px rgba(255, 122, 48, 0.8)",
             }}
           />
@@ -300,7 +306,7 @@ function Pin({ service, animationDelay }: PinProps) {
         }}
         className="mt-3 whitespace-nowrap pointer-events-none text-center"
       >
-        <span className="font-body text-xs text-[#0E0E0E]/80 font-medium">
+        <span className="font-body text-xs text-text/80 font-medium">
           {service.label}
         </span>
       </motion.div>
@@ -471,13 +477,15 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
   const sortedServices = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
 
   return (
-    <section
+    <Section
       ref={sectionRef}
       id="services"
-      className="relative py-24 md:py-32 px-5 md:px-12 overflow-hidden min-h-screen"
+      variant="hero"
+      background="transparent"
+      className="relative overflow-hidden !pb-28 md:!pb-36 lg:!pb-48"
     >
       {/* Background Video with Parallax */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+      <div className="absolute inset-0 overflow-hidden z-0">
         <motion.video
           src="/src/video-bg-service.mp4"
           autoPlay
@@ -485,13 +493,11 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
           muted
           playsInline
           controls={false}
-          preload="auto"
+          preload="metadata"
           className="absolute inset-0 w-full h-full object-cover"
           style={{
             opacity: 0.6,
-            transform: backgroundScrollY > 0 
-              ? `translateY(${backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`
-              : "translateY(0) scale(1)",
+            transform: `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
             transformOrigin: "center center",
             willChange: "transform",
           }}
@@ -508,22 +514,22 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
         }}
       />
 
-      <div className="relative max-w-[1400px] mx-auto z-10 pt-8">
+      <Container maxWidth="wide" className="relative z-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "0px" }}
           transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
           className="text-center mb-12 md:mb-16"
         >
-          <h1 className="section-title text-[#0E0E0E] mb-6 font-heading font-bold">
+          <h1 className="section-title text-text mb-6 font-heading font-bold">
             {messages.title.replace(/\.$/, '')}
-            <span className="text-[#FF7A30]">.</span>
+            <span className="text-accent">.</span>
           </h1>
-          <h2 className="font-heading font-normal text-lg md:text-xl text-[#0E0E0E] max-w-3xl mx-auto leading-relaxed">
+          <h2 className="font-heading font-normal text-lg md:text-xl text-text max-w-3xl mx-auto leading-relaxed">
             <TextWithOrangeDots>{messages.subtitle.replace(/\.$/, '')}</TextWithOrangeDots>
-            <span className="text-[#FF7A30]">.</span>
+            <span className="text-accent">.</span>
           </h2>
         </motion.div>
 
@@ -572,7 +578,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
             />
           ))}
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

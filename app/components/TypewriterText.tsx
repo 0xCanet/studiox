@@ -78,7 +78,7 @@ export function TypewriterText({
                 {textWithoutLastChar}
               </TextWithOrangeDots>
               <span
-                className="text-[var(--color-accent)] blinking-dot"
+                className="text-accent blinking-dot"
                 style={{
                   animation: shouldShowBlinkingDot ? "blinkDot 1s infinite" : "none",
                 }}

@@ -46,7 +46,7 @@ export function RandomCharReveal({
   className = "",
   as = "span",
   highlightWord,
-  highlightColor = "#FF7A30",
+  highlightColor = "var(--color-accent)",
   initialText,
 }: RandomCharRevealProps) {
   const [revealedLength, setRevealedLength] = useState(0);
@@ -67,7 +67,7 @@ export function RandomCharReveal({
       timeoutRef.current = null;
     }
 
-    // Initialize: random chars matching case/style, preserve spaces/punctuation (same for H1 and H2)
+    // Initialize: random chars matching case/style, preserve spaces/punctuation
     setRevealedLength(0);
     
     const initialChars = text.split("").map((finalChar) => {
@@ -82,40 +82,45 @@ export function RandomCharReveal({
     // Count replaceable chars for timing
     const replaceableCharsCount = text.split("").filter(char => shouldReplaceChar(char)).length;
 
-    // Start animation
+    // Start animation - same approach as LoadingBarTags
     timeoutRef.current = setTimeout(() => {
       const startTime = performance.now();
       const charsPerMs = replaceableCharsCount / duration;
 
       const animate = () => {
         const elapsed = performance.now() - startTime;
-        const newRevealedLength = Math.min(elapsed * charsPerMs, replaceableCharsCount);
-        // Use smoother interpolation - keep decimal for smoother transitions
+        const newRevealedLength = Math.min(
+          elapsed * charsPerMs,
+          replaceableCharsCount
+        );
+
         setRevealedLength(newRevealedLength);
 
         // Update display: revealed chars = final text, unrevealed = regenerate random chars
+        // Same logic as LoadingBarTags - update every frame for smoothness
         let replaceableCount = 0;
         const newDisplayChars = text.split("").map((finalChar) => {
           if (!shouldReplaceChar(finalChar)) {
             return finalChar;
           }
           
-          // Use fractional reveal for smoother animation
-          // Reveal when we're close to the next character (within 0.2 threshold)
-          if (replaceableCount < newRevealedLength - 0.2) {
+          // Use Math.floor like LoadingBarTags for consistent reveal
+          if (replaceableCount < Math.floor(newRevealedLength)) {
             replaceableCount++;
             return finalChar;
           } else {
             replaceableCount++;
-            // Generate random char matching the target char's case and type
+            // Always generate new random chars for unrevealed positions (like LoadingBarTags)
             return generateRandomChar(finalChar);
           }
         });
+
         setDisplayChars(newDisplayChars);
 
         if (newRevealedLength < replaceableCharsCount) {
           animationFrameRef.current = requestAnimationFrame(animate);
         } else {
+          // Ensure we set the final state
           setRevealedLength(replaceableCharsCount);
           setDisplayChars(text.split(""));
           animationFrameRef.current = null;
@@ -139,115 +144,73 @@ export function RandomCharReveal({
 
   const Component = as;
 
-  // Render text with highlight if needed, applying monospace to random chars for consistent width
-  const renderText = () => {
-    // Count replaceable chars to know which are revealed
-    let replaceableCount = 0;
-    const replaceableIndices = text.split("").map((char) => {
-      if (shouldReplaceChar(char)) {
-        const idx = replaceableCount;
-        replaceableCount++;
-        return idx;
-      }
-      return -1;
-    });
+  // Count replaceable chars to know which are revealed (same logic as LoadingBarTags)
+  let replaceableCount = 0;
+  const revealedCount = Math.floor(revealedLength);
+
+  // Render character by character - each char is already in its final position
+  // Same approach as LoadingBarTags: use monospace for all chars to keep width constant
+  const renderedChars = text.split("").map((finalChar, index) => {
+    const displayChar = displayChars[index] || finalChar;
+    const isReplaceable = shouldReplaceChar(finalChar);
+    const isRevealed = isReplaceable && replaceableCount < revealedCount;
     
-    // Build rendered text character by character with monospace for unrevealed chars
-    const renderedElements: React.ReactNode[] = [];
-    displayChars.forEach((displayChar, index) => {
-      const finalChar = text[index];
-      const isReplaceable = shouldReplaceChar(finalChar);
-      const replaceableIdx = replaceableIndices[index];
-      const isRevealed = isReplaceable && replaceableIdx !== -1 && replaceableIdx < revealedLength - 0.2;
-      
-      // Apply orange color to dots
-      const isDot = displayChar === ".";
-      
-      // For unrevealed replaceable chars, use monospace to keep consistent width
-      if (isReplaceable && !isRevealed) {
-        renderedElements.push(
-          <span key={index} style={{ fontFamily: "monospace", fontVariantNumeric: "tabular-nums" }}>
-            {displayChar}
-          </span>
-        );
-      } else if (isDot) {
-        renderedElements.push(
-          <span key={index} className="text-[var(--color-accent)]">
-            {displayChar}
-          </span>
-        );
-      } else {
-        renderedElements.push(<React.Fragment key={index}>{displayChar}</React.Fragment>);
-      }
-    });
+    if (isReplaceable) {
+      replaceableCount++;
+    }
     
-    if (highlightWord && text.includes(highlightWord)) {
-      const highlightStart = text.indexOf(highlightWord);
-      const highlightEnd = highlightStart + highlightWord.length;
-      
-      const before = renderedElements.slice(0, highlightStart);
-      const highlight = renderedElements.slice(highlightStart, highlightEnd);
-      const after = renderedElements.slice(highlightEnd);
-      
+    // Apply orange color to dots
+    const isDot = finalChar === ".";
+    
+    // Use the revealed char or the random display char
+    const char = isRevealed ? finalChar : displayChar;
+    
+    if (isDot) {
       return (
-        <>
-          {before.length > 0 && <span>{before}</span>}
-          <span className="underline" style={{ color: highlightColor }}>
-            {highlight}
-          </span>
-          {after.length > 0 && <span>{after}</span>}
-        </>
+        <span key={index} className="text-accent">
+          {char}
+        </span>
       );
     }
     
-    return <span>{renderedElements}</span>;
-  };
+    // Use React.Fragment with stable key (like LoadingBarTags)
+    return <React.Fragment key={index}>{char}</React.Fragment>;
+  });
 
-  // Hidden text for layout
-  const hiddenText = highlightWord && text.includes(highlightWord) ? (
-    <>
-      <TextWithOrangeDots as="span">{text.slice(0, text.indexOf(highlightWord))}</TextWithOrangeDots>
-      <span className="underline" style={{ color: highlightColor }}>
-        {highlightWord}
-      </span>
-      <TextWithOrangeDots as="span">{text.slice(text.indexOf(highlightWord) + highlightWord.length)}</TextWithOrangeDots>
-    </>
-  ) : (
-    <TextWithOrangeDots as="span">{text}</TextWithOrangeDots>
-  );
+  // Handle highlight word if needed
+  let content: React.ReactNode;
+  if (highlightWord && text.includes(highlightWord)) {
+    const highlightStart = text.indexOf(highlightWord);
+    const highlightEnd = highlightStart + highlightWord.length;
+    
+    const before = renderedChars.slice(0, highlightStart);
+    const highlight = renderedChars.slice(highlightStart, highlightEnd);
+    const after = renderedChars.slice(highlightEnd);
+    
+    content = (
+      <>
+        {before.length > 0 && <span>{before}</span>}
+        <span className="neon-text">
+          {highlight}
+        </span>
+        {after.length > 0 && <span>{after}</span>}
+      </>
+    );
+  } else {
+    content = <>{renderedChars}</>;
+  }
 
-  const containerStyle: React.CSSProperties = {
-    position: "relative",
-    zIndex: 30,
-    maxWidth: isH1 ? "100%" : "100%", // Full width on mobile, will be constrained by parent
-  };
-
-  const hiddenSpanStyle: React.CSSProperties = {
-    display: isH1 ? "inline-block" : "block",
-    opacity: 0,
-    height: "auto",
-    pointerEvents: "none",
-    whiteSpace: "pre-wrap", // Allow wrapping for H1 to display on 2 lines
-    width: isH1 ? "100%" : "auto",
-    lineHeight: "inherit",
-  };
-
-  const visibleSpanStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    whiteSpace: "pre-wrap", // Allow wrapping for H1 to display on 2 lines
-    lineHeight: "inherit",
-  };
-
+  // Apply monospace wrapper to keep width constant (like LoadingBarTags)
+  // The outer Component keeps its original font, inner span uses monospace
   return (
-    <Component className={className} style={containerStyle}>
-      <span aria-hidden="true" style={hiddenSpanStyle}>
-        {hiddenText}
-      </span>
-      <span style={visibleSpanStyle}>
-        {renderText()}
+    <Component className={className}>
+      <span
+        style={{
+          fontFamily: "monospace",
+          fontVariantNumeric: "tabular-nums",
+        }}
+      >
+        {content}
       </span>
     </Component>
   );

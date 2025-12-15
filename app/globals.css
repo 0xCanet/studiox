@@ -4,7 +4,10 @@
    STUDI.OX DESIGN SYSTEM
    ============================================ */
 @theme inline {
-  /* Core Colors */
+  /* ============================================
+     COLOR TOKENS (Standardized)
+     ============================================ */
+  /* Base Colors */
   --color-cream: #F0EEE9;
   --color-white: #F0EEE9;
   --color-charcoal: #0E0E0E;
@@ -12,24 +15,81 @@
   --color-accent-hover: #E86A20;
   --color-accent-light: rgba(255, 122, 48, 0.1);
 
-  /* Surfaces */
-  --color-background: #F0EEE9;
-  --color-foreground: #0E0E0E;
+  /* Surface Colors (mapped to Tailwind) */
+  --color-bg: #F0EEE9;
+  --color-surface: #F0EEE9;
+  --color-surface-2: rgba(240, 238, 233, 0.95);
+  
+  /* Text Colors */
+  --color-text: #0E0E0E;
   --color-muted: rgba(14, 14, 14, 0.6);
   --color-subtle: rgba(14, 14, 14, 0.4);
+  
+  /* Border Colors */
+  --color-border: rgba(14, 14, 14, 0.1);
+  --color-border-subtle: rgba(14, 14, 14, 0.08);
+  
+  /* Legacy aliases (for backward compatibility) */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
 
-  /* Typography */
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
   --font-heading: var(--font-k2d, 'K2D', system-ui, sans-serif);
   --font-body: var(--font-ibm-plex-mono, 'IBM Plex Sans Mono', monospace);
 
-  /* Grid System - consistent spacing across all components */
-  --grid-gutter: 20px;
-  --grid-gutter-md: 50px;
+  /* ============================================
+     SPACING & LAYOUT
+     ============================================ */
+  --radius: 20px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  
+  /* Section Padding Standards */
+  --section-padding-base: 2.5rem; /* py-10 */
+  --section-padding-base-md: 3rem; /* md:py-12 */
+  --section-padding-base-lg: 4rem; /* lg:py-16 */
+  
+  --section-padding-hero: 3.5rem; /* py-14 */
+  --section-padding-hero-md: 4.5rem; /* md:py-18 */
+  --section-padding-hero-lg: 6rem; /* lg:py-24 */
+  
+  --section-padding-dense: 2rem; /* py-8 */
+  --section-padding-dense-md: 2.5rem; /* md:py-10 */
+  
+  /* Container Padding */
+  --container-padding: 1.25rem; /* px-5 */
+  --container-padding-md: 3rem; /* md:px-12 */
+  --container-padding-lg: 2rem; /* lg:px-8 */
+
+  /* ============================================
+     SHADOWS (Premium, Subtle)
+     ============================================ */
+  --shadow-1: 0 8px 24px rgba(14, 14, 14, 0.08);
+  --shadow-2: 0 20px 40px rgba(14, 14, 14, 0.12);
+  --shadow-accent: 0 8px 24px rgba(255, 122, 48, 0.3);
+
+  /* ============================================
+     TAILWIND MAPPINGS
+     ============================================ */
+  /* Colors mapped to Tailwind utilities - these reference the values defined above */
+  /* Note: These are for Tailwind theme, actual CSS variables are in :root */
 }
 
 /* ============================================
    BASE STYLES
    ============================================ */
+:root {
+  /* Ensure CSS variables are available globally */
+  --color-cream: #F0EEE9;
+  --color-white: #F0EEE9;
+  --color-charcoal: #0E0E0E;
+  --color-accent: #FF7A30;
+  --color-accent-hover: #E86A20;
+  --color-accent-light: rgba(255, 122, 48, 0.1);
+}
+
 html {
   font-size: 100%;
   scroll-behavior: smooth;
@@ -214,6 +274,14 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-white);
 }
 
+/* Hero H1 - Large size */
+#hero h1,
+.hero-h1 {
+  font-size: clamp(2rem, 4vw + 1rem, 4rem) !important; /* text-4xl to text-7xl */
+  line-height: 1.05 !important;
+  letter-spacing: -0.02em !important;
+}
+
 /* Hero section text - prevent unwanted line breaks */
 .hero-h1,
 .hero-h2 {
@@ -252,16 +320,20 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Standardized Typography Scale */
 h1 {
-  font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
+  font-size: clamp(1.875rem, 4vw + 1rem, 3rem); /* text-3xl md:text-5xl */
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
 }
 
 h2 {
-  font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
-  font-weight: 400;
-  line-height: 1.5;
+  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 1.875rem); /* text-2xl md:text-3xl */
+  line-height: 1.1;
   letter-spacing: -0.01em;
-  color: var(--color-foreground);
+  font-weight: 400;
+  color: var(--color-text);
 }
 
 /* Override for hero section h2 - white text */
@@ -270,14 +342,22 @@ h2 {
 }
 
 h3 {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-size: clamp(1.25rem, 2vw, 1.5rem); /* text-xl md:text-2xl */
+  line-height: 1.375; /* leading-snug */
+  color: var(--color-text);
 }
 
 p {
   font-family: var(--font-body);
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--color-muted);
+  font-size: 1rem; /* text-base */
+  line-height: 1.625; /* leading-relaxed */
+  color: var(--color-text);
+}
+
+/* Small text */
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.625; /* leading-relaxed */
 }
 
 /* ============================================
@@ -332,11 +412,11 @@ p {
 
 /* Override for hero section ghost button - white text */
 #hero .btn-ghost {
-  color: var(--color-white);
+  color: var(--color-white) !important;
 }
 
 #hero .btn-ghost:hover {
-  color: var(--color-accent);
+  color: var(--color-accent) !important;
 }
 
 .btn-contact {
@@ -473,7 +553,6 @@ p {
    SECTIONS
    ============================================ */
 section {
-  padding: 5rem 1.5rem;
   overflow-x: hidden;
   max-width: 100%;
   width: 100%;
@@ -514,25 +593,8 @@ section {
   }
 }
 
-@media (min-width: 768px) {
-  section {
-    padding: 7rem 3rem;
-  }
-  
-  #hero {
-    padding: 0 !important;
-  }
-}
-
-@media (min-width: 1024px) {
-  section {
-    padding: 9rem 4rem;
-  }
-  
-  #hero {
-    padding: 0 !important;
-  }
-}
+/* Standardized Section Padding - Use Section component instead */
+/* Legacy section padding removed - use Section component variants */
 
 .section-title {
   font-size: clamp(2rem, 4vw, 3rem);
@@ -710,20 +772,20 @@ section {
 .glass-pill-light {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.7) 0%,
+    rgba(240, 238, 233, 0.7) 0%,
     rgba(255, 240, 230, 0.6) 25%,
     rgba(240, 245, 255, 0.6) 50%,
     rgba(255, 240, 250, 0.6) 75%,
-    rgba(255, 255, 255, 0.7) 100%
+    rgba(240, 238, 233, 0.7) 100%
   ) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(240, 238, 233, 0.5);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(240, 238, 233, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.08),
     /* Iridescent edge highlights */
     0 0 0 1px rgba(255, 122, 48, 0.15),
@@ -820,39 +882,27 @@ section {
 .glass-pill-link-standalone {
   position: relative;
   overflow: hidden;
-  /* Smooth transitions for all properties - identical to .glass-pill for consistent appearance */
-  transition: 
-    background 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background-image 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    background-size 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    -webkit-backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    backdrop-filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    animation 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  will-change: background, border-color, box-shadow, backdrop-filter;
+  /* Same transition as navbar links for consistent animation */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Contact button on light sections - Iridescent glass effect */
 .glass-pill-link-standalone-light {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.7) 0%,
+    rgba(240, 238, 233, 0.7) 0%,
     rgba(255, 240, 230, 0.6) 25%,
     rgba(240, 245, 255, 0.6) 50%,
     rgba(255, 240, 250, 0.6) 75%,
-    rgba(255, 255, 255, 0.7) 100%
+    rgba(240, 238, 233, 0.7) 100%
   ) !important;
   background-size: 200% 200% !important;
-  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  /* Exact same box-shadow as .glass-pill-light for identical contour */
+  border: 1px solid rgba(240, 238, 233, 0.5);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(240, 238, 233, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.08),
     /* Iridescent edge highlights - identical to glass-pill-light */
     0 0 0 1px rgba(255, 122, 48, 0.15),
@@ -875,11 +925,9 @@ section {
     rgba(14, 14, 14, 0.5) 100%
   ) !important;
   background-size: 200% 200% !important;
-  animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
   border: 1px solid rgba(240, 238, 233, 0.15);
-  /* Exact same box-shadow as .glass-pill-dark for identical contour */
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(240, 238, 233, 0.15),
@@ -912,23 +960,29 @@ section {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Hover state for orange button - premium effect */
+/* Hover state for orange button - same as navbar links */
 .glass-pill-link-orange:hover {
-  background: rgba(255, 122, 48, 1) !important;
-  -webkit-backdrop-filter: blur(5px) saturate(2.2);
-  backdrop-filter: blur(5px) saturate(2.2);
-  border-color: rgba(255, 122, 48, 0.7) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 48, 0.3) 0%,
+    rgba(255, 150, 100, 0.35) 25%,
+    rgba(255, 122, 48, 0.3) 50%,
+    rgba(255, 180, 150, 0.35) 75%,
+    rgba(255, 122, 48, 0.3) 100%
+  ) !important;
+  background-size: 200% 200% !important;
+  animation: iridescent-shift 8s ease-in-out infinite !important;
   box-shadow: 
-    0 12px 40px rgba(255, 122, 48, 0.4),
-    inset 0 1px 0 rgba(240, 238, 233, 0.4),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
-    /* Enhanced chromatic aberration on hover */
-    0 0 0 1px rgba(255, 200, 150, 0.3),
-    -1px 0 0 rgba(255, 220, 180, 0.3),
-    1px 0 0 rgba(255, 150, 100, 0.25),
-    /* Glow effect */
-    0 0 20px rgba(255, 122, 48, 0.3);
-  transform: translateY(-2px) scale(1.02);
+    inset 0 1px 0 rgba(240, 238, 233, 0.6),
+    inset 0 -1px 0 rgba(255, 122, 48, 0.4),
+    0 4px 16px rgba(255, 122, 48, 0.3),
+    /* Enhanced iridescent edges on hover */
+    -2px 0 0 rgba(255, 200, 150, 0.35),
+    2px 0 0 rgba(150, 200, 255, 0.3),
+    0 -2px 0 rgba(255, 180, 220, 0.25),
+    0 2px 0 rgba(200, 220, 255, 0.25),
+    0 0 20px rgba(255, 122, 48, 0.2) !important;
+  transform: none !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -955,7 +1009,7 @@ section {
   background-size: 200% 200%;
   animation: iridescent-shift 8s ease-in-out infinite;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.3),
     /* Enhanced iridescent edges on hover */
@@ -982,7 +1036,7 @@ section {
   background-size: 200% 200% !important;
   animation: iridescent-shift 8s ease-in-out infinite !important;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.3),
     /* Enhanced iridescent edges on hover */
@@ -1006,6 +1060,11 @@ section {
   color: var(--color-white) !important;
 }
 
+/* Orange button keeps white text on hover - same as navbar links */
+.glass-pill-link-orange:hover {
+  color: var(--color-white) !important;
+}
+
 /* Links inside navbar - no transform to prevent navbar jumping */
 .glass-pill .glass-pill-link:hover,
 .glass-pill .glass-pill-link.hovered {
@@ -1014,7 +1073,7 @@ section {
 
 /* Standalone buttons (Contact) - same hover behavior as navbar links */
 .glass-pill-link-standalone:hover {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 
@@ -1069,7 +1128,7 @@ section {
   animation: iridescent-shift 6s ease infinite;
   font-weight: 600;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.35),
     /* Iridescent edges for active state */
@@ -1096,7 +1155,7 @@ section {
   animation: iridescent-shift 6s ease infinite !important;
   font-weight: 600;
   box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.35),
     /* Iridescent edges for active state */
@@ -1229,6 +1288,43 @@ footer {
   .max-w-wide {
     max-width: 1280px;
   }
+
+  /* Color utilities using design tokens */
+  .bg-bg {
+    background-color: var(--color-bg);
+  }
+  
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+  
+  .bg-surface-2 {
+    background-color: var(--color-surface-2);
+  }
+  
+  .text-text {
+    color: var(--color-text);
+  }
+  
+  .text-muted {
+    color: var(--color-muted);
+  }
+  
+  .text-subtle {
+    color: var(--color-subtle);
+  }
+  
+  .text-accent {
+    color: var(--color-accent);
+  }
+  
+  .border-border {
+    border-color: var(--color-border);
+  }
+  
+  .border-border-subtle {
+    border-color: var(--color-border-subtle);
+  }
 }
 
 
@@ -1266,6 +1362,38 @@ footer {
 
 .blinking-dot {
   display: inline-block;
+}
+
+/* Neon text effect for "Ambitions" - based on neon-words component */
+.neon-text {
+  font-weight: bold;
+  color: var(--color-accent);
+  text-shadow: 
+    0 0 1px rgba(255, 122, 48, 0.8),
+    0 0 2px rgba(255, 122, 48, 0.6),
+    0 0 4px rgba(255, 122, 48, 0.4),
+    0 0 8px rgba(255, 122, 48, 0.3);
+  animation: flicker 1.5s infinite alternate;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Flicker animation */
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 
+      0 0 1px rgba(255, 122, 48, 0.8),
+      0 0 2px rgba(255, 122, 48, 0.6),
+      0 0 4px rgba(255, 122, 48, 0.4),
+      0 0 8px rgba(255, 122, 48, 0.3);
+  }
+  20%, 24%, 55% {
+    text-shadow: 
+      0 0 0.5px rgba(255, 122, 48, 0.6),
+      0 0 1px rgba(255, 122, 48, 0.4),
+      0 0 2px rgba(255, 122, 48, 0.3),
+      0 0 4px rgba(255, 122, 48, 0.2);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

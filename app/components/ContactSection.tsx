@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ContactFormContent } from "./ContactFormContent";
+import { Section } from "./Section";
 
 export interface ContactMessages {
   title: string;
@@ -55,8 +56,8 @@ export function ContactSection({ messages, language = "en", isModal = false }: C
   }
 
   return (
-    <section id="contact" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-12">
+    <Section id="contact" variant="base" background="bg">
       <ContactFormContent messages={messages} language={language} isModal={false} />
-    </section>
+    </Section>
   );
 }

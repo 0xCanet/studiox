@@ -79,7 +79,7 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
             fill="none"
             stroke="currentColor"
             strokeWidth={strokeWidth}
-            className="text-white"
+            className="text-[#F0EEE9]"
             style={{ opacity }}
             animate={
               shouldReduceMotion

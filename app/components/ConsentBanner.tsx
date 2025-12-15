@@ -129,7 +129,7 @@ export function ConsentBanner({ language }: ConsentBannerProps) {
         right: isMobile ? "auto" : "70px"
       }}
     >
-      <div className={`bg-white border border-charcoal/10 shadow-lg rounded-lg p-5 backdrop-blur-sm bg-white/95 ${
+      <div className={`bg-[#F0EEE9] border border-charcoal/10 shadow-lg rounded-lg p-5 backdrop-blur-sm bg-[#F0EEE9]/95 ${
         isMobile ? "w-full" : "max-w-sm"
       }`}>
         <p className="text-sm text-foreground mb-4 font-body leading-relaxed">

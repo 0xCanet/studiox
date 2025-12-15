@@ -10,6 +10,7 @@ export interface NavbarMessages {
   links: {
     services: string;
     work: string;
+    pricing: string;
     about: string;
     letsTalk: string;
   };
@@ -69,26 +70,54 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
     };
   }, []);
 
+  // Helper function to check if we're over any dark section (Hero or Pricing)
+  const isOverDarkSection = (yPosition?: number): boolean => {
+    // If forceLightMode is enabled, always return false (light mode)
+    if (forceLightMode) return false;
+    
+    const threshold = yPosition ?? 150; // Distance from top of viewport to trigger transition
+    const heroSection = document.getElementById("hero");
+    const pricingSection = document.getElementById("pricing");
+    
+    // Check if we're over the hero section (dark)
+    if (heroSection) {
+      const heroRect = heroSection.getBoundingClientRect();
+      if (heroRect.bottom > threshold) return true;
+    }
+    
+    // Check if we're over the pricing section (dark)
+    if (pricingSection) {
+      const pricingRect = pricingSection.getBoundingClientRect();
+      if (pricingRect.top < threshold && pricingRect.bottom > threshold) return true;
+    }
+    
+    // Default to light if not over any dark section
+    return false;
+  };
+
   // Detect background color at a specific point - real-time detection
   const detectBackgroundAtPoint = (x: number, y: number): boolean => {
     // If forceLightMode is enabled, always return false (light mode)
     if (forceLightMode) return false;
     
-    // Hero section is dark, all other sections are light (#F0EEE9)
+    // Hero section and Pricing section are dark, all other sections are light (#F0EEE9)
     const heroSection = document.getElementById("hero");
-    if (!heroSection) return false; // Default to light if hero not found (for project pages)
-
-    const heroRect = heroSection.getBoundingClientRect();
-    // Trigger transition 50px earlier - when hero bottom is 150px from top of viewport
-    // This makes navbar switch to light mode before hero fully exits
-    const threshold = 100; // Distance from top of viewport to trigger transition
+    const pricingSection = document.getElementById("pricing");
     
-    // Check if hero bottom is still above the threshold
-    // If heroRect.bottom > threshold, we're still over the hero (dark)
-    // If heroRect.bottom <= threshold, we've passed to light sections
-    const isOverHero = heroRect.bottom > threshold;
+    // Check if the Y position is within the hero section
+    if (heroSection) {
+      const heroRect = heroSection.getBoundingClientRect();
+      if (y >= heroRect.top && y <= heroRect.bottom) return true;
+    }
     
-    return isOverHero;
+    // Check if the Y position is within the pricing section
+    if (pricingSection) {
+      const pricingRect = pricingSection.getBoundingClientRect();
+      if (y >= pricingRect.top && y <= pricingRect.bottom) return true;
+    }
+    
+    // Default to light if not over any dark section
+    return false;
   };
 
   // Initial detection on mount - before refs are available
@@ -128,15 +157,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
           const isDark = detectBackgroundAtPoint(centerX, centerY);
           setLogoIsOverDark(isDark);
         } else {
-          // Fallback: use global state if ref not available
-          const heroSection = document.getElementById("hero");
-          if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            setLogoIsOverDark(heroRect.bottom > 150);
-          } else {
-            // No hero section found, use light mode
-            setLogoIsOverDark(false);
-          }
+          // Fallback: use helper function to check dark sections
+          setLogoIsOverDark(isOverDarkSection());
         }
 
         // Detect for nav pill (center navigation)
@@ -146,14 +168,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
           const centerX = rect.left + rect.width / 2;
           setNavPillIsOverDark(detectBackgroundAtPoint(centerX, centerY));
         } else {
-          // Fallback
-          const heroSection = document.getElementById("hero");
-          if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            setNavPillIsOverDark(heroRect.bottom > 150);
-          } else {
-            setNavPillIsOverDark(false);
-          }
+          // Fallback: use helper function to check dark sections
+          setNavPillIsOverDark(isOverDarkSection());
         }
 
         // Detect for contact button
@@ -163,14 +179,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
           const centerX = rect.left + rect.width / 2;
           setContactIsOverDark(detectBackgroundAtPoint(centerX, centerY));
         } else {
-          // Fallback
-          const heroSection = document.getElementById("hero");
-          if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            setContactIsOverDark(heroRect.bottom > 150);
-          } else {
-            setContactIsOverDark(false);
-          }
+          // Fallback: use helper function to check dark sections
+          setContactIsOverDark(isOverDarkSection());
         }
 
         // Detect for language switcher
@@ -180,14 +190,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
           const centerX = rect.left + rect.width / 2;
           setLangIsOverDark(detectBackgroundAtPoint(centerX, centerY));
         } else {
-          // Fallback
-          const heroSection = document.getElementById("hero");
-          if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            setLangIsOverDark(heroRect.bottom > 150);
-          } else {
-            setLangIsOverDark(false);
-          }
+          // Fallback: use helper function to check dark sections
+          setLangIsOverDark(isOverDarkSection());
         }
 
         // Keep global state for mobile navbar
@@ -197,14 +201,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
           const centerX = rect.left + rect.width / 2;
           setIsOverDark(detectBackgroundAtPoint(centerX, centerY));
         } else {
-          // Fallback
-          const heroSection = document.getElementById("hero");
-          if (heroSection) {
-            const heroRect = heroSection.getBoundingClientRect();
-            setIsOverDark(heroRect.bottom > 150);
-          } else {
-            setIsOverDark(false);
-          }
+          // Fallback: use helper function to check dark sections
+          setIsOverDark(isOverDarkSection());
         }
       });
     };
@@ -266,7 +264,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   // Scroll spy - detect which section is in view
   useEffect(() => {
-    const sections = ["services", "work", "about", "contact"];
+    const sections = ["services", "work", "pricing", "about", "contact"];
     
     const updateActiveLink = () => {
       const scrollY = window.scrollY;
@@ -361,6 +359,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   const navLinks = [
     { href: "#services", label: messages.links.services },
     { href: "#work", label: messages.links.work },
+    { href: "#pricing", label: messages.links.pricing },
     { href: "#about", label: messages.links.about },
     { href: "#contact", label: messages.links.letsTalk },
   ];
@@ -583,7 +582,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
                   transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
-                  className="mobile-nav-link text-left text-[var(--color-accent)]"
+                  className="mobile-nav-link text-left text-accent"
                 >
                   {messages.contact}
                 </motion.button>

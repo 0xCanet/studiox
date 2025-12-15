@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { useLenis } from "lenis/react";
+import { Container } from "./Container";
 
 export interface FooterMessages {
   copyright: string;
@@ -42,9 +43,9 @@ export function Footer({ messages }: FooterProps) {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="bg-[#F0EEE9] border-t border-[#0E0E0E]/8"
+      className="bg-bg border-t border-border-subtle"
     >
-      <div className="max-w-[1200px] mx-auto px-5 md:px-12 py-8 md:py-12">
+      <Container maxWidth="wide" className="py-8 md:py-12">
         <div className="flex flex-col gap-8 md:gap-12">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
             <div className="flex-shrink-0">
@@ -61,13 +62,13 @@ export function Footer({ messages }: FooterProps) {
                   priority
                 />
               </a>
-              <p className="text-[#0E0E0E]/50 text-sm font-body max-w-xs">
+              <p className="text-muted text-sm font-body max-w-xs">
                 <TextWithOrangeDots>{messages.tagline}</TextWithOrangeDots>
               </p>
             </div>
 
             <div className="flex flex-col gap-4">
-              <h4 className="text-[#0E0E0E]/40 text-[18px] font-heading uppercase tracking-wider mb-2">
+              <h4 className="text-subtle text-[18px] font-heading uppercase tracking-wider mb-2">
                 {messages.quickLinksTitle}
               </h4>
               <nav className="flex flex-col gap-3">
@@ -81,7 +82,7 @@ export function Footer({ messages }: FooterProps) {
                         handleQuickLinkClick(link.href);
                       }
                     }}
-                    className="text-[#0E0E0E]/60 hover:text-[#FF7A30] text-sm font-heading transition-colors w-fit"
+                    className="text-muted hover:text-accent text-sm font-heading transition-colors w-fit"
                   >
                     {link.label}
                   </a>
@@ -90,7 +91,7 @@ export function Footer({ messages }: FooterProps) {
             </div>
 
             <div className="flex flex-col gap-4">
-              <h4 className="text-[#0E0E0E]/40 text-[18px] font-heading uppercase tracking-wider mb-2">
+              <h4 className="text-subtle text-[18px] font-heading uppercase tracking-wider mb-2">
                 {messages.socialLinksTitle}
               </h4>
               <nav className="flex flex-col gap-3">
@@ -100,7 +101,7 @@ export function Footer({ messages }: FooterProps) {
                     href={link.href}
                     target={link.href.startsWith("mailto:") ? undefined : "_blank"}
                     rel={link.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                    className="text-[#0E0E0E]/60 hover:text-[#FF7A30] text-sm font-heading transition-colors w-fit"
+                    className="text-muted hover:text-accent text-sm font-heading transition-colors w-fit"
                   >
                     {link.label}
                   </a>
@@ -109,13 +110,13 @@ export function Footer({ messages }: FooterProps) {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-[#0E0E0E]/8">
-            <p className="text-[#0E0E0E]/40 text-sm font-body">
+          <div className="pt-6 border-t border-border-subtle">
+            <p className="text-subtle text-sm font-body">
               <TextWithOrangeDots>{messages.copyright}</TextWithOrangeDots>
             </p>
           </div>
         </div>
-      </div>
+      </Container>
     </motion.footer>
   );
 }

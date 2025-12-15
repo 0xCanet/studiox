@@ -68,7 +68,7 @@ export function ContactModal({ isOpen, onClose, messages, language = "en" }: Con
               <button
                 onClick={onClose}
                 className="absolute top-4 right-4 md:top-6 md:right-6 z-10 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#0E0E0E]/5 hover:bg-[#0E0E0E]/10 rounded-full transition-colors"
-                aria-label="Close modal"
+                aria-label={language === "fr" ? "Fermer la modale" : "Close modal"}
               >
                 <svg
                   className="w-5 h-5 md:w-6 md:h-6 text-[#0E0E0E]"
@@ -97,7 +97,7 @@ export function ContactModal({ isOpen, onClose, messages, language = "en" }: Con
                   >
                     <h1 className="section-title text-[#0E0E0E] mb-4">
                       {messages.title.endsWith('.') ? messages.title.slice(0, -1) : messages.title}
-                      <span className="text-[#FF7A30]">.</span>
+                      <span className="text-accent">.</span>
                     </h1>
                   </motion.div>
 

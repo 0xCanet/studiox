@@ -122,7 +122,7 @@ export function LoadingBarTags({
             
             if (isPipe) {
               return (
-                <span key={charIndex} className="text-[var(--color-accent)]">
+                <span key={charIndex} className="text-accent">
                   {char}
                 </span>
               );
@@ -152,7 +152,7 @@ export function LoadingBarTags({
               </span>
               {index < tags.length - 1 && (
                 <span
-                  className="text-[var(--color-accent)] font-body text-xs"
+                  className="text-accent font-body text-xs"
                   style={{ margin: "0 0.25rem" }}
                 >
                   •

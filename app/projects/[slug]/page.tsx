@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -35,7 +36,7 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
           href="https://x.com/0xcanet"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#FF7A30] underline hover:text-[#E86A20] transition-colors"
+          className="text-accent underline hover:text-[#E86A20] transition-colors"
         >
           {matchText}
         </a>
@@ -43,7 +44,7 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
     } else if (matchText === "Studi.0x") {
       parts.push(
         <span key={`bold-${keyIndex++}`} className="font-bold text-[#0E0E0E]">
-          Studi<span className="text-[#FF7A30]">.</span>0x
+          Studi<span className="text-accent">.</span>0x
         </span>
       );
     } else if (matchText.startsWith("(link")) {
@@ -56,7 +57,7 @@ const formatDescriptionWithLinks = (text: string, language: Language): React.Rea
             href="https://x.com/0xcanet"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[#FF7A30] underline hover:text-[#E86A20] transition-colors"
+            className="text-accent underline hover:text-[#E86A20] transition-colors"
           >
             {linkText}
           </a>
@@ -211,7 +212,7 @@ const messages: Record<
           id: "coming-soon",
           title: "Coming soon",
           category: "Coming soon",
-          tags: ["Coming soon"],
+          tags: ["A new project is coming soon, crafted to push the boundaries of experience and design."],
         },
       ],
     },
@@ -291,8 +292,8 @@ const messages: Record<
         },
         {
           id: "coming-soon",
-          title: "Coming soon",
-          category: "Coming soon",
+          title: "Bientôt disponible",
+          category: "À venir",
           tags: ["Bientôt disponible"],
         },
       ],
@@ -376,7 +377,7 @@ export default function ProjectPage() {
             >
               <Link
                 href="/#work"
-                className="inline-flex items-center gap-2 text-[#0E0E0E]/60 hover:text-[#FF7A30] transition-colors font-body text-sm mb-8"
+                className="inline-flex items-center gap-2 text-[#0E0E0E]/60 hover:text-accent transition-colors font-body text-sm mb-8"
               >
                 <svg
                   className="w-4 h-4"
@@ -402,13 +403,18 @@ export default function ProjectPage() {
               className="mb-8"
             >
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-[#FF7A30] text-xs font-body uppercase tracking-wider">
-                  {project.category}
+                <span className="text-xs font-body uppercase tracking-wider">
+                  {project.category.split('•').map((part, index, array) => (
+                    <React.Fragment key={index}>
+                      <span className="text-accent">{part.trim()}</span>
+                      {index < array.length - 1 && <span className="text-accent"> • </span>}
+                    </React.Fragment>
+                  ))}
                 </span>
               </div>
               <h1 className="section-title text-[#0E0E0E] mb-4 font-heading font-bold">
                 {project.title}
-                <span className="text-[#FF7A30]">.</span>
+                <span className="text-accent">.</span>
               </h1>
               <div className="text-lg md:text-xl text-[#0E0E0E]/70 max-w-3xl leading-relaxed font-body">
                 {slug === "scorage" ? (
@@ -512,20 +518,20 @@ export default function ProjectPage() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "0px" }}
                 transition={{ duration: 0.7 }}
                 className="mb-6"
               >
                 <h1 className="section-title text-[#0E0E0E] mb-4 font-heading font-bold">
                   {t.project.videoPresentation.replace(/\.$/, '')}
-                  <span className="text-[#FF7A30]">.</span>
+                  <span className="text-accent">.</span>
                 </h1>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "0px" }}
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="rounded-2xl overflow-hidden bg-[#0E0E0E] mb-4"
               >
@@ -543,7 +549,7 @@ export default function ProjectPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "0px" }}
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="max-w-3xl mb-8"
               >
@@ -551,7 +557,7 @@ export default function ProjectPage() {
                   {project.videoDescription[language].split(/(VEO3\.1|After Effects|Final Cut Pro)/).map((part, index) => {
                     if (part === "VEO3.1" || part === "After Effects" || part === "Final Cut Pro") {
                       return (
-                        <span key={index} className="font-bold text-[#FF7A30]">
+                        <span key={index} className="font-bold text-accent">
                           {part}
                         </span>
                       );
@@ -566,7 +572,7 @@ export default function ProjectPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
+                  viewport={{ once: true, margin: "0px" }}
                   transition={{ duration: 0.7, delay: 0.3 }}
                   className="mt-8"
                 >
@@ -583,10 +589,10 @@ export default function ProjectPage() {
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
+                viewport={{ once: true, margin: "0px" }}
                 transition={{ duration: 0.7 }}
               >
-                <h3 className="text-[#FF7A30] text-sm font-body uppercase tracking-wider mb-3">
+                <h3 className="text-accent text-sm font-body uppercase tracking-wider mb-3">
                   {t.project.overview}
                 </h3>
                 <p className="text-[#0E0E0E]/70 leading-relaxed font-body">
@@ -613,7 +619,7 @@ export default function ProjectPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.7, delay: 0.1 }}
               >
-                <h3 className="text-[#FF7A30] text-sm font-body uppercase tracking-wider mb-3">
+                <h3 className="text-accent text-sm font-body uppercase tracking-wider mb-3">
                   {t.project.challenge}
                 </h3>
                 <p className="text-[#0E0E0E]/70 leading-relaxed font-body">
@@ -638,7 +644,7 @@ export default function ProjectPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.7, delay: 0.2 }}
               >
-                <h3 className="text-[#FF7A30] text-sm font-body uppercase tracking-wider mb-3">
+                <h3 className="text-accent text-sm font-body uppercase tracking-wider mb-3">
                   {t.project.solution}
                 </h3>
                 <p className="text-[#0E0E0E]/70 leading-relaxed font-body">
@@ -673,7 +679,7 @@ export default function ProjectPage() {
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.7, delay: 0.3 }}
               >
-                <h3 className="text-[#FF7A30] text-sm font-body uppercase tracking-wider mb-3">
+                <h3 className="text-accent text-sm font-body uppercase tracking-wider mb-3">
                   {t.project.results}
                 </h3>
                 <p className="text-[#0E0E0E]/70 leading-relaxed font-body">
@@ -703,13 +709,13 @@ export default function ProjectPage() {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "0px" }}
               transition={{ duration: 0.7 }}
               className="mb-8"
             >
               <h1 className="section-title text-[#0E0E0E] mb-4 font-heading font-bold">
                 {t.project.otherProjects.replace(/\.$/, '')}
-                <span className="text-[#FF7A30]">.</span>
+                <span className="text-accent">.</span>
               </h1>
             </motion.div>
             {otherProjects.items.length > 0 && (

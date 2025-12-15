@@ -1,16 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Navbar, type NavbarMessages } from "./components/Navbar";
 import { Hero, type HeroMessages } from "./components/Hero";
 import { RouteServicesSection, type RouteServicesMessages } from "./components/RouteServicesSection";
 import { WorkSection, type WorkMessages } from "./components/WorkSection";
 import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
-import { ContactModal } from "./components/ContactModal";
 import { Footer, type FooterMessages } from "./components/Footer";
 import { ConsentBanner } from "./components/ConsentBanner";
+import { pricingCopy } from "@/content/pricing";
 import { replaceVariablesInObject } from "./lib/i18n-utils";
+
+// Lazy load des composants lourds pour améliorer les performances initiales
+const ContactModal = dynamic(() => import("./components/ContactModal").then(mod => ({ default: mod.ContactModal })), {
+  ssr: false,
+});
+
+const PricingSection = dynamic(() => import("./components/PricingSection").then(mod => ({ default: mod.PricingSection })), {
+  ssr: true,
+  loading: () => {
+    const lang = typeof window !== "undefined" && navigator.language.toLowerCase().startsWith("fr") ? "fr" : "en";
+    return (
+      <div className="min-h-[600px] flex items-center justify-center">
+        <div className="text-muted">{lang === "fr" ? "Chargement..." : "Loading..."}</div>
+      </div>
+    );
+  },
+});
 
 type Language = "en" | "fr";
 
@@ -32,6 +50,7 @@ const messages: Record<
       links: {
         services: "Services",
         work: "Projects",
+        pricing: "Offers",
         about: "About",
         letsTalk: "Let's talk about your project",
       },
@@ -225,6 +244,7 @@ const messages: Record<
       quickLinks: [
         { label: "Services", href: "#services" },
         { label: "Projects", href: "#work" },
+        { label: "Offers", href: "#pricing" },
         { label: "About", href: "#about" },
         { label: "Contact", href: "#contact" },
       ],
@@ -241,6 +261,7 @@ const messages: Record<
       links: {
         services: "Services",
         work: "Projets",
+        pricing: "Offres",
         about: "À propos",
         letsTalk: "Parlez-moi de votre projet",
       },
@@ -338,8 +359,8 @@ const messages: Record<
         },
         {
           id: "coming-soon",
-          title: "Coming soon",
-          category: "Coming soon",
+          title: "Bientôt disponible",
+          category: "À venir",
           tags: ["Un nouveau projet arrive bientôt, pensé pour repousser les limites en matière d'expérience et de design."],
         },
       ],
@@ -434,6 +455,7 @@ const messages: Record<
       quickLinks: [
         { label: "Services", href: "#services" },
         { label: "Projets", href: "#work" },
+        { label: "Offres", href: "#pricing" },
         { label: "À propos", href: "#about" },
         { label: "Contact", href: "#contact" },
       ],
@@ -488,6 +510,15 @@ export default function HomePage() {
         <Hero messages={t.hero} onContactClick={() => setIsContactModalOpen(true)} />
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
+        <section id="pricing">
+          <PricingSection
+            lang={language}
+            copy={pricingCopy}
+            onPrimary={(tierId) => {
+              setIsContactModalOpen(true);
+            }}
+          />
+        </section>
         <AboutSection messages={t.about} />
         <ContactSection messages={t.contact} language={language} />
       </main>

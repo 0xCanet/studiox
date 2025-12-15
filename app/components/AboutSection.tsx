@@ -33,22 +33,25 @@ interface AboutSectionProps {
   messages: AboutMessages;
 }
 
+import { Container } from "./Container";
+import { Section } from "./Section";
+
 export function AboutSection({ messages }: AboutSectionProps) {
   return (
-    <section id="about" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-12">
-      <div className="max-w-[1200px] mx-auto">
+    <Section id="about" variant="base" background="bg">
+      <Container maxWidth="wide">
         {/* First Row: Portrait (left) + About Content & Values (right) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
           {/* Left Column - Portrait */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ duration: 0.7 }}
           >
             <div className="relative w-full aspect-[3/4] max-w-md lg:max-w-lg mx-auto lg:mx-0 rounded-2xl overflow-hidden">
               <Image
-                src="/images/backgrounds/portrait-canet.png"
+                src="/images/backgrounds/pp_jessy_orange.png"
                 alt={messages.founder.portraitAlt}
                 fill
                 className="object-cover"
@@ -57,10 +60,10 @@ export function AboutSection({ messages }: AboutSectionProps) {
               />
             </div>
             <div className="mt-6 text-center lg:text-left">
-              <h3 className="font-heading font-bold text-xl text-[#0E0E0E] mb-1">
+              <h3 className="font-heading font-bold text-xl text-text mb-1">
                 {messages.founder.name}
               </h3>
-              <p className="text-[#0E0E0E]/60 text-sm font-body">
+              <p className="text-muted text-sm font-body">
                 {messages.founder.role}
               </p>
             </div>
@@ -70,19 +73,19 @@ export function AboutSection({ messages }: AboutSectionProps) {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="space-y-8"
           >
             {/* About Content */}
             <div>
-              <h1 className="section-title text-[#0E0E0E] mb-6">
+              <h1 className="section-title text-text mb-6">
                 {messages.heading.replace(/\.$/, '')}
-                <span className="text-[#FF7A30]">.</span>
+                <span className="text-accent">.</span>
               </h1>
               <div className="space-y-4 mb-8">
                 {messages.intro.map((paragraph, index) => (
-                  <p key={index} className="text-[#0E0E0E]/70 text-lg leading-relaxed">
+                  <p key={index} className="text-muted text-lg leading-relaxed">
                     <TextWithOrangeDots>{paragraph}</TextWithOrangeDots>
                   </p>
                 ))}
@@ -91,7 +94,7 @@ export function AboutSection({ messages }: AboutSectionProps) {
 
             {/* Pillars */}
             <div>
-              <h3 className="font-heading font-semibold text-xl text-[#0E0E0E] mb-6">
+              <h3 className="font-heading font-semibold text-xl text-text mb-6">
                 {messages.pillarsTitle}
               </h3>
               <div className="space-y-6">
@@ -102,12 +105,12 @@ export function AboutSection({ messages }: AboutSectionProps) {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.15 }}
-                    className="relative pl-6 border-l-2 border-[#FF7A30]/30 hover:border-[#FF7A30] transition-colors"
+                    className="relative pl-6 border-l-2 border-accent/30 hover:border-accent transition-colors"
                   >
-                    <h4 className="font-heading font-semibold text-lg text-[#0E0E0E] mb-2">
+                    <h4 className="font-heading font-semibold text-lg text-text mb-2">
                       {pillar.title}
                     </h4>
-                    <p className="text-[#0E0E0E]/60 text-sm leading-relaxed">
+                    <p className="text-muted text-sm leading-relaxed">
                       <TextWithOrangeDots>{pillar.desc}</TextWithOrangeDots>
                     </p>
                   </motion.div>
@@ -126,10 +129,10 @@ export function AboutSection({ messages }: AboutSectionProps) {
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="text-center"
                 >
-                  <div className="font-heading font-bold text-3xl md:text-4xl text-[#FF7A30] mb-1">
+                  <div className="font-heading font-bold text-3xl md:text-4xl text-accent mb-1">
                     {stat.value}
                   </div>
-                  <div className="text-[#0E0E0E]/50 text-sm font-body">
+                  <div className="text-muted text-sm font-body">
                     {stat.label}
                   </div>
                 </motion.div>
@@ -137,7 +140,7 @@ export function AboutSection({ messages }: AboutSectionProps) {
             </div>
           </motion.div>
         </div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }

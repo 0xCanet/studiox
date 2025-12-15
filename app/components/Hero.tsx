@@ -199,7 +199,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
   
   // Memoize tagline tags - all animations use same duration and start together
   const taglineTags = useMemo(() => messages.tagline.split(" • "), [messages.tagline]);
-  const animationDuration = 3500; // Same duration for all texts (slower/smoother)
+  const animationDuration = 2200; // Reduced duration for more minimalist, subtle effect
   
   useLenis(({ scroll }) => {
     requestAnimationFrame(() => {
@@ -315,7 +315,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: 'translateZ(0)',
@@ -356,7 +356,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
             loop
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
             style={{ 
               transform: 'translateZ(0)',
@@ -417,8 +417,8 @@ export function Hero({ messages, onContactClick }: HeroProps) {
             transform: isMobile 
               ? `translateY(${-browserBarHeight - 10 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
               : heroScrollY > 0
-                ? `translateY(${-32 - (heroScrollY * 0.6)}px)`
-                : 'translateY(-32px)',
+                ? `translateY(${-64 - (heroScrollY * 0.6)}px)`
+                : 'translateY(-64px)',
             willChange: heroScrollY > 0 ? 'transform' : 'auto',
             overflowX: 'hidden',
             maxWidth: '100%',
@@ -454,9 +454,9 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                     duration={animationDuration}
                     delay={0}
                     as="h1"
-                    className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-3xl md:text-5xl lg:text-6xl"
+                    className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
                     highlightWord="ambitions."
-                    highlightColor="#FF7A30"
+                    highlightColor="var(--color-accent)"
                     initialText="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
                   />
                 ) : (
@@ -466,9 +466,9 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                     duration={animationDuration}
                     delay={0}
                     as="h1"
-                    className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-3xl md:text-5xl lg:text-6xl"
+                    className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
                     highlightWord="ambition."
-                    highlightColor="#FF7A30"
+                    highlightColor="var(--color-accent)"
                     initialText="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
                   />
                 )}
@@ -497,7 +497,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               >
               <button
                 onClick={onContactClick}
-                className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center"
+                className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 text-[#F0EEE9] inline-flex items-center"
               >
                 {messages.primaryCta.replace(" →", "")}
                 <svg

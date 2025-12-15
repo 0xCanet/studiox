@@ -118,7 +118,7 @@ export function PDFViewer({ fileUrl }: PDFViewerProps) {
             )}
           </ZoomIn>
         </div>
-        <div className="border border-[#0E0E0E]/10 rounded-lg bg-white">
+        <div className="border border-[#0E0E0E]/10 rounded-lg bg-[#F0EEE9]">
           <div
             style={{
               height: "800px",

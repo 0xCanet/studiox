@@ -1,9 +1,13 @@
 "use client";
 
+import React, { memo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { useMemo } from "react";
+import { Container } from "./Container";
+import { Section } from "./Section";
 
 export interface WorkItem {
   id: string;
@@ -27,8 +31,8 @@ interface WorkSectionProps {
   hideHeader?: boolean;
 }
 
-// Extracted ProjectCard component to avoid duplication
-function ProjectCard({ 
+// Extracted ProjectCard component to avoid duplication - Memoized for performance
+const ProjectCard = memo(function ProjectCard({ 
   project, 
   viewProjectText, 
   isComingSoon 
@@ -40,7 +44,7 @@ function ProjectCard({
   const cardContent = (
     <>
       {/* Project Card */}
-      <div className="relative rounded-2xl overflow-hidden bg-[#F0EEE9] aspect-[16/10] md:aspect-[16/9]">
+      <div className="relative rounded-2xl overflow-hidden bg-surface aspect-[16/10] md:aspect-[16/9]">
         {/* Video or Image */}
         {project.video ? (
           <div className="absolute inset-0 overflow-hidden">
@@ -56,20 +60,30 @@ function ProjectCard({
                       <source src={project.video} type="video/mp4" />
                     </video>
           </div>
+        ) : project.image ? (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]">
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="lazy"
+              quality={85}
+            />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,122,48,0.1),transparent_50%)]" />
+          </div>
         ) : (
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]"
-            style={project.image ? { backgroundImage: `url(${project.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-          >
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,122,48,0.1),transparent_50%)]" />
           </div>
         )}
 
         {/* Hover Overlay - Orange tint for video */}
         {project.video ? (
-          <div className="absolute inset-0 bg-[#FF7A30]/0 group-hover:bg-[#FF7A30]/15 transition-all duration-500 ease-in-out" />
+          <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/15 transition-all duration-500 ease-in-out" />
         ) : (
-          <div className="absolute inset-0 bg-[#0E0E0E]/0 group-hover:bg-[#0E0E0E]/40 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-text/0 group-hover:bg-text/40 transition-colors duration-300" />
         )}
 
         {/* View Project CTA */}
@@ -94,26 +108,37 @@ function ProjectCard({
       </div>
 
       {/* Project Info */}
-      <div className="mt-4 md:mt-5">
+      <motion.div 
+        className="mt-4 md:mt-5"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px" }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <div className="flex items-center gap-3 mb-2">
-          <span className="text-[#FF7A30] text-xs font-body uppercase tracking-wider">
-            {project.category}
+          <span className="text-xs font-body uppercase tracking-wider">
+            {project.category.split('•').map((part, index, array) => (
+              <React.Fragment key={index}>
+                <span className="text-accent">{part.trim()}</span>
+                {index < array.length - 1 && <span className="text-accent"> • </span>}
+              </React.Fragment>
+            ))}
           </span>
         </div>
-        <h4 className="font-heading font-semibold text-xl md:text-2xl text-[#0E0E0E] mb-2 group-hover:text-[#FF7A30] transition-colors">
+        <h4 className="font-heading font-semibold text-xl md:text-2xl text-text mb-2 group-hover:text-accent transition-colors">
           {project.title}
         </h4>
         <div className="flex flex-wrap gap-2">
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs text-[#0E0E0E]/50 font-body"
+              className="text-xs text-muted font-body"
             >
               {tag}
             </span>
           ))}
         </div>
-      </div>
+      </motion.div>
     </>
   );
 
@@ -126,7 +151,7 @@ function ProjectCard({
       {cardContent}
     </Link>
   );
-}
+});
 
 export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) {
   const containerVariants = useMemo(() => ({
@@ -140,37 +165,42 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
   }), []);
 
   const itemVariants = useMemo(() => ({
-    hidden: { opacity: 0, y: 40 },
+    hidden: { 
+      opacity: 0, 
+      y: 50,
+      scale: 0.95,
+    },
     visible: {
       opacity: 1,
       y: 0,
+      scale: 1,
       transition: {
-        duration: 0.7,
+        duration: 0.8,
         ease: [0.4, 0, 0.2, 1] as const,
       },
     },
   }), []);
 
   return (
-    <section id="work" className="bg-[#F0EEE9] py-24 md:py-32 px-5 md:px-12">
-      <div className="max-w-[1200px] mx-auto">
+    <Section id="work" variant="base" background="bg">
+      <Container maxWidth="wide">
         {/* Header */}
         {!hideHeader && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ duration: 0.7 }}
-            className="flex flex-col md:flex-row md:items-end md:justify-between mb-12 md:mb-16"
+            className="flex flex-col md:flex-row md:items-end md:justify-between mt-8 md:mt-12 mb-12 md:mb-16"
           >
             <div>
-              <h1 className="section-title text-[#0E0E0E] mb-4">
+              <h1 className="section-title text-text mb-6">
                 {messages.title.replace(/\.$/, '')}
-                <span className="text-[#FF7A30]">.</span>
+                <span className="text-accent">.</span>
               </h1>
-              <h2 className="text-[#0E0E0E] max-w-xl font-heading font-normal text-lg md:text-xl leading-relaxed">
+              <h2 className="text-text max-w-xl font-heading font-normal text-lg md:text-xl leading-relaxed">
                 <TextWithOrangeDots>{messages.subtitle.replace(/\.$/, '')}</TextWithOrangeDots>
-                <span className="text-[#FF7A30]">.</span>
+                <span className="text-accent">.</span>
               </h2>
             </div>
             <a
@@ -200,7 +230,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: "0px" }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
         >
           {messages.items.map((project, index) => (
@@ -217,8 +247,8 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
             </motion.div>
           ))}
         </motion.div>
-      </div>
-    </section>
+      </Container>
+    </Section>
   );
 }
 
