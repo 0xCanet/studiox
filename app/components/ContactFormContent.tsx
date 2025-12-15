@@ -199,7 +199,7 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
   const subtitleWithoutDot = messages.subtitle.endsWith('.') ? messages.subtitle.slice(0, -1) : messages.subtitle;
 
   return (
-    <div className="max-w-[1200px] mx-auto">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
       {!isModal && (
         <motion.div
           initial={{ opacity: 0, y: 30 }}
