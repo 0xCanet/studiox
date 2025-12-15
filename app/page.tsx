@@ -117,7 +117,17 @@ const messages: Record<
         "A collection of collaborations where strategy meets design.",
       cta: "View all projects",
       viewProject: "View Project",
+      downloadPDF: "Download PDF",
+      availableNow: "Available now",
       items: [
+        {
+          id: "ebook-design-2026",
+          title: "Pourquoi le design est une nécessité en 2026 (FR ONLY)",
+          category: "EBOOK",
+          tags: ["Discover why design is essential in 2026 and how it can transform your business"],
+          downloadUrl: "/src/Pourquoi_le_design_est_une_necessite_en_2026.pdf",
+          image: "/images/backgrounds/ebook-mockup.png",
+        },
         {
           id: "sendo-market",
           title: "Sendo.Market",
@@ -328,7 +338,17 @@ const messages: Record<
         "Une collection de collaborations où stratégie et design se rencontrent.",
       cta: "Voir tous les projets",
       viewProject: "Voir le projet",
+      downloadPDF: "Télécharger le PDF",
+      availableNow: "Disponible maintenant",
       items: [
+        {
+          id: "ebook-design-2026",
+          title: "Pourquoi le design est une nécessité en 2026",
+          category: "EBOOK",
+          tags: ["Découvrez pourquoi le design est essentiel en 2026 et comment il peut transformer votre entreprise"],
+          downloadUrl: "/src/Pourquoi_le_design_est_une_necessite_en_2026.pdf",
+          image: "/images/backgrounds/ebook-mockup.png",
+        },
         {
           id: "sendo-market",
           title: "Sendo.Market",
