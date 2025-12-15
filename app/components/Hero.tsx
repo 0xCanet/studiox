@@ -26,6 +26,10 @@ export function Hero({ messages, onContactClick }: HeroProps) {
   const [heroScrollY, setHeroScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [browserBarHeight, setBrowserBarHeight] = useState(0);
+  const [navbarHeight, setNavbarHeight] = useState(96); // Default minimum height for mobile navbar (30px top + ~56px navbar + 10px margin)
+  const [viewportHeight, setViewportHeight] = useState(0);
+  const [contentPosition, setContentPosition] = useState<'top' | 'center' | 'bottom'>('bottom'); // Position strategy for mobile
+  const [minSectionHeight, setMinSectionHeight] = useState(600); // Minimum section height for mobile
   const [videoVisible, setVideoVisible] = useState(false);
   const [videoZoom, setVideoZoom] = useState(1.1); // Start zoomed in, then zoom out
   const [containerZoom, setContainerZoom] = useState(1.15); // Container starts more zoomed, then zooms out
@@ -124,6 +128,195 @@ export function Hero({ messages, onContactClick }: HeroProps) {
       }
     };
   }, []);
+
+  // Calculate viewport height and determine content positioning strategy
+  useEffect(() => {
+    const calculateViewportHeight = () => {
+      if (!isMobile) {
+        setViewportHeight(0);
+        return;
+      }
+
+      // Use Visual Viewport API if available (most accurate)
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height);
+      } else {
+        setViewportHeight(window.innerHeight);
+      }
+    };
+
+    calculateViewportHeight();
+    
+    window.addEventListener('resize', calculateViewportHeight);
+    window.addEventListener('orientationchange', calculateViewportHeight);
+    
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', calculateViewportHeight);
+    }
+    
+    return () => {
+      window.removeEventListener('resize', calculateViewportHeight);
+      window.removeEventListener('orientationchange', calculateViewportHeight);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', calculateViewportHeight);
+      }
+    };
+  }, [isMobile]);
+
+  // Calculate navbar height on mobile to ensure Hero content starts after it
+  useEffect(() => {
+    const calculateNavbarHeight = () => {
+      if (!isMobile) {
+        setNavbarHeight(0);
+        return;
+      }
+
+      // Try multiple selectors to find the navbar
+      const navbar = document.querySelector('nav[class*="fixed"]') || 
+                     document.querySelector('nav') ||
+                     document.querySelector('[role="navigation"]');
+      
+      if (navbar) {
+        const rect = navbar.getBoundingClientRect();
+        // Navbar top position (30px) + navbar height + small margin
+        const totalHeight = rect.top + rect.height + 10; // 10px margin
+        setNavbarHeight(Math.max(96, totalHeight)); // Minimum 96px to ensure content is always below navbar
+      } else {
+        // Fallback: estimate navbar height (30px top + ~56px navbar + 10px margin)
+        setNavbarHeight(96);
+      }
+    };
+
+    // Calculate immediately
+    calculateNavbarHeight();
+    
+    // Recalculate multiple times to catch navbar when it becomes visible
+    const timers = [
+      setTimeout(() => calculateNavbarHeight(), 100),
+      setTimeout(() => calculateNavbarHeight(), 500),
+      setTimeout(() => calculateNavbarHeight(), 1000),
+      setTimeout(() => calculateNavbarHeight(), 2100), // When navbar becomes visible
+      setTimeout(() => calculateNavbarHeight(), 2500), // After navbar animation completes
+    ];
+
+    window.addEventListener('resize', calculateNavbarHeight);
+    window.addEventListener('orientationchange', calculateNavbarHeight);
+    
+    // Use MutationObserver to detect when navbar is added/modified
+    const observer = new MutationObserver(() => {
+      calculateNavbarHeight();
+    });
+    
+    // Observe body for navbar changes
+    if (document.body) {
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+      });
+    }
+    
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+      window.removeEventListener('resize', calculateNavbarHeight);
+      window.removeEventListener('orientationchange', calculateNavbarHeight);
+      observer.disconnect();
+    };
+  }, [isMobile]);
+
+  // Determine content positioning strategy based on viewport height and content size
+  useEffect(() => {
+    if (!isMobile || viewportHeight === 0) {
+      setContentPosition('bottom');
+      return;
+    }
+
+    const calculateContentPosition = () => {
+      // Estimate content height (tagline + title + subtitle + buttons + padding)
+      // Rough estimate: ~400-500px for typical mobile content
+      const estimatedContentHeight = 500;
+      const availableHeight = viewportHeight - navbarHeight;
+      
+      // Update minimum section height based on estimate
+      setMinSectionHeight(Math.max(600, navbarHeight + estimatedContentHeight + 100));
+      
+      // If we have enough space (content + 100px margin), start from top
+      if (availableHeight >= estimatedContentHeight + 100) {
+        setContentPosition('top');
+      } 
+      // If we have moderate space (content + 50px margin), center it
+      else if (availableHeight >= estimatedContentHeight + 50) {
+        setContentPosition('center');
+      } 
+      // Otherwise, position at bottom (default)
+      else {
+        setContentPosition('bottom');
+      }
+    };
+
+    // Initial calculation with estimate
+    calculateContentPosition();
+
+        // Wait for content to be rendered before recalculating with actual height
+    const timers = [
+      setTimeout(() => {
+        if (textRef.current && animationPhase === 'content') {
+          const contentRect = textRef.current.getBoundingClientRect();
+          const actualContentHeight = contentRect.height;
+          const availableHeight = viewportHeight - navbarHeight;
+          
+          // Use actual content height if available and reasonable
+          if (actualContentHeight > 100 && actualContentHeight < 2000) {
+            const contentHeight = actualContentHeight;
+            
+            // Update minimum section height based on actual content
+            setMinSectionHeight(Math.max(600, navbarHeight + contentHeight + 100));
+            
+            if (availableHeight >= contentHeight + 100) {
+              setContentPosition('top');
+            } else if (availableHeight >= contentHeight + 50) {
+              setContentPosition('center');
+            } else {
+              setContentPosition('bottom');
+            }
+          }
+        }
+      }, 2500), // After content animation completes
+      setTimeout(() => {
+        // Final check after all animations
+        if (textRef.current && animationPhase === 'content') {
+          const contentRect = textRef.current.getBoundingClientRect();
+          const actualContentHeight = contentRect.height;
+          const availableHeight = viewportHeight - navbarHeight;
+          
+          if (actualContentHeight > 100 && actualContentHeight < 2000) {
+            const contentHeight = actualContentHeight;
+            
+            // Update minimum section height based on actual content
+            setMinSectionHeight(Math.max(600, navbarHeight + contentHeight + 100));
+            
+            if (availableHeight >= contentHeight + 100) {
+              setContentPosition('top');
+            } else if (availableHeight >= contentHeight + 50) {
+              setContentPosition('center');
+            } else {
+              setContentPosition('bottom');
+            }
+          }
+        }
+      }, 3000)
+    ];
+    
+    window.addEventListener('resize', calculateContentPosition);
+    window.addEventListener('orientationchange', calculateContentPosition);
+    
+    return () => {
+      timers.forEach(timer => clearTimeout(timer));
+      window.removeEventListener('resize', calculateContentPosition);
+      window.removeEventListener('orientationchange', calculateContentPosition);
+    };
+  }, [isMobile, viewportHeight, navbarHeight, animationPhase]);
 
   useEffect(() => {
     const htmlElement = document.documentElement;
@@ -254,13 +447,18 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     <section 
       ref={sectionRef}
       id="hero" 
-      className="relative h-screen bg-[var(--color-cream)] pt-5 px-5 pb-5 md:pt-6 md:px-12 md:pb-12" 
+      className="relative h-screen bg-[var(--color-cream)] px-5 pb-5 md:pt-6 md:px-12 md:pb-12" 
       style={{ 
         width: '100%', 
         maxWidth: '100%',
         marginRight: 0, 
+        paddingTop: isMobile && contentPosition === 'top' ? `${Math.max(96, navbarHeight)}px` : isMobile ? '0px' : undefined,
         height: isMobile ? '100dvh' : '102vh',
-        minHeight: isMobile ? '100dvh' : '102vh',
+        minHeight: isMobile 
+          ? contentPosition === 'top' 
+            ? `${minSectionHeight}px` // Minimum height calculated based on actual content
+            : '100dvh'
+          : '102vh',
         transform: 'none',
         position: 'relative',
         overflowX: 'hidden',
@@ -408,14 +606,38 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
         <div 
           ref={textRef}
-          className="absolute inset-0 flex flex-col justify-end z-20"
+          className={`absolute inset-0 flex flex-col z-20 ${
+            isMobile 
+              ? contentPosition === 'top' 
+                ? 'justify-start' 
+                : contentPosition === 'center' 
+                  ? 'justify-center' 
+                  : 'justify-end'
+              : 'justify-end'
+          }`}
           style={{
             paddingLeft: isMobile ? '20px' : '48px',
             paddingRight: isMobile ? '20px' : '48px',
-            paddingTop: isMobile ? '32px' : '48px',
-            paddingBottom: isMobile ? `calc(80px + env(safe-area-inset-bottom, 0px))` : '48px',
+            paddingTop: isMobile 
+              ? contentPosition === 'top' 
+                ? `${navbarHeight + 20}px` // Start after navbar with margin
+                : contentPosition === 'center'
+                  ? '32px'
+                  : '32px'
+              : '48px',
+            paddingBottom: isMobile 
+              ? contentPosition === 'bottom'
+                ? `calc(80px + env(safe-area-inset-bottom, 0px))`
+                : contentPosition === 'center'
+                  ? '32px'
+                  : '32px'
+              : '48px',
             transform: isMobile 
-              ? `translateY(${-browserBarHeight - 10 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)`
+              ? contentPosition === 'top'
+                ? `translateY(${heroScrollY > 0 ? heroScrollY * 0.6 : 0}px)` // Minimal transform for top position
+                : contentPosition === 'center'
+                  ? `translateY(${-browserBarHeight * 0.3 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)` // Slight upward adjustment
+                  : `translateY(${-browserBarHeight - 10 - (heroScrollY > 0 ? heroScrollY * 0.6 : 0)}px)` // Original bottom position
               : heroScrollY > 0
                 ? `translateY(${-64 - (heroScrollY * 0.6)}px)`
                 : 'translateY(-64px)',
