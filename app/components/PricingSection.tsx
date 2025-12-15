@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 import { useLenis } from "lenis/react";
 import { PricingCopy } from "@/types/copy";
 import { Container } from "./Container";
@@ -44,22 +44,7 @@ interface PricingSectionProps {
   intensity?: "subtle" | "medium";
 }
 
-type CardVariants = {
-  hidden: {
-    opacity: number;
-    y: number;
-    scale: number;
-  };
-  visible: {
-    opacity: number;
-    y: number;
-    scale: number;
-    transition: {
-      duration: number;
-      ease: number[];
-    };
-  };
-};
+type CardVariants = Variants;
 
 /* Tailwind tokens assumed (documented in comment, not modifying config):
  * - bg-neutral-950: near-black (#0E0F11 or similar)
@@ -109,7 +94,7 @@ export function PricingSection({
       scale: 1,
       transition: {
         duration: shouldReduceMotion ? 0 : 0.7,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
       },
     },
   };
@@ -248,7 +233,7 @@ export function PricingSection({
                 tier={tier}
                 lang={lang}
                 onPrimary={() => onPrimary(tier.id)}
-                shouldReduceMotion={shouldReduceMotion}
+                shouldReduceMotion={shouldReduceMotion ?? false}
                 cardVariants={cardVariants}
               />
             ))}

@@ -16,9 +16,6 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
-
-  // Optimisation du build
-  swcMinify: true,
   
   // Headers de sécurité et performance
   async headers() {

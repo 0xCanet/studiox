@@ -152,6 +152,7 @@ const messages: Record<
       links: {
         services: "Services",
         work: "Work",
+        pricing: "Pricing",
         about: "About",
         letsTalk: "Let's talk",
       },
@@ -234,6 +235,7 @@ const messages: Record<
       links: {
         services: "Services",
         work: "Projets",
+        pricing: "Tarifs",
         about: "À propos",
         letsTalk: "Parlez-moi de votre projet",
       },
