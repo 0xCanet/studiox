@@ -10,8 +10,6 @@ import { ContactSection, type ContactMessages } from "./components/ContactSectio
 import { ContactModal } from "./components/ContactModal";
 import { Footer, type FooterMessages } from "./components/Footer";
 import { ConsentBanner } from "./components/ConsentBanner";
-import { PricingSection } from "./components/PricingSection";
-import { pricingCopy } from "./content/pricing";
 import { replaceVariablesInObject } from "./lib/i18n-utils";
 
 type Language = "en" | "fr";
@@ -491,15 +489,6 @@ export default function HomePage() {
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
         <AboutSection messages={t.about} />
-        <PricingSection
-          lang={language}
-          copy={pricingCopy}
-          onPrimary={(tierId) => {
-            console.log("Primary CTA clicked for tier:", tierId);
-            setIsContactModalOpen(true);
-          }}
-          intensity="subtle"
-        />
         <ContactSection messages={t.contact} language={language} />
       </main>
 
