@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import type { ContactMessages } from "./ContactSection";
@@ -28,11 +28,78 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
     message: string;
   }>({ type: null, message: "" });
 
-  const today = useMemo(() => {
+  // Force recalculation of today when component mounts and on interval
+  const [currentDate, setCurrentDate] = useState(() => {
     const date = new Date();
     date.setHours(0, 0, 0, 0);
     return date;
-  }, []);
+  });
+
+  // Update current date periodically to ensure calendar stays dynamic
+  useEffect(() => {
+    const updateDate = () => {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      setCurrentDate(date);
+    };
+    
+    // Update immediately if date changed
+    const checkDate = setInterval(() => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      if (now.getTime() !== currentDate.getTime()) {
+        updateDate();
+      }
+    }, 60000); // Check every minute
+
+    return () => clearInterval(checkDate);
+  }, [currentDate]);
+
+  // Use currentDate as today for dynamic updates
+  const today = currentDate;
+
+  // Generate unavailable dates and times based on current date (deterministic but changes daily)
+  const getUnavailableSlots = useCallback((baseDate: Date) => {
+    const seed = baseDate.getFullYear() * 10000 + baseDate.getMonth() * 100 + baseDate.getDate();
+    
+    // Simple seeded random function
+    let random = seed;
+    const seededRandom = () => {
+      random = (random * 9301 + 49297) % 233280;
+      return random / 233280;
+    };
+
+    const unavailableDates = new Set<string>();
+    const unavailableTimes = new Set<string>();
+
+    // Remove 2-4 random days in the next 30 days (starting from day 3, as days 1-2 are always unavailable)
+    const daysToRemove = Math.floor(seededRandom() * 3) + 2; // 2-4 days
+    for (let i = 0; i < daysToRemove; i++) {
+      const daysAhead = Math.floor(seededRandom() * 28) + 3; // Days 3-30 (skip today and tomorrow)
+      const unavailableDate = new Date(baseDate);
+      unavailableDate.setDate(baseDate.getDate() + daysAhead);
+      unavailableDate.setHours(0, 0, 0, 0);
+      unavailableDates.add(unavailableDate.toDateString());
+    }
+
+    // Remove 2-5 random time slots per day for the next 7 days (starting from day 3)
+    for (let day = 3; day <= 9; day++) {
+      const checkDate = new Date(baseDate);
+      checkDate.setDate(baseDate.getDate() + day);
+      const slotsToRemove = Math.floor(seededRandom() * 4) + 2; // 2-5 slots
+      
+      for (let i = 0; i < slotsToRemove; i++) {
+        const timeIndex = Math.floor(seededRandom() * messages.calendar.timeSlots.length);
+        const timeSlot = messages.calendar.timeSlots[timeIndex];
+        const dateKey = `${checkDate.toDateString()}_${timeSlot}`;
+        unavailableTimes.add(dateKey);
+      }
+    }
+
+    return { unavailableDates, unavailableTimes };
+  }, [messages.calendar.timeSlots]);
+
+  const { unavailableDates, unavailableTimes } = useMemo(() => getUnavailableSlots(today), [getUnavailableSlots, today]);
 
   const getDaysInMonth = useCallback((date: Date) => {
     const year = date.getFullYear();
@@ -58,8 +125,23 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
   const isDateSelectable = useCallback((date: Date | null) => {
     if (!date) return false;
     const dayOfWeek = date.getDay();
-    return dayOfWeek !== 0 && dayOfWeek !== 6 && date >= today;
-  }, [today]);
+    
+    // Calculate tomorrow
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    
+    // Always make today and tomorrow unavailable (to show we're booked)
+    const isTodayOrTomorrow = date.toDateString() === today.toDateString() || 
+                               date.toDateString() === tomorrow.toDateString();
+    
+    // Check if it's a weekday, not in the past, not today/tomorrow, and not in unavailable dates
+    const isWeekday = dayOfWeek !== 0 && dayOfWeek !== 6;
+    const isNotPast = date >= today;
+    const isNotImmediate = !isTodayOrTomorrow;
+    const isAvailable = !unavailableDates.has(date.toDateString());
+    
+    return isWeekday && isNotPast && isNotImmediate && isAvailable;
+  }, [today, unavailableDates]);
 
   const formatMonth = useCallback((date: Date) => {
     const monthName = messages.calendar.monthNames[date.getMonth()];
@@ -86,9 +168,31 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
     }
   }, [isDateSelectable]);
 
+  const isTimeSlotAvailable = useCallback((date: Date | null, time: string) => {
+    if (!date) return false;
+    
+    // Calculate tomorrow
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    
+    // Always make all time slots unavailable for today and tomorrow
+    const isTodayOrTomorrow = date.toDateString() === today.toDateString() || 
+                               date.toDateString() === tomorrow.toDateString();
+    
+    if (isTodayOrTomorrow) {
+      return false;
+    }
+    
+    // Check if this specific time slot is unavailable
+    const dateKey = `${date.toDateString()}_${time}`;
+    return !unavailableTimes.has(dateKey);
+  }, [today, unavailableTimes]);
+
   const handleTimeClick = useCallback((time: string) => {
-    setSelectedTime(time);
-  }, []);
+    if (selectedDate && isTimeSlotAvailable(selectedDate, time)) {
+      setSelectedTime(time);
+    }
+  }, [selectedDate, isTimeSlotAvailable]);
 
   const isBooking = selectedDate && selectedTime;
 
@@ -311,11 +415,15 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
                   </p>
                   <div className="grid grid-cols-3 gap-2 mb-6">
                     {messages.calendar.timeSlots.map((time) => {
-                      const slotClasses = "time-slot" + (selectedTime === time ? " selected" : "");
+                      const isAvailable = isTimeSlotAvailable(selectedDate, time);
+                      const slotClasses = "time-slot" + 
+                        (selectedTime === time ? " selected" : "") +
+                        (!isAvailable ? " opacity-50 cursor-not-allowed" : "");
                       return (
                         <button
                           key={time}
                           onClick={() => handleTimeClick(time)}
+                          disabled={!isAvailable}
                           className={slotClasses}
                         >
                           {time}
