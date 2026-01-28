@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useReducedMotion, Variants } from "framer-motion";
-import { useLenis } from "lenis/react";
 import { PricingCopy } from "@/types/copy";
 import { Container } from "./Container";
 import { Section } from "./Section";
@@ -99,72 +98,60 @@ export function PricingSection({
     },
   };
 
-  // Parallax scroll effect with zoom
-  useLenis(({ scroll }) => {
-    requestAnimationFrame(() => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const sectionHeight = rect.height;
-        
-        const buffer = 10;
-        
-        let newPricingScrollY = 0;
-        
-        if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
-          newPricingScrollY = 0;
-        } else if (rect.top < viewportHeight && rect.bottom > 0) {
-          const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-          
-          const maxParallax = 200;
-          newPricingScrollY = scrollProgress * maxParallax;
-        }
-        
-        const currentValue = prevPricingScrollYRef.current;
-        const targetValue = newPricingScrollY;
-        const diff = targetValue - currentValue;
-        
-        if (Math.abs(diff) > 0.1) {
-          const interpolationSpeed = diff > 0 ? 0.25 : 0.15;
-          const smoothedValue = currentValue + diff * interpolationSpeed;
-          prevPricingScrollYRef.current = smoothedValue;
-          setPricingScrollY(smoothedValue);
-        } else {
-          // Snap to target if very close
-          prevPricingScrollYRef.current = targetValue;
-          setPricingScrollY(targetValue);
-        }
-      } else {
-        const currentValue = prevPricingScrollYRef.current;
-        if (Math.abs(currentValue) > 0.1) {
-          const smoothedValue = currentValue * 0.9; // Smooth decay
-          prevPricingScrollYRef.current = smoothedValue;
-          setPricingScrollY(smoothedValue);
-        } else {
-          prevPricingScrollYRef.current = 0;
-          setPricingScrollY(0);
-        }
+  // Parallax scroll effect with zoom using native scroll with throttling
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (sectionRef.current) {
+            const rect = sectionRef.current.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Simplified calculation - only update when section is visible
+            if (rect.top < viewportHeight && rect.bottom > 0) {
+              const scrollProgress = Math.max(0, Math.min(1, -rect.top / rect.height));
+              const newValue = scrollProgress * 130; // Reduced intensity
+
+              // Only update if change is significant
+              if (Math.abs(newValue - prevPricingScrollYRef.current) > 1) {
+                prevPricingScrollYRef.current = newValue;
+                setPricingScrollY(newValue);
+              }
+            } else if (prevPricingScrollYRef.current !== 0) {
+              prevPricingScrollYRef.current = 0;
+              setPricingScrollY(0);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-    <Section 
+    <Section
       ref={sectionRef}
+      id="pricing"
       variant="base"
       background="bg"
-      className="relative py-12 md:py-16 lg:py-20"
+      className="relative"
     >
       {/* Dark container with margins like Hero section - 24px (md:ml-6 md:mr-6) from edges */}
-      <div 
+      <div
         className="relative bg-neutral-950 overflow-hidden rounded-none md:rounded-[32px] mx-0 md:mx-6"
       >
         {/* Video Background */}
-        <div 
+        <div
           ref={videoRef}
           className="absolute inset-0 z-0"
           style={{
-            transform: pricingScrollY > 0 
+            transform: pricingScrollY > 0
               ? `translateY(${pricingScrollY * 0.4}px) scale(${1.1 * (1 + pricingScrollY * 0.0002)})`
               : `scale(1.1)`,
             transformOrigin: "center center",
@@ -178,7 +165,7 @@ export function PricingSection({
             playsInline
             preload="metadata"
             className="absolute inset-0 w-full h-full object-cover"
-            style={{ 
+            style={{
               transform: 'translateZ(0)',
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
@@ -194,7 +181,7 @@ export function PricingSection({
         </div>
 
         {/* Content wrapper with max-width constraint like other sections */}
-        <Container maxWidth="wide" className="relative z-10 pt-16 md:pt-20 lg:pt-24 pb-12 md:pb-16 lg:pb-20">
+        <Container maxWidth="wide" className="relative z-10 py-16 md:py-20 lg:py-24">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 30 }}
@@ -203,19 +190,22 @@ export function PricingSection({
             transition={{ duration: shouldReduceMotion ? 0 : 0.7, ease: [0.4, 0, 0.2, 1] }}
             className="text-center mb-12 md:mb-16 lg:mb-20"
           >
-            <h1 
+            <h1
               className="section-title mb-6 font-heading font-bold"
               style={{ color: '#F0EEE9' }}
             >
-              {copy.heading[lang].replace(/\.$/, '')}
-              <span className="text-accent">.</span>
+              {copy.heading[lang].split(/(\?|\.)/).map((part, index) => {
+                if (part === '?' || part === '.') {
+                  return <span key={index} className="text-accent">{part}</span>;
+                }
+                return <span key={index}>{part}</span>;
+              })}
             </h1>
-            <h2 
+            <h2
               className="font-heading font-normal text-lg md:text-xl max-w-3xl mx-auto leading-relaxed"
               style={{ color: '#F0EEE9' }}
             >
-              {copy.intro[lang].replace(/\.$/, '')}
-              <span className="text-accent">.</span>
+              {copy.intro[lang]}
             </h2>
           </motion.div>
 
@@ -279,39 +269,47 @@ function PricingCard({
     <motion.div
       variants={cardVariants}
       whileHover={shouldReduceMotion ? {} : { y: -4 }}
-      className={`group relative flex ${
-        isFeatured ? "sm:col-span-2 lg:col-span-1" : ""
-      }`}
+      className={`group relative flex ${isFeatured ? "sm:col-span-2 lg:col-span-1" : ""
+        }`}
     >
+      {/* Badge "Offre principale" pour la carte featured - positionné sur le conteneur parent */}
+      {isFeatured && (
+        <div className="absolute -top-3 -right-3 bg-[#FF7A2F] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide z-50">
+          Offre principale
+        </div>
+      )}
       {/* Glassmorphism Card - Liquid Glass Style */}
-      <div className="relative rounded-xl md:rounded-2xl p-5 md:p-8 sm:p-10 h-full overflow-hidden flex flex-col">
-        {/* Base glass layer with backdrop blur */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#F0EEE9]/[0.08] via-[#F0EEE9]/[0.04] to-[#F0EEE9]/[0.02] backdrop-blur-lg rounded-2xl border border-[#F0EEE9]/10 group-hover:border-[#FF7A2F]/40 transition-all duration-500" />
-        
+      <div className="relative rounded-xl md:rounded-2xl p-5 md:p-8 sm:p-10 h-full overflow-visible flex flex-col">
+        {/* Base glass layer with backdrop blur - bordure orange pour featured */}
+        <div className={`absolute inset-0 bg-gradient-to-br from-[#F0EEE9]/[0.08] via-[#F0EEE9]/[0.04] to-[#F0EEE9]/[0.02] backdrop-blur-lg rounded-2xl border transition-all duration-500 ${isFeatured
+          ? "border-[#FF7A2F]/60 group-hover:border-[#FF7A2F]"
+          : "border-[#F0EEE9]/10 group-hover:border-[#FF7A2F]/40"
+          }`} />
+
         {/* Orange tint layer - subtle by default, stronger on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#FF7A2F]/5 via-[#FF7A2F]/3 to-transparent rounded-2xl group-hover:from-[#FF7A2F]/15 group-hover:via-[#FF7A2F]/8 group-hover:to-transparent transition-all duration-500" />
-        
+
         {/* Liquid glass highlight effect - top reflection */}
-        <div className="absolute inset-0 rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" 
-          style={{ 
+        <div className="absolute inset-0 rounded-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+          style={{
             background: 'linear-gradient(180deg, rgba(240,238,233,0.2) 0%, rgba(240,238,233,0.05) 30%, transparent 60%)',
-          }} 
+          }}
         />
-        
+
         {/* Orange glow on hover */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#FF7A2F]/0 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
             background: 'radial-gradient(circle at 30% 20%, rgba(255,122,47,0.25) 0%, transparent 60%)',
           }}
         />
-        
+
         {/* Inner shine effect */}
         <div className="absolute inset-[1px] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
           style={{
             background: 'radial-gradient(circle at 50% 0%, rgba(240,238,233,0.3) 0%, transparent 50%)',
           }}
         />
-        
+
         {/* Content */}
         <div className="relative z-10 flex flex-col h-full">
           <CardContent
@@ -344,6 +342,12 @@ function CardContent({
 }: CardContentProps) {
   return (
     <div className="flex flex-col h-full">
+      {/* Category Label (pour "Clients existants") */}
+      {tier.categoryLabel && (
+        <div className="text-xs md:text-sm text-neutral-400 uppercase tracking-wide mb-2">
+          {tier.categoryLabel[lang]}
+        </div>
+      )}
       {/* Title */}
       <h3 className="text-xl md:text-2xl sm:text-3xl font-bold text-[#F0EEE9] mb-2 md:mb-3 group-hover:text-[#FF7A2F] transition-colors duration-300 relative inline-block" style={{ color: '#F0EEE9' }}>
         {tier.title[lang]}
@@ -395,15 +399,17 @@ function CardContent({
         </p>
       )}
 
-      {/* Button - toujours en bas grâce à mt-auto */}
-      <div className="mt-auto pt-3 md:pt-4">
-        <PrimaryButton
-          onClick={onPrimary}
-          label={tier.primaryCta[lang]}
-          shouldReduceMotion={shouldReduceMotion}
-          isFeatured={isFeatured}
-        />
-      </div>
+      {/* Button - toujours en bas grâce à mt-auto - masqué si hideCta est true */}
+      {!tier.hideCta && (
+        <div className="mt-auto pt-3 md:pt-4">
+          <PrimaryButton
+            onClick={onPrimary}
+            label={tier.primaryCta[lang]}
+            shouldReduceMotion={shouldReduceMotion}
+            isFeatured={isFeatured}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -421,10 +427,37 @@ function PrimaryButton({
   shouldReduceMotion,
   isFeatured,
 }: PrimaryButtonProps) {
+  // Style orange pour featured, style secondaire (transparent avec bordure) pour les autres
+  if (isFeatured) {
+    return (
+      <button
+        onClick={onClick}
+        className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center w-full justify-center"
+        aria-label={label}
+      >
+        {label}
+        <svg
+          className="ml-2 w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17 8l4 4m0 0l-4 4m4-4H3"
+          />
+        </svg>
+      </button>
+    );
+  }
+
+  // Style secondaire pour les cartes non-featured
   return (
     <button
       onClick={onClick}
-      className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 transition-colors duration-500 ease-in-out text-[#F0EEE9] inline-flex items-center w-full justify-center"
+      className="cursor-pointer bg-transparent hover:bg-[#FF7A2F]/10 border-2 border-[#FF7A2F]/40 hover:border-[#FF7A2F] text-[#FF7A2F] hover:text-[#FF7A2F] text-sm px-6 py-2.5 rounded-lg transition-all duration-300 ease-in-out inline-flex items-center w-full justify-center"
       aria-label={label}
     >
       {label}

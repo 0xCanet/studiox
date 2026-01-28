@@ -1,8 +1,7 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
-import { useLenis } from "lenis/react";
+import { useRef, useState, useEffect } from "react";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 
 export interface ServiceItem {
@@ -144,7 +143,7 @@ const ServiceIcons: Record<string, React.ReactNode> = {
 // Topographic Lines Component - Animated SVG pattern
 function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: string }) {
   const gradientId = `topoGradient-${cardId}`;
-  
+
   return (
     <motion.div
       className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none"
@@ -176,10 +175,10 @@ function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: s
           animate={
             isHovered
               ? {
-                  pathLength: 1,
-                  opacity: 1,
-                  transition: { duration: 1.2, ease: "easeInOut" },
-                }
+                pathLength: 1,
+                opacity: 1,
+                transition: { duration: 1.2, ease: "easeInOut" },
+              }
               : { pathLength: 0, opacity: 0, transition: { duration: 0.3 } }
           }
         />
@@ -192,10 +191,10 @@ function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: s
           animate={
             isHovered
               ? {
-                  pathLength: 1,
-                  opacity: 0.7,
-                  transition: { duration: 1.2, delay: 0.1, ease: "easeInOut" },
-                }
+                pathLength: 1,
+                opacity: 0.7,
+                transition: { duration: 1.2, delay: 0.1, ease: "easeInOut" },
+              }
               : { pathLength: 0, opacity: 0, transition: { duration: 0.3 } }
           }
         />
@@ -208,10 +207,10 @@ function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: s
           animate={
             isHovered
               ? {
-                  pathLength: 1,
-                  opacity: 0.7,
-                  transition: { duration: 1.2, delay: 0.2, ease: "easeInOut" },
-                }
+                pathLength: 1,
+                opacity: 0.7,
+                transition: { duration: 1.2, delay: 0.2, ease: "easeInOut" },
+              }
               : { pathLength: 0, opacity: 0, transition: { duration: 0.3 } }
           }
         />
@@ -224,10 +223,10 @@ function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: s
           animate={
             isHovered
               ? {
-                  pathLength: 1,
-                  opacity: 0.5,
-                  transition: { duration: 1.2, delay: 0.3, ease: "easeInOut" },
-                }
+                pathLength: 1,
+                opacity: 0.5,
+                transition: { duration: 1.2, delay: 0.3, ease: "easeInOut" },
+              }
               : { pathLength: 0, opacity: 0, transition: { duration: 0.3 } }
           }
         />
@@ -240,10 +239,10 @@ function TopographicLines({ isHovered, cardId }: { isHovered: boolean; cardId: s
           animate={
             isHovered
               ? {
-                  pathLength: 1,
-                  opacity: 0.5,
-                  transition: { duration: 1.2, delay: 0.4, ease: "easeInOut" },
-                }
+                pathLength: 1,
+                opacity: 0.5,
+                transition: { duration: 1.2, delay: 0.4, ease: "easeInOut" },
+              }
               : { pathLength: 0, opacity: 0, transition: { duration: 0.3 } }
           }
         />
@@ -407,51 +406,40 @@ export function ServicesSection({ messages }: ServicesSectionProps) {
     },
   };
 
-  // Parallax effect using Lenis scroll
-  useLenis(({ scroll }) => {
-    requestAnimationFrame(() => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const sectionHeight = rect.height;
-        
-        const buffer = 10;
-        let newBackgroundScrollY = 0;
-        
-        if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
-          newBackgroundScrollY = 0;
-        } else if (rect.top < viewportHeight && rect.bottom > 0) {
-          const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-          const maxParallax = 150;
-          newBackgroundScrollY = scrollProgress * maxParallax;
-        }
-        
-        // Smooth interpolation
-        const currentValue = prevBackgroundScrollYRef.current;
-        const targetValue = newBackgroundScrollY;
-        const diff = targetValue - currentValue;
-        
-        if (Math.abs(diff) > 0.1) {
-          const interpolationSpeed = diff > 0 ? 0.25 : 0.15;
-          const smoothedValue = currentValue + diff * interpolationSpeed;
-          prevBackgroundScrollYRef.current = smoothedValue;
-          setBackgroundScrollY(smoothedValue);
-        } else {
-          prevBackgroundScrollYRef.current = targetValue;
-          setBackgroundScrollY(targetValue);
-        }
-      } else {
-        const currentValue = prevBackgroundScrollYRef.current;
-        if (Math.abs(currentValue) > 0.1) {
-          const smoothedValue = currentValue * 0.9;
-          prevBackgroundScrollYRef.current = smoothedValue;
-          setBackgroundScrollY(smoothedValue);
-        } else {
-          prevBackgroundScrollYRef.current = 0;
-          setBackgroundScrollY(0);
-        }
+  // Parallax effect using native scroll with throttling
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (sectionRef.current) {
+            const rect = sectionRef.current.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Simplified calculation - only update when section is visible
+            if (rect.top < viewportHeight && rect.bottom > 0) {
+              const scrollProgress = Math.max(0, Math.min(1, -rect.top / rect.height));
+              const newValue = scrollProgress * 100; // Reduced intensity
+
+              // Only update if change is significant
+              if (Math.abs(newValue - prevBackgroundScrollYRef.current) > 1) {
+                prevBackgroundScrollYRef.current = newValue;
+                setBackgroundScrollY(newValue);
+              }
+            } else if (prevBackgroundScrollYRef.current !== 0) {
+              prevBackgroundScrollYRef.current = 0;
+              setBackgroundScrollY(0);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -472,14 +460,14 @@ export function ServicesSection({ messages }: ServicesSectionProps) {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           opacity: 0.6,
-          transform: backgroundScrollY > 0 
+          transform: backgroundScrollY > 0
             ? `translateY(${backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`
             : "translateY(0) scale(1)",
           transformOrigin: "center center",
           willChange: "transform",
         }}
       />
-      
+
       {/* Overlay for content readability */}
       <div
         className="absolute inset-0 pointer-events-none"

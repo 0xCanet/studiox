@@ -22,7 +22,7 @@ export function PDFViewer({ fileUrl }: PDFViewerProps) {
   // Enable vertical scroll mode to see all pages
   const scrollModePluginInstanceRef = useRef(scrollModePlugin());
   const scrollModePluginInstance = scrollModePluginInstanceRef.current;
-  
+
   // Set vertical scroll mode after plugin initialization
   useEffect(() => {
     scrollModePluginInstance.switchScrollMode(ScrollMode.Vertical);
@@ -123,10 +123,9 @@ export function PDFViewer({ fileUrl }: PDFViewerProps) {
             style={{
               height: "800px",
             }}
-            data-lenis-prevent
           >
-            <Viewer 
-              fileUrl={fileUrl} 
+            <Viewer
+              fileUrl={fileUrl}
               plugins={[scrollModePluginInstance, zoomPluginInstance]}
               setRenderRange={setRenderRange}
               renderPage={renderPage}

@@ -19,16 +19,16 @@
   --color-bg: #F0EEE9;
   --color-surface: #F0EEE9;
   --color-surface-2: rgba(240, 238, 233, 0.95);
-  
+
   /* Text Colors */
   --color-text: #0E0E0E;
   --color-muted: rgba(14, 14, 14, 0.6);
   --color-subtle: rgba(14, 14, 14, 0.4);
-  
+
   /* Border Colors */
   --color-border: rgba(14, 14, 14, 0.1);
   --color-border-subtle: rgba(14, 14, 14, 0.08);
-  
+
   /* Legacy aliases (for backward compatibility) */
   --color-background: var(--color-bg);
   --color-foreground: var(--color-text);
@@ -45,23 +45,34 @@
   --radius: 20px;
   --radius-lg: 24px;
   --radius-xl: 32px;
-  
+
   /* Section Padding Standards */
-  --section-padding-base: 2.5rem; /* py-10 */
-  --section-padding-base-md: 3rem; /* md:py-12 */
-  --section-padding-base-lg: 4rem; /* lg:py-16 */
-  
-  --section-padding-hero: 3.5rem; /* py-14 */
-  --section-padding-hero-md: 4.5rem; /* md:py-18 */
-  --section-padding-hero-lg: 6rem; /* lg:py-24 */
-  
-  --section-padding-dense: 2rem; /* py-8 */
-  --section-padding-dense-md: 2.5rem; /* md:py-10 */
-  
+  --section-padding-base: 2.5rem;
+  /* py-10 */
+  --section-padding-base-md: 3rem;
+  /* md:py-12 */
+  --section-padding-base-lg: 4rem;
+  /* lg:py-16 */
+
+  --section-padding-hero: 3.5rem;
+  /* py-14 */
+  --section-padding-hero-md: 4.5rem;
+  /* md:py-18 */
+  --section-padding-hero-lg: 6rem;
+  /* lg:py-24 */
+
+  --section-padding-dense: 2rem;
+  /* py-8 */
+  --section-padding-dense-md: 2.5rem;
+  /* md:py-10 */
+
   /* Container Padding */
-  --container-padding: 1.25rem; /* px-5 */
-  --container-padding-md: 3rem; /* md:px-12 */
-  --container-padding-lg: 2rem; /* lg:px-8 */
+  --container-padding: 1.25rem;
+  /* px-5 */
+  --container-padding-md: 3rem;
+  /* md:px-12 */
+  --container-padding-lg: 2rem;
+  /* lg:px-8 */
 
   /* ============================================
      SHADOWS (Premium, Subtle)
@@ -97,64 +108,24 @@ html {
   overflow-y: auto;
   max-width: 100%;
   width: 100%;
-  /* Force hide native scrollbar completely */
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
-}
-
-/* Force hide native scrollbar on all browsers - very aggressive rules */
-html::-webkit-scrollbar,
-html *::-webkit-scrollbar,
-body::-webkit-scrollbar,
-body *::-webkit-scrollbar {
-  display: none !important; /* Chrome, Safari, Opera */
-  width: 0px !important;
-  height: 0px !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  background: transparent !important;
-  -webkit-appearance: none !important;
-}
-
-html::-webkit-scrollbar-track,
-html *::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track,
-body *::-webkit-scrollbar-track {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  background: transparent !important;
-}
-
-html::-webkit-scrollbar-thumb,
-html *::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb,
-body *::-webkit-scrollbar-thumb {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  background: transparent !important;
-  width: 0px !important;
-  height: 0px !important;
-}
-
-html::-webkit-scrollbar-corner,
-html *::-webkit-scrollbar-corner,
-body::-webkit-scrollbar-corner,
-body *::-webkit-scrollbar-corner {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  background: transparent !important;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Prevent horizontal scroll on mobile */
+  overscroll-behavior-x: none;
 }
 
 /* Hide scrollbar during animation - class added on mount, removed after 2s */
 html.scrollbar-hidden {
   /* Keep content scrollable but completely hide scrollbar during zoom animation */
-  scrollbar-width: none !important; /* Firefox */
-  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE and Edge */
   /* Prevent any scrollbar from appearing during zoom */
-  overflow-y: auto !important; /* Allow scrolling but hide scrollbar */
+  overflow-y: auto !important;
+  /* Allow scrolling but hide scrollbar */
 }
 
 /* Extra aggressive rules when scrollbar-hidden class is present */
@@ -190,11 +161,14 @@ html.scrollbar-hidden *::-webkit-scrollbar-track {
 /* Show custom scrollbar only on desktop, after 2 seconds (when scrollbar-hidden is removed) */
 @media (min-width: 1024px) {
   html:not(.scrollbar-hidden) {
-    scrollbar-width: thin !important; /* Firefox - ~8px */
-    scrollbar-color: var(--color-charcoal) transparent !important; /* Firefox: thumb transparent track */
-    -ms-overflow-style: auto !important; /* IE and Edge */
+    scrollbar-width: thin !important;
+    /* Firefox - ~8px */
+    scrollbar-color: var(--color-charcoal) transparent !important;
+    /* Firefox: thumb transparent track */
+    -ms-overflow-style: auto !important;
+    /* IE and Edge */
   }
-  
+
   html:not(.scrollbar-hidden)::-webkit-scrollbar {
     display: block !important;
     width: 8px !important;
@@ -204,14 +178,14 @@ html.scrollbar-hidden *::-webkit-scrollbar-track {
     background: transparent !important;
     -webkit-appearance: none !important;
   }
-  
+
   html:not(.scrollbar-hidden)::-webkit-scrollbar-track {
     display: block !important;
     background: transparent !important;
     opacity: 1 !important;
     visibility: visible !important;
   }
-  
+
   html:not(.scrollbar-hidden)::-webkit-scrollbar-thumb {
     display: block !important;
     background: var(--color-charcoal) !important;
@@ -221,30 +195,40 @@ html.scrollbar-hidden *::-webkit-scrollbar-track {
     width: 8px !important;
     height: auto !important;
   }
-  
+
   html:not(.scrollbar-hidden)::-webkit-scrollbar-thumb:hover {
     background: var(--color-accent) !important;
   }
-  
+
   /* Compensate scrollbar width to recenter content */
   body {
-    margin-left: 4px !important /* Shift content right by half scrollbar width to center visually */
+    margin-left: 4px !important
+      /* Shift content right by half scrollbar width to center visually */
   }
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  /* Dynamic viewport height for mobile */
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  /* Let html handle overflow */
   max-width: 100%;
   width: 100%;
   padding-right: 0;
   margin-right: 0;
+  position: relative;
+  height: auto;
+  /* Improve touch scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Prevent text size adjustment on orientation change */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
 }
 
 /* ============================================
@@ -260,7 +244,12 @@ body {
   font-family: var(--font-body);
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.1;
@@ -277,7 +266,8 @@ h1, h2, h3, h4, h5, h6 {
 /* Hero H1 - Large size */
 #hero h1,
 .hero-h1 {
-  font-size: clamp(2rem, 4vw + 1rem, 4rem) !important; /* text-4xl to text-7xl */
+  font-size: clamp(2rem, 4vw + 1rem, 4rem) !important;
+  /* text-4xl to text-7xl */
   line-height: 1.05 !important;
   letter-spacing: -0.02em !important;
 }
@@ -310,6 +300,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Mobile specific fixes for hero text */
 @media (max-width: 1023px) {
+
   .hero-h1,
   .hero-h2 {
     word-break: break-word;
@@ -322,14 +313,16 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Standardized Typography Scale */
 h1 {
-  font-size: clamp(1.875rem, 4vw + 1rem, 3rem); /* text-3xl md:text-5xl */
+  font-size: clamp(1.875rem, 4vw + 1rem, 3rem);
+  /* text-3xl md:text-5xl */
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--color-text);
 }
 
 h2 {
-  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 1.875rem); /* text-2xl md:text-3xl */
+  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 1.875rem);
+  /* text-2xl md:text-3xl */
   line-height: 1.1;
   letter-spacing: -0.01em;
   font-weight: 400;
@@ -342,22 +335,27 @@ h2 {
 }
 
 h3 {
-  font-size: clamp(1.25rem, 2vw, 1.5rem); /* text-xl md:text-2xl */
-  line-height: 1.375; /* leading-snug */
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  /* text-xl md:text-2xl */
+  line-height: 1.375;
+  /* leading-snug */
   color: var(--color-text);
 }
 
 p {
   font-family: var(--font-body);
-  font-size: 1rem; /* text-base */
-  line-height: 1.625; /* leading-relaxed */
+  font-size: 1rem;
+  /* text-base */
+  line-height: 1.625;
+  /* leading-relaxed */
   color: var(--color-text);
 }
 
 /* Small text */
 .text-sm {
   font-size: 0.875rem;
-  line-height: 1.625; /* leading-relaxed */
+  line-height: 1.625;
+  /* leading-relaxed */
 }
 
 /* ============================================
@@ -518,13 +516,11 @@ p {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(14, 14, 14, 0.1) 0%,
-    rgba(14, 14, 14, 0) 30%,
-    rgba(14, 14, 14, 0) 60%,
-    rgba(14, 14, 14, 0.4) 100%
-  );
+  background: linear-gradient(180deg,
+      rgba(14, 14, 14, 0.1) 0%,
+      rgba(14, 14, 14, 0) 30%,
+      rgba(14, 14, 14, 0) 60%,
+      rgba(14, 14, 14, 0.4) 100%);
   z-index: 1;
 }
 
@@ -586,8 +582,8 @@ section {
     width: 100% !important;
     max-width: 100% !important;
   }
-  
-  #hero > div {
+
+  #hero>div {
     overflow-x: hidden !important;
     max-width: 100% !important;
   }
@@ -736,7 +732,7 @@ section {
   width: 100%;
   position: relative;
   /* Smooth transitions for all properties - works in both directions */
-  transition: 
+  transition:
     background 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     background-image 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     background-size 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -750,9 +746,12 @@ section {
 
 /* Iridescent gradient animation - smooth and subtle */
 @keyframes iridescent-shift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -763,6 +762,7 @@ section {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -770,20 +770,18 @@ section {
 
 /* Navbar on light sections (default) - Iridescent glass effect */
 .glass-pill-light {
-  background: linear-gradient(
-    135deg,
-    rgba(240, 238, 233, 0.7) 0%,
-    rgba(255, 240, 230, 0.6) 25%,
-    rgba(240, 245, 255, 0.6) 50%,
-    rgba(255, 240, 250, 0.6) 75%,
-    rgba(240, 238, 233, 0.7) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(240, 238, 233, 0.7) 0%,
+      rgba(255, 240, 230, 0.6) 25%,
+      rgba(240, 245, 255, 0.6) 50%,
+      rgba(255, 240, 250, 0.6) 75%,
+      rgba(240, 238, 233, 0.7) 100%) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
   border: 1px solid rgba(240, 238, 233, 0.5);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(240, 238, 233, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.08),
@@ -797,20 +795,18 @@ section {
 
 /* Navbar on hero section (dark background) - Iridescent glass effect */
 .glass-pill-dark {
-  background: linear-gradient(
-    135deg,
-    rgba(14, 14, 14, 0.5) 0%,
-    rgba(20, 15, 25, 0.45) 25%,
-    rgba(15, 20, 30, 0.45) 50%,
-    rgba(25, 15, 20, 0.45) 75%,
-    rgba(14, 14, 14, 0.5) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(14, 14, 14, 0.5) 0%,
+      rgba(20, 15, 25, 0.45) 25%,
+      rgba(15, 20, 30, 0.45) 50%,
+      rgba(25, 15, 20, 0.45) 75%,
+      rgba(14, 14, 14, 0.5) 100%) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 10s ease-in-out infinite, fade-in-smooth 0.8s ease-out !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
   border: 1px solid rgba(240, 238, 233, 0.15);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(240, 238, 233, 0.15),
     inset 0 -1px 0 rgba(0, 0, 0, 0.25),
@@ -831,8 +827,8 @@ section {
     justify-content: space-between;
     padding: 8px 16px;
   }
-  
-  .glass-pill > div {
+
+  .glass-pill>div {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -866,7 +862,7 @@ section {
   color: var(--color-charcoal);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Links on dark hero section */
@@ -875,7 +871,7 @@ section {
   color: var(--color-white);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   transition: color 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    text-shadow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Standalone glass-pill-link (Contact button) - Base */
@@ -888,19 +884,17 @@ section {
 
 /* Contact button on light sections - Iridescent glass effect */
 .glass-pill-link-standalone-light {
-  background: linear-gradient(
-    135deg,
-    rgba(240, 238, 233, 0.7) 0%,
-    rgba(255, 240, 230, 0.6) 25%,
-    rgba(240, 245, 255, 0.6) 50%,
-    rgba(255, 240, 250, 0.6) 75%,
-    rgba(240, 238, 233, 0.7) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(240, 238, 233, 0.7) 0%,
+      rgba(255, 240, 230, 0.6) 25%,
+      rgba(240, 245, 255, 0.6) 50%,
+      rgba(255, 240, 250, 0.6) 75%,
+      rgba(240, 238, 233, 0.7) 100%) !important;
   background-size: 200% 200% !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
   border: 1px solid rgba(240, 238, 233, 0.5);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(240, 238, 233, 0.8),
     inset 0 -1px 0 rgba(0, 0, 0, 0.08),
@@ -916,19 +910,17 @@ section {
 
 /* Contact button on dark hero section - Iridescent glass effect */
 .glass-pill-link-standalone-dark {
-  background: linear-gradient(
-    135deg,
-    rgba(14, 14, 14, 0.5) 0%,
-    rgba(20, 15, 25, 0.45) 25%,
-    rgba(15, 20, 30, 0.45) 50%,
-    rgba(25, 15, 20, 0.45) 75%,
-    rgba(14, 14, 14, 0.5) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(14, 14, 14, 0.5) 0%,
+      rgba(20, 15, 25, 0.45) 25%,
+      rgba(15, 20, 30, 0.45) 50%,
+      rgba(25, 15, 20, 0.45) 75%,
+      rgba(14, 14, 14, 0.5) 100%) !important;
   background-size: 200% 200% !important;
   -webkit-backdrop-filter: blur(5px) saturate(180%);
   backdrop-filter: blur(5px) saturate(180%);
   border: 1px solid rgba(240, 238, 233, 0.15);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(240, 238, 233, 0.15),
     inset 0 -1px 0 rgba(0, 0, 0, 0.25),
@@ -948,7 +940,7 @@ section {
   -webkit-backdrop-filter: blur(5px) saturate(2);
   backdrop-filter: blur(5px) saturate(2);
   border: 1px solid rgba(255, 122, 48, 0.5) !important;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(255, 122, 48, 0.25),
     inset 0 1px 0 rgba(240, 238, 233, 0.3),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1),
@@ -962,17 +954,15 @@ section {
 
 /* Hover state for orange button - same as navbar links */
 .glass-pill-link-orange:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 48, 0.3) 0%,
-    rgba(255, 150, 100, 0.35) 25%,
-    rgba(255, 122, 48, 0.3) 50%,
-    rgba(255, 180, 150, 0.35) 75%,
-    rgba(255, 122, 48, 0.3) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(255, 122, 48, 0.3) 0%,
+      rgba(255, 150, 100, 0.35) 25%,
+      rgba(255, 122, 48, 0.3) 50%,
+      rgba(255, 180, 150, 0.35) 75%,
+      rgba(255, 122, 48, 0.3) 100%) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 8s ease-in-out infinite !important;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.3),
@@ -989,7 +979,7 @@ section {
 /* Active state for orange button */
 .glass-pill-link-orange:active {
   transform: translateY(0) scale(0.98);
-  box-shadow: 
+  box-shadow:
     0 6px 24px rgba(255, 122, 48, 0.3),
     inset 0 2px 4px rgba(0, 0, 0, 0.2),
     inset 0 -1px 2px rgba(255, 122, 48, 0.3);
@@ -998,17 +988,15 @@ section {
 /* Hover State - Same for all navbar links and contact button */
 .glass-pill-link:hover,
 .glass-pill-link.hovered {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 48, 0.3) 0%,
-    rgba(255, 150, 100, 0.35) 25%,
-    rgba(255, 122, 48, 0.3) 50%,
-    rgba(255, 180, 150, 0.35) 75%,
-    rgba(255, 122, 48, 0.3) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 122, 48, 0.3) 0%,
+      rgba(255, 150, 100, 0.35) 25%,
+      rgba(255, 122, 48, 0.3) 50%,
+      rgba(255, 180, 150, 0.35) 75%,
+      rgba(255, 122, 48, 0.3) 100%);
   background-size: 200% 200%;
   animation: iridescent-shift 8s ease-in-out infinite;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.3),
@@ -1025,17 +1013,15 @@ section {
 .glass-pill-link-standalone:hover,
 .glass-pill-link-standalone-light:hover,
 .glass-pill-link-standalone-dark:hover {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 48, 0.3) 0%,
-    rgba(255, 150, 100, 0.35) 25%,
-    rgba(255, 122, 48, 0.3) 50%,
-    rgba(255, 180, 150, 0.35) 75%,
-    rgba(255, 122, 48, 0.3) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(255, 122, 48, 0.3) 0%,
+      rgba(255, 150, 100, 0.35) 25%,
+      rgba(255, 122, 48, 0.3) 50%,
+      rgba(255, 180, 150, 0.35) 75%,
+      rgba(255, 122, 48, 0.3) 100%) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 8s ease-in-out infinite !important;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.3),
@@ -1080,7 +1066,7 @@ section {
 /* Active/Pressed State */
 .glass-pill-link:active {
   background: rgba(255, 122, 48, 0.45);
-  box-shadow: 
+  box-shadow:
     inset 0 2px 4px rgba(255, 122, 48, 0.3),
     inset 0 -1px 2px rgba(0, 0, 0, 0.1),
     0 1px 4px rgba(255, 122, 48, 0.3);
@@ -1091,7 +1077,7 @@ section {
 .glass-pill-link-standalone-light:active,
 .glass-pill-link-standalone-dark:active {
   background: rgba(255, 122, 48, 0.45) !important;
-  box-shadow: 
+  box-shadow:
     inset 0 2px 4px rgba(255, 122, 48, 0.3),
     inset 0 -1px 2px rgba(0, 0, 0, 0.1),
     0 1px 4px rgba(255, 122, 48, 0.3) !important;
@@ -1116,18 +1102,16 @@ section {
 
 /* Selected/Current Page State */
 .glass-pill-link.active {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 48, 0.35) 0%,
-    rgba(255, 150, 100, 0.4) 25%,
-    rgba(255, 122, 48, 0.35) 50%,
-    rgba(255, 180, 150, 0.4) 75%,
-    rgba(255, 122, 48, 0.35) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(255, 122, 48, 0.35) 0%,
+      rgba(255, 150, 100, 0.4) 25%,
+      rgba(255, 122, 48, 0.35) 50%,
+      rgba(255, 180, 150, 0.4) 75%,
+      rgba(255, 122, 48, 0.35) 100%);
   background-size: 200% 200%;
   animation: iridescent-shift 6s ease infinite;
   font-weight: 600;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.35),
@@ -1143,18 +1127,16 @@ section {
 .glass-pill-link-standalone.active,
 .glass-pill-link-standalone-light.active,
 .glass-pill-link-standalone-dark.active {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 122, 48, 0.35) 0%,
-    rgba(255, 150, 100, 0.4) 25%,
-    rgba(255, 122, 48, 0.35) 50%,
-    rgba(255, 180, 150, 0.4) 75%,
-    rgba(255, 122, 48, 0.35) 100%
-  ) !important;
+  background: linear-gradient(135deg,
+      rgba(255, 122, 48, 0.35) 0%,
+      rgba(255, 150, 100, 0.4) 25%,
+      rgba(255, 122, 48, 0.35) 50%,
+      rgba(255, 180, 150, 0.4) 75%,
+      rgba(255, 122, 48, 0.35) 100%) !important;
   background-size: 200% 200% !important;
   animation: iridescent-shift 6s ease infinite !important;
   font-weight: 600;
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 rgba(240, 238, 233, 0.6),
     inset 0 -1px 0 rgba(255, 122, 48, 0.4),
     0 4px 16px rgba(255, 122, 48, 0.35),
@@ -1258,6 +1240,7 @@ footer {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1268,10 +1251,21 @@ footer {
   animation: fadeInUp 0.6s ease forwards;
 }
 
-.animation-delay-100 { animation-delay: 0.1s; }
-.animation-delay-200 { animation-delay: 0.2s; }
-.animation-delay-300 { animation-delay: 0.3s; }
-.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
 
 /* ============================================
    UTILITIES
@@ -1293,35 +1287,35 @@ footer {
   .bg-bg {
     background-color: var(--color-bg);
   }
-  
+
   .bg-surface {
     background-color: var(--color-surface);
   }
-  
+
   .bg-surface-2 {
     background-color: var(--color-surface-2);
   }
-  
+
   .text-text {
     color: var(--color-text);
   }
-  
+
   .text-muted {
     color: var(--color-muted);
   }
-  
+
   .text-subtle {
     color: var(--color-subtle);
   }
-  
+
   .text-accent {
     color: var(--color-accent);
   }
-  
+
   .border-border {
     border-color: var(--color-border);
   }
-  
+
   .border-border-subtle {
     border-color: var(--color-border-subtle);
   }
@@ -1338,10 +1332,14 @@ footer {
 
 /* Typewriter cursor animation */
 @keyframes typewriterBlink {
-  0%, 49% {
+
+  0%,
+  49% {
     opacity: 1;
   }
-  50%, 100% {
+
+  50%,
+  100% {
     opacity: 0;
   }
 }
@@ -1352,10 +1350,14 @@ footer {
 
 /* Blinking dot animation for final period */
 @keyframes blinkDot {
-  0%, 49% {
+
+  0%,
+  49% {
     opacity: 1;
   }
-  50%, 100% {
+
+  50%,
+  100% {
     opacity: 0.3;
   }
 }
@@ -1368,7 +1370,7 @@ footer {
 .neon-text {
   font-weight: bold;
   color: var(--color-accent);
-  text-shadow: 
+  text-shadow:
     0 0 1px rgba(255, 122, 48, 0.8),
     0 0 2px rgba(255, 122, 48, 0.6),
     0 0 4px rgba(255, 122, 48, 0.4),
@@ -1380,15 +1382,26 @@ footer {
 
 /* Flicker animation */
 @keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-    text-shadow: 
+
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    text-shadow:
       0 0 1px rgba(255, 122, 48, 0.8),
       0 0 2px rgba(255, 122, 48, 0.6),
       0 0 4px rgba(255, 122, 48, 0.4),
       0 0 8px rgba(255, 122, 48, 0.3);
   }
-  20%, 24%, 55% {
-    text-shadow: 
+
+  20%,
+  24%,
+  55% {
+    text-shadow:
       0 0 0.5px rgba(255, 122, 48, 0.6),
       0 0 1px rgba(255, 122, 48, 0.4),
       0 0 2px rgba(255, 122, 48, 0.3),
@@ -1397,15 +1410,26 @@ footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .typewriter-cursor {
     animation: none !important;
     opacity: 1 !important;
+  }
+
+  /* Disable parallax and transform animations */
+  [style*="transform"],
+  [style*="translateY"],
+  [style*="translateX"] {
+    transform: none !important;
   }
 }
 
@@ -1417,8 +1441,105 @@ footer {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* Hardware acceleration for animations */
+.hero-image-container,
+.hero-content,
+video,
+.glass-pill,
+.glass-pill-link {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Optimize images */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 1023px) {
+
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Prevent layout shift */
+* {
+  box-sizing: border-box;
+}
+
+/* Reduce motion for specific elements */
+@media (prefers-reduced-motion: reduce) {
+  video {
+    animation: none !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Container queries support */
+@supports (container-type: inline-size) {
+  .container {
+    container-type: inline-size;
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Improved focus visible for keyboard navigation */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Remove focus outline for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  * {
+    border-color: currentColor !important;
+  }
+}
+
+/* Dark mode support (future-proofing) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
   }
 }

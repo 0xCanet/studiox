@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
-import { useLenis } from "lenis/react";
 import { LoadingBarTags } from "./LoadingBarTags";
 import { RandomCharReveal } from "./RandomCharReveal";
 
@@ -40,14 +39,15 @@ export function Hero({ messages, onContactClick }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+    // Skip expensive mouse tracking on mobile for better performance
+    if (isMobile || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
     });
     setIsHovering(true);
-  }, []);
+  }, [isMobile]);
 
   const handleMouseLeave = useCallback(() => {
     setIsHovering(false);
@@ -79,7 +79,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
     window.addEventListener('resize', calculateBrowserBarHeight);
     window.addEventListener('orientationchange', calculateBrowserBarHeight);
-    
+
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', calculateBrowserBarHeight);
       window.visualViewport.addEventListener('scroll', calculateBrowserBarHeight);
@@ -103,21 +103,21 @@ export function Hero({ messages, onContactClick }: HeroProps) {
       const isSmallScreen = window.innerWidth < 1024;
       setIsMobile(isSmallScreen && isTouchDevice);
     };
-    
+
     checkMobile();
-    
+
     const mediaQuery = window.matchMedia('(max-width: 1023px)');
     const handleChange = () => checkMobile();
-    
+
     if (mediaQuery.addEventListener) {
       mediaQuery.addEventListener('change', handleChange);
     } else {
       mediaQuery.addListener(handleChange);
     }
-    
+
     window.addEventListener('resize', checkMobile);
     window.addEventListener('orientationchange', checkMobile);
-    
+
     return () => {
       window.removeEventListener('resize', checkMobile);
       window.removeEventListener('orientationchange', checkMobile);
@@ -146,14 +146,14 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     };
 
     calculateViewportHeight();
-    
+
     window.addEventListener('resize', calculateViewportHeight);
     window.addEventListener('orientationchange', calculateViewportHeight);
-    
+
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', calculateViewportHeight);
     }
-    
+
     return () => {
       window.removeEventListener('resize', calculateViewportHeight);
       window.removeEventListener('orientationchange', calculateViewportHeight);
@@ -172,10 +172,10 @@ export function Hero({ messages, onContactClick }: HeroProps) {
       }
 
       // Try multiple selectors to find the navbar
-      const navbar = document.querySelector('nav[class*="fixed"]') || 
-                     document.querySelector('nav') ||
-                     document.querySelector('[role="navigation"]');
-      
+      const navbar = document.querySelector('nav[class*="fixed"]') ||
+        document.querySelector('nav') ||
+        document.querySelector('[role="navigation"]');
+
       if (navbar) {
         const rect = navbar.getBoundingClientRect();
         // Navbar top position (30px) + navbar height + small margin
@@ -189,7 +189,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
     // Calculate immediately
     calculateNavbarHeight();
-    
+
     // Recalculate multiple times to catch navbar when it becomes visible
     const timers = [
       setTimeout(() => calculateNavbarHeight(), 100),
@@ -201,12 +201,12 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
     window.addEventListener('resize', calculateNavbarHeight);
     window.addEventListener('orientationchange', calculateNavbarHeight);
-    
+
     // Use MutationObserver to detect when navbar is added/modified
     const observer = new MutationObserver(() => {
       calculateNavbarHeight();
     });
-    
+
     // Observe body for navbar changes
     if (document.body) {
       observer.observe(document.body, {
@@ -216,7 +216,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
         attributeFilter: ['class', 'style']
       });
     }
-    
+
     return () => {
       timers.forEach(timer => clearTimeout(timer));
       window.removeEventListener('resize', calculateNavbarHeight);
@@ -237,18 +237,18 @@ export function Hero({ messages, onContactClick }: HeroProps) {
       // Rough estimate: ~400-500px for typical mobile content
       const estimatedContentHeight = 500;
       const availableHeight = viewportHeight - navbarHeight;
-      
+
       // Update minimum section height based on estimate
       setMinSectionHeight(Math.max(600, navbarHeight + estimatedContentHeight + 100));
-      
+
       // If we have enough space (content + 100px margin), start from top
       if (availableHeight >= estimatedContentHeight + 100) {
         setContentPosition('top');
-      } 
+      }
       // If we have moderate space (content + 50px margin), center it
       else if (availableHeight >= estimatedContentHeight + 50) {
         setContentPosition('center');
-      } 
+      }
       // Otherwise, position at bottom (default)
       else {
         setContentPosition('bottom');
@@ -258,21 +258,21 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     // Initial calculation with estimate
     calculateContentPosition();
 
-        // Wait for content to be rendered before recalculating with actual height
+    // Wait for content to be rendered before recalculating with actual height
     const timers = [
       setTimeout(() => {
         if (textRef.current && animationPhase === 'content') {
           const contentRect = textRef.current.getBoundingClientRect();
           const actualContentHeight = contentRect.height;
           const availableHeight = viewportHeight - navbarHeight;
-          
+
           // Use actual content height if available and reasonable
           if (actualContentHeight > 100 && actualContentHeight < 2000) {
             const contentHeight = actualContentHeight;
-            
+
             // Update minimum section height based on actual content
             setMinSectionHeight(Math.max(600, navbarHeight + contentHeight + 100));
-            
+
             if (availableHeight >= contentHeight + 100) {
               setContentPosition('top');
             } else if (availableHeight >= contentHeight + 50) {
@@ -289,13 +289,13 @@ export function Hero({ messages, onContactClick }: HeroProps) {
           const contentRect = textRef.current.getBoundingClientRect();
           const actualContentHeight = contentRect.height;
           const availableHeight = viewportHeight - navbarHeight;
-          
+
           if (actualContentHeight > 100 && actualContentHeight < 2000) {
             const contentHeight = actualContentHeight;
-            
+
             // Update minimum section height based on actual content
             setMinSectionHeight(Math.max(600, navbarHeight + contentHeight + 100));
-            
+
             if (availableHeight >= contentHeight + 100) {
               setContentPosition('top');
             } else if (availableHeight >= contentHeight + 50) {
@@ -307,10 +307,10 @@ export function Hero({ messages, onContactClick }: HeroProps) {
         }
       }, 3000)
     ];
-    
+
     window.addEventListener('resize', calculateContentPosition);
     window.addEventListener('orientationchange', calculateContentPosition);
-    
+
     return () => {
       timers.forEach(timer => clearTimeout(timer));
       window.removeEventListener('resize', calculateContentPosition);
@@ -321,33 +321,33 @@ export function Hero({ messages, onContactClick }: HeroProps) {
   useEffect(() => {
     const htmlElement = document.documentElement;
     htmlElement.classList.add('scrollbar-hidden');
-    
+
     // Phase 1: Video appears and zooms out over 2 seconds
     setVideoVisible(true);
-    
+
     // Container zoom out animation over 2 seconds (more dramatic)
     const containerZoomStartTime = Date.now();
     const containerZoomDuration = 2000;
     const containerStartZoom = 1.15;
     const containerEndZoom = 1.0;
-    
+
     const containerZoomInterval = setInterval(() => {
       const elapsed = Date.now() - containerZoomStartTime;
       const progress = Math.min(elapsed / containerZoomDuration, 1);
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentContainerZoom = containerStartZoom - (containerStartZoom - containerEndZoom) * easedProgress;
       setContainerZoom(currentContainerZoom);
-      
+
       if (progress >= 1) {
         clearInterval(containerZoomInterval);
       }
     }, 16);
-    
+
     const zoomStartTime = Date.now();
     const zoomDuration = 2000;
     const startZoom = 1.1;
     const endZoom = 1.0;
-    
+
     const zoomInterval = setInterval(() => {
       const elapsed = Date.now() - zoomStartTime;
       const progress = Math.min(elapsed / zoomDuration, 1);
@@ -355,17 +355,17 @@ export function Hero({ messages, onContactClick }: HeroProps) {
       const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentZoom = startZoom - (startZoom - endZoom) * easedProgress;
       setVideoZoom(currentZoom);
-      
+
       if (progress >= 1) {
         clearInterval(zoomInterval);
       }
     }, 16);
-    
+
     const scrollbarTimeout = setTimeout(() => {
       const htmlElement = document.documentElement;
       htmlElement.classList.remove('scrollbar-hidden');
     }, 2000);
-    
+
     // Phase 2: After 2 seconds, navbar appears
     const navbarTimeout = setTimeout(() => {
       setAnimationPhase("navbar");
@@ -386,76 +386,63 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     };
   }, []);
 
-  // Get scroll position from Lenis - Apply parallax on both mobile and desktop
+  // Native scroll handling for parallax - Apply parallax on both mobile and desktop
   // Use ref to store previous value for smooth interpolation
   const prevHeroScrollYRef = useRef(0);
-  
+
   // Memoize tagline tags - all animations use same duration and start together
   const taglineTags = useMemo(() => messages.tagline.split(" • "), [messages.tagline]);
   const animationDuration = 2200; // Reduced duration for more minimalist, subtle effect
-  
-  useLenis(({ scroll }) => {
-    requestAnimationFrame(() => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const sectionHeight = rect.height;
-        
-        const buffer = 10;
-        
-        let newHeroScrollY = 0;
-        
-        if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
-          newHeroScrollY = 0;
-        } else if (rect.top < viewportHeight && rect.bottom > 0) {
-          const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-          
-          const maxParallax = 200;
-          newHeroScrollY = scrollProgress * maxParallax;
-        }
-        
-        const currentValue = prevHeroScrollYRef.current;
-        const targetValue = newHeroScrollY;
-        const diff = targetValue - currentValue;
-        
-        if (Math.abs(diff) > 0.1) {
-          const interpolationSpeed = diff > 0 ? 0.25 : 0.15;
-          const smoothedValue = currentValue + diff * interpolationSpeed;
-          prevHeroScrollYRef.current = smoothedValue;
-          setHeroScrollY(smoothedValue);
-        } else {
-          // Snap to target if very close
-          prevHeroScrollYRef.current = targetValue;
-          setHeroScrollY(targetValue);
-        }
-      } else {
-        const currentValue = prevHeroScrollYRef.current;
-        if (Math.abs(currentValue) > 0.1) {
-          const smoothedValue = currentValue * 0.9; // Smooth decay
-          prevHeroScrollYRef.current = smoothedValue;
-          setHeroScrollY(smoothedValue);
-        } else {
-          prevHeroScrollYRef.current = 0;
-          setHeroScrollY(0);
-        }
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (sectionRef.current) {
+            const rect = sectionRef.current.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Simplified calculation - only update when section is visible
+            if (rect.top < viewportHeight && rect.bottom > 0) {
+              const scrollProgress = Math.max(0, Math.min(1, -rect.top / rect.height));
+              const newValue = scrollProgress * 130; // Reduced intensity
+
+              // Only update if change is significant
+              if (Math.abs(newValue - prevHeroScrollYRef.current) > 1) {
+                prevHeroScrollYRef.current = newValue;
+                setHeroScrollY(newValue);
+              }
+            } else if (prevHeroScrollYRef.current !== 0) {
+              prevHeroScrollYRef.current = 0;
+              setHeroScrollY(0);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
 
   return (
-    <section 
+    <section
       ref={sectionRef}
-      id="hero" 
-      className="relative h-screen bg-[var(--color-cream)] px-5 pb-5 md:pt-6 md:px-12 md:pb-12" 
-      style={{ 
-        width: '100%', 
+      id="hero"
+      className="relative h-screen bg-[var(--color-cream)] px-5 pb-5 md:pt-6 md:px-12 md:pb-12"
+      style={{
+        width: '100%',
         maxWidth: '100%',
-        marginRight: 0, 
+        marginRight: 0,
         paddingTop: isMobile && contentPosition === 'top' ? `${Math.max(96, navbarHeight)}px` : isMobile ? '0px' : undefined,
         height: isMobile ? '100dvh' : '102vh',
-        minHeight: isMobile 
-          ? contentPosition === 'top' 
+        minHeight: isMobile
+          ? contentPosition === 'top'
             ? `${minSectionHeight}px` // Minimum height calculated based on actual content
             : '100dvh'
           : '102vh',
@@ -465,174 +452,173 @@ export function Hero({ messages, onContactClick }: HeroProps) {
         boxSizing: 'border-box'
       }}
     >
-        <div 
-          ref={containerRef}
-          className="relative w-full rounded-b-3xl md:rounded-[32px] bg-[var(--color-charcoal)] md:mt-6 md:ml-6 md:mr-6 md:mb-0"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          style={{ 
-            width: isMobile ? '100%' : 'calc(100% - 48px)',
-            maxWidth: isMobile ? '100%' : 'calc(100% - 48px)',
-            height: isMobile ? '100%' : 'calc(100% - 24px)',
-            minHeight: isMobile ? '100%' : 'calc(100% - 24px)',
-            transform: `scale(${containerZoom})`,
-            transformOrigin: 'center center',
-            position: 'relative',
-            boxSizing: 'border-box',
-            willChange: 'transform',
-            transition: 'opacity 0.8s ease-out',
-            opacity: videoVisible ? 1 : 0,
-          }}
-        >
-        <div 
+      <div
+        ref={containerRef}
+        className="relative w-full rounded-b-3xl md:rounded-[32px] bg-[var(--color-charcoal)] md:mt-6 md:ml-6 md:mr-6 md:mb-0"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          width: isMobile ? '100%' : 'calc(100% - 48px)',
+          maxWidth: isMobile ? '100%' : 'calc(100% - 48px)',
+          height: isMobile ? '100%' : 'calc(100% - 24px)',
+          minHeight: isMobile ? '100%' : 'calc(100% - 24px)',
+          transform: `scale(${containerZoom})`,
+          transformOrigin: 'center center',
+          position: 'relative',
+          boxSizing: 'border-box',
+          willChange: 'transform',
+          transition: 'opacity 0.8s ease-out',
+          opacity: videoVisible ? 1 : 0,
+        }}
+      >
+        <div
           className="absolute inset-0 rounded-b-3xl md:rounded-[32px] overflow-hidden"
           style={{
             borderRadius: isMobile ? '0 0 1.5rem 1.5rem' : '32px'
           }}
         >
-        <motion.div 
-          ref={videoRef}
-          className="absolute inset-0 w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: videoVisible ? 1 : 0,
-          }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{
-            filter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
-            WebkitFilter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
-            transform: heroScrollY > 0 
-              ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
-              : `scale(${videoZoom})`,
-            transformOrigin: "center center",
-            willChange: 'transform, opacity',
-          }}
-        >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ 
-              transform: 'translateZ(0)',
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
+          <motion.div
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: videoVisible ? 1 : 0,
+            }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{
+              filter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
+              WebkitFilter: isMobile ? "blur(0.5px)" : "grayscale(100%) blur(0.5px)",
+              transform: heroScrollY > 0
+                ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
+                : `scale(${videoZoom})`,
+              transformOrigin: "center center",
+              willChange: 'transform, opacity',
+            }}
+          >
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                willChange: 'auto'
+              }}
+              aria-label="Hero background video"
+            >
+              <source src="/src/video_01.mp4" type="video/mp4" />
+            </video>
+          </motion.div>
+
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: videoVisible ? 1 : 0,
+            }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{
+              transform: heroScrollY > 0
+                ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
+                : `scale(${videoZoom})`,
+              transformOrigin: "center center",
+              maskImage: isHovering && !isMobile
+                ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
+                : "transparent",
+              WebkitMaskImage: isHovering && !isMobile
+                ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
+                : "transparent",
+              transition: "mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              willChange: heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
+            }}
+          >
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                transform: 'translateZ(0)',
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
+                willChange: 'auto'
+              }}
+              aria-label="Hero background video"
+            >
+              <source src="/src/video_01.mp4" type="video/mp4" />
+            </video>
+          </motion.div>
+
+          <div
+            className="absolute inset-0 pointer-events-none z-7"
+            style={{
+              background: isHovering
+                ? `radial-gradient(circle 450px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.08) 0%, rgba(240,238,233,0.05) 25%, rgba(240,238,233,0.02) 50%, transparent 75%, transparent 100%)`
+                : "transparent",
+              transition: "opacity 0.25s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              filter: "blur(30px)",
+              willChange: "background",
+              transform: isMobile ? 'none' : undefined,
+            }}
+          />
+
+          <div
+            className="absolute inset-0 pointer-events-none z-8"
+            style={{
+              background: isHovering
+                ? `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.15) 0%, rgba(240,238,233,0.08) 30%, rgba(240,238,233,0.03) 60%, transparent 85%, transparent 100%)`
+                : "transparent",
+              transition: "opacity 0.2s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+              filter: "blur(15px)",
+              mixBlendMode: "soft-light",
+              willChange: "background",
+              transform: isMobile ? 'none' : undefined,
+            }}
+          />
+
+          <div
+            className="absolute inset-0 bg-gradient-to-t from-[var(--color-charcoal)]/80 via-[var(--color-charcoal)]/30 to-[var(--color-charcoal)]/10 z-10"
+            style={{
+              transform: 'none',
               willChange: 'auto'
             }}
-            aria-label="Hero background video"
-          >
-            <source src="/src/video_01.mp4" type="video/mp4" />
-          </video>
-        </motion.div>
-
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: videoVisible ? 1 : 0,
-          }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          style={{
-            transform: heroScrollY > 0 
-              ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
-              : `scale(${videoZoom})`,
-            transformOrigin: "center center",
-            maskImage: isHovering && !isMobile
-              ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
-              : "transparent",
-            WebkitMaskImage: isHovering && !isMobile
-              ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
-              : "transparent",
-            transition: "mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            willChange: heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
-          }}
-        >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ 
-              transform: 'translateZ(0)',
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              willChange: 'auto'
-            }}
-            aria-label="Hero background video"
-          >
-            <source src="/src/video_01.mp4" type="video/mp4" />
-          </video>
-        </motion.div>
-
-        <div
-          className="absolute inset-0 pointer-events-none z-7"
-          style={{
-            background: isHovering
-              ? `radial-gradient(circle 450px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.08) 0%, rgba(240,238,233,0.05) 25%, rgba(240,238,233,0.02) 50%, transparent 75%, transparent 100%)`
-              : "transparent",
-            transition: "opacity 0.25s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            filter: "blur(30px)",
-            willChange: "background",
-            transform: isMobile ? 'none' : undefined,
-          }}
-        />
-        
-        <div
-          className="absolute inset-0 pointer-events-none z-8"
-          style={{
-            background: isHovering
-              ? `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(240,238,233,0.15) 0%, rgba(240,238,233,0.08) 30%, rgba(240,238,233,0.03) 60%, transparent 85%, transparent 100%)`
-              : "transparent",
-            transition: "opacity 0.2s ease-out, background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-            filter: "blur(15px)",
-            mixBlendMode: "soft-light",
-            willChange: "background",
-            transform: isMobile ? 'none' : undefined,
-          }}
-        />
-
-        <div 
-          className="absolute inset-0 bg-gradient-to-t from-[var(--color-charcoal)]/80 via-[var(--color-charcoal)]/30 to-[var(--color-charcoal)]/10 z-10"
-          style={{
-            transform: 'none',
-            willChange: 'auto'
-          }}
-        />
+          />
         </div>
 
-        <div 
+        <div
           ref={textRef}
-          className={`absolute inset-0 flex flex-col z-20 ${
-            isMobile 
-              ? contentPosition === 'top' 
-                ? 'justify-start' 
-                : contentPosition === 'center' 
-                  ? 'justify-center' 
-                  : 'justify-end'
-              : 'justify-end'
-          }`}
+          className={`absolute inset-0 flex flex-col z-20 ${isMobile
+            ? contentPosition === 'top'
+              ? 'justify-start'
+              : contentPosition === 'center'
+                ? 'justify-center'
+                : 'justify-end'
+            : 'justify-end'
+            }`}
           style={{
             paddingLeft: isMobile ? '20px' : '48px',
             paddingRight: isMobile ? '20px' : '48px',
-            paddingTop: isMobile 
-              ? contentPosition === 'top' 
+            paddingTop: isMobile
+              ? contentPosition === 'top'
                 ? `${navbarHeight + 20}px` // Start after navbar with margin
                 : contentPosition === 'center'
                   ? '32px'
                   : '32px'
               : '48px',
-            paddingBottom: isMobile 
+            paddingBottom: isMobile
               ? contentPosition === 'bottom'
                 ? `calc(80px + env(safe-area-inset-bottom, 0px))`
                 : contentPosition === 'center'
                   ? '32px'
                   : '32px'
               : '48px',
-            transform: isMobile 
+            transform: isMobile
               ? contentPosition === 'top'
                 ? `translateY(${heroScrollY > 0 ? heroScrollY * 0.6 : 0}px)` // Minimal transform for top position
                 : contentPosition === 'center'
@@ -651,12 +637,12 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ 
-                  duration: 0.8, 
+                transition={{
+                  duration: 0.8,
                   ease: "easeOut"
                 }}
               >
-                <div className="mb-6" style={{ 
+                <div className="mb-6" style={{
                   maxWidth: '100%',
                   overflow: 'hidden',
                   wordBreak: 'break-word'
@@ -710,36 +696,36 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 0.6, 
+                transition={{
+                  duration: 0.6,
                   delay: animationDuration / 1000 + 0.2,
                   ease: "easeOut"
                 }}
                 className="flex flex-wrap items-center gap-3 md:gap-4"
               >
-              <button
-                onClick={onContactClick}
-                className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 text-[#F0EEE9] inline-flex items-center"
-              >
-                {messages.primaryCta.replace(" →", "")}
-                <svg
-                  className="ml-2 w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+                <button
+                  onClick={onContactClick}
+                  className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-orange text-sm px-6 py-2.5 text-[#F0EEE9] inline-flex items-center"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </button>
-              <a href="#work" className="btn btn-ghost">
-                {messages.secondaryCta}
-              </a>
-            </motion.div>
+                  {messages.primaryCta.replace(" →", "")}
+                  <svg
+                    className="ml-2 w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </button>
+                <a href="#work" className="btn btn-ghost">
+                  {messages.secondaryCta}
+                </a>
+              </motion.div>
             )}
           </div>
         </div>

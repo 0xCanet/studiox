@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { useLenis } from "lenis/react";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { Section } from "./Section";
 import { Container } from "./Container";
@@ -45,38 +44,8 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
   const cardRef = useRef<HTMLDivElement>(null);
   const [parallaxY, setParallaxY] = useState(0);
 
-  // Effet de parallaxe pour desktop uniquement - basé sur le scroll
-  useLenis(({ scroll }) => {
-    if (isMobile) return;
-    
-    requestAnimationFrame(() => {
-      if (cardRef.current) {
-        // Trouver la section parente
-        const section = cardRef.current.closest('section');
-        if (!section) return;
-        
-        const sectionRect = section.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const viewportCenterY = viewportHeight / 2;
-        
-        // Calculer la position de la section dans le viewport
-        const sectionTop = sectionRect.top;
-        const sectionHeight = sectionRect.height;
-        const sectionCenterY = sectionTop + sectionHeight / 2;
-        
-        // Calculer la distance du centre de la section au centre du viewport
-        const distanceFromCenter = sectionCenterY - viewportCenterY;
-        const normalizedDistance = distanceFromCenter / viewportHeight;
-        
-        // Appliquer un décalage de parallaxe différent selon l'offset de la card
-        // Chaque card se déplace indépendamment avec une intensité différente
-        const parallaxIntensity = parallaxOffset * 200; // Intensité très augmentée pour visibilité
-        const newParallaxY = normalizedDistance * parallaxIntensity;
-        
-        setParallaxY(newParallaxY);
-      }
-    });
-  }, [isMobile, parallaxOffset]);
+  // Parallax désactivé pour les cards individuelles - géré globalement
+  // pour éviter les problèmes de performance
 
   if (isMobile) {
     return (
@@ -93,21 +62,21 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
           <div className="w-full aspect-video rounded-lg overflow-hidden mb-6">
             {service.animationSrc ? (
               service.animationSrc.endsWith(".webm") || service.animationSrc.endsWith(".mp4") ? (
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                className="w-full h-full object-cover"
-                style={{
-                  imageRendering: "pixelated" as any,
-                  filter: "sepia(0.2)",
-                }}
-                aria-label={`${service.label} animation`}
-              >
-                <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
-              </video>
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-cover"
+                  style={{
+                    imageRendering: "pixelated" as any,
+                    filter: "sepia(0.2)",
+                  }}
+                  aria-label={`${service.label} animation`}
+                >
+                  <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
+                </video>
               ) : (
                 <img
                   src={service.animationSrc}
@@ -152,7 +121,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
       initial={{ opacity: 0, scale: 0.85, y: 30 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true, margin: "0px" }}
-      transition={{ 
+      transition={{
         duration: 0.6,
         ease: [0.4, 0, 0.2, 1],
         delay: parallaxOffset * 0.1 + 0.2 // Délai différent pour chaque card
@@ -162,7 +131,6 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         left: `${fixedPosition.left}px`,
         top: `${fixedPosition.top}px`,
         width: '280px',
-        transform: `translateY(${parallaxY}px)`,
       }}
     >
       <div
@@ -255,7 +223,7 @@ function Pin({ service, animationDelay }: PinProps) {
       <motion.div
         initial={{ opacity: 0, scale: 0 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ 
+        transition={{
           delay: animationDelay,
           duration: 0.4,
           ease: "easeOut"
@@ -300,7 +268,7 @@ function Pin({ service, animationDelay }: PinProps) {
       <motion.div
         initial={{ opacity: 0, y: -5 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ 
+        transition={{
           delay: animationDelay + 0.2,
           duration: 0.3,
         }}
@@ -334,15 +302,15 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
       const containerWidth = mapContainerRef.current.offsetWidth;
       const containerHeight = mapContainerRef.current.offsetHeight || 700; // fallback à minHeight
-      
+
       // Positions de référence pour un écran de 1400px (largeur max du conteneur)
       const baseWidth = 1400;
       const baseHeight = 700;
-      
+
       // Calcul du ratio pour adapter les positions
       const widthRatio = containerWidth / baseWidth;
       const heightRatio = containerHeight / baseHeight;
-      
+
       // Positions de base en pixels pour un écran de 1400px
       const basePositions: Record<string, { left: number; top: number }> = {
         brand_identity: { left: 14, top: 380.5 },
@@ -353,7 +321,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
       // Calculer les nouvelles positions en fonction du ratio
       const responsivePositions = new Map<string, { left: number; top: number }>();
-      
+
       Object.entries(basePositions).forEach(([key, pos]) => {
         responsivePositions.set(key, {
           left: pos.left * widthRatio,
@@ -410,66 +378,50 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     };
   }, []);
 
-  // Parallax effect using Lenis scroll
-  useLenis(() => {
-    requestAnimationFrame(() => {
-      if (sectionRef.current) {
-        const rect = sectionRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const sectionHeight = rect.height;
-        
-        const buffer = 10;
-        let newBackgroundScrollY = 0;
-        
-        if (rect.bottom <= buffer || rect.top >= viewportHeight - buffer) {
-          newBackgroundScrollY = 0;
-        } else if (rect.top < viewportHeight && rect.bottom > 0) {
-          const scrollProgress = Math.max(0, Math.min(1, -rect.top / sectionHeight));
-          const maxParallax = 150;
-          newBackgroundScrollY = scrollProgress * maxParallax;
-        }
-        
-        const currentValue = prevBackgroundScrollYRef.current;
-        const targetValue = newBackgroundScrollY;
-        const diff = targetValue - currentValue;
-        
-        if (Math.abs(diff) > 0.1) {
-          const interpolationSpeed = diff > 0 ? 0.25 : 0.15;
-          const smoothedValue = currentValue + diff * interpolationSpeed;
-          prevBackgroundScrollYRef.current = smoothedValue;
-          setBackgroundScrollY(prev => {
-            if (Math.abs(prev - smoothedValue) < 0.01) return prev;
-            return smoothedValue;
-          });
-        } else {
-          prevBackgroundScrollYRef.current = targetValue;
-          setBackgroundScrollY(prev => {
-            if (Math.abs(prev - targetValue) < 0.01) return prev;
-            return targetValue;
-          });
-        }
-      } else {
-        const currentValue = prevBackgroundScrollYRef.current;
-        if (Math.abs(currentValue) > 0.1) {
-          const smoothedValue = currentValue * 0.9;
-          prevBackgroundScrollYRef.current = smoothedValue;
-          setBackgroundScrollY(smoothedValue);
-        } else {
-          prevBackgroundScrollYRef.current = 0;
-          setBackgroundScrollY(0);
-        }
+  // Parallax effect using native scroll with throttling
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          if (sectionRef.current) {
+            const rect = sectionRef.current.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Simplified calculation - only update when section is visible
+            if (rect.top < viewportHeight && rect.bottom > 0) {
+              const scrollProgress = Math.max(0, Math.min(1, -rect.top / rect.height));
+              const newValue = scrollProgress * 100; // Reduced intensity
+
+              // Only update if change is significant
+              if (Math.abs(newValue - prevBackgroundScrollYRef.current) > 1) {
+                prevBackgroundScrollYRef.current = newValue;
+                setBackgroundScrollY(newValue);
+              }
+            } else if (prevBackgroundScrollYRef.current !== 0) {
+              prevBackgroundScrollYRef.current = 0;
+              setBackgroundScrollY(0);
+            }
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Get pin position relative to container for better positioning
   const getPinPositionRelative = (service: ServiceRouteItem) => {
     if (!mapContainerRef.current || isMobile) return { x: 0, y: 0 };
-    
+
     const containerRect = mapContainerRef.current.getBoundingClientRect();
     const x = containerRect.width * service.xDesktop / 100;
     const y = containerRect.height * service.yDesktop / 100;
-    
+
     return { x, y };
   };
 
@@ -504,7 +456,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
           aria-label="Services section background video"
         />
       </div>
-      
+
       {/* Overlay for content readability - en dessous du tracé pour le laisser visible */}
       <div
         className="absolute inset-0 pointer-events-none z-[1]"
@@ -535,9 +487,9 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
         {/* Desktop: Military Map with Pins and Cards */}
         <div className="hidden lg:block">
-          <div 
+          <div
             ref={mapContainerRef}
-            className="relative w-full" 
+            className="relative w-full"
             style={{ aspectRatio: "16/9", minHeight: "700px" }}
           >
             {/* Pins and Cards */}
@@ -546,7 +498,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
               const pinIndex = sortedByOrder.findIndex(s => s.id === service.id);
               const animationDelay = pinIndex * 0.2;
               const fixedPos = cardPositions.get(service.id) || { left: 0, top: 0 };
-              
+
               // Définir un offset de parallaxe différent pour chaque card (de -3 à 3)
               // Chaque card aura un mouvement indépendant et différent
               const parallaxOffsets = [-3, -1, 1, 3];

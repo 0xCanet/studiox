@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
-import { useLenis } from "lenis/react";
 import { Container } from "./Container";
 
 export interface FooterMessages {
@@ -26,14 +25,12 @@ interface FooterProps {
 }
 
 export function Footer({ messages }: FooterProps) {
-  const lenis = useLenis();
-
   const handleQuickLinkClick = (href: string) => {
     if (href.startsWith("#")) {
-      lenis?.scrollTo(href, {
-        offset: -100,
-        duration: 1.5,
-      });
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 

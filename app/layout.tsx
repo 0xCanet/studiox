@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { K2D, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
-import "lenis/dist/lenis.css";
-import { SmoothScroll } from "./components/SmoothScroll";
 import { GoogleAnalytics } from "./components/GoogleAnalytics";
 
 const k2d = K2D({
@@ -18,6 +16,17 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F0EEE9' },
+    { media: '(prefers-color-scheme: dark)', color: '#0E0E0E' }
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://studiox.dev"),
@@ -93,6 +102,9 @@ export const metadata: Metadata = {
     },
   },
   category: "Design Agency",
+  appleWebApp: {
+    title: "Studi.0x",
+  },
 };
 
 export default function RootLayout({
@@ -101,10 +113,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable} scrollbar-hidden`} suppressHydrationWarning>
+    <html lang="en" className={`${k2d.variable} ${ibmPlexMono.variable}`} suppressHydrationWarning>
       <body className={`${k2d.variable} ${ibmPlexMono.variable} antialiased`} suppressHydrationWarning>
         <GoogleAnalytics />
-        <SmoothScroll>{children}</SmoothScroll>
+        {children}
       </body>
     </html>
   );

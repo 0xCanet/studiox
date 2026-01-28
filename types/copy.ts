@@ -11,6 +11,8 @@ export interface TierCopy {
   primaryCta: Record<Lang, string>;
   secondaryCta?: Record<Lang, string>;
   featured?: boolean;
+  categoryLabel?: Record<Lang, string>; // Label optionnel (ex: "Clients existants")
+  hideCta?: boolean; // Pour masquer le bouton CTA
 }
 
 export interface PricingCopy {

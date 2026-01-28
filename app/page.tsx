@@ -530,15 +530,13 @@ export default function HomePage() {
         <Hero messages={t.hero} onContactClick={() => setIsContactModalOpen(true)} />
         <RouteServicesSection messages={t.services} />
         <WorkSection messages={t.work} />
-        <section id="pricing">
-          <PricingSection
-            lang={language}
-            copy={pricingCopy}
-            onPrimary={(tierId) => {
-              setIsContactModalOpen(true);
-            }}
-          />
-        </section>
+        <PricingSection
+          lang={language}
+          copy={pricingCopy}
+          onPrimary={(tierId) => {
+            setIsContactModalOpen(true);
+          }}
+        />
         <AboutSection messages={t.about} />
         <ContactSection messages={t.contact} language={language} />
       </main>

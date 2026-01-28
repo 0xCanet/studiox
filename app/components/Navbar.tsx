@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useLenis } from "lenis/react";
 
 export interface NavbarMessages {
   logo: string;
@@ -14,7 +13,7 @@ export interface NavbarMessages {
     about: string;
     letsTalk: string;
   };
-    contact: string;
+  contact: string;
 }
 
 interface NavbarProps {
@@ -35,7 +34,6 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   const [langIsOverDark, setLangIsOverDark] = useState(!forceLightMode);
   const [isMobile, setIsMobile] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const lenis = useLenis();
   const navbarRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLAnchorElement>(null);
   const navPillRef = useRef<HTMLDivElement>(null);
@@ -48,7 +46,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       setIsVisible(true);
       return;
     }
-    
+
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 2000);
@@ -61,10 +59,10 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => {
       window.removeEventListener('resize', checkMobile);
     };
@@ -74,23 +72,23 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   const isOverDarkSection = (yPosition?: number): boolean => {
     // If forceLightMode is enabled, always return false (light mode)
     if (forceLightMode) return false;
-    
+
     const threshold = yPosition ?? 150; // Distance from top of viewport to trigger transition
     const heroSection = document.getElementById("hero");
     const pricingSection = document.getElementById("pricing");
-    
+
     // Check if we're over the hero section (dark)
     if (heroSection) {
       const heroRect = heroSection.getBoundingClientRect();
       if (heroRect.bottom > threshold) return true;
     }
-    
+
     // Check if we're over the pricing section (dark)
     if (pricingSection) {
       const pricingRect = pricingSection.getBoundingClientRect();
       if (pricingRect.top < threshold && pricingRect.bottom > threshold) return true;
     }
-    
+
     // Default to light if not over any dark section
     return false;
   };
@@ -99,23 +97,23 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   const detectBackgroundAtPoint = (x: number, y: number): boolean => {
     // If forceLightMode is enabled, always return false (light mode)
     if (forceLightMode) return false;
-    
+
     // Hero section and Pricing section are dark, all other sections are light (#F0EEE9)
     const heroSection = document.getElementById("hero");
     const pricingSection = document.getElementById("pricing");
-    
+
     // Check if the Y position is within the hero section
     if (heroSection) {
       const heroRect = heroSection.getBoundingClientRect();
       if (y >= heroRect.top && y <= heroRect.bottom) return true;
     }
-    
+
     // Check if the Y position is within the pricing section
     if (pricingSection) {
       const pricingRect = pricingSection.getBoundingClientRect();
       if (y >= pricingRect.top && y <= pricingRect.bottom) return true;
     }
-    
+
     // Default to light if not over any dark section
     return false;
   };
@@ -131,7 +129,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       setIsOverDark(false);
       return;
     }
-    
+
     // On initial load, we're always over the hero (dark background)
     // Set all states to dark immediately
     setLogoIsOverDark(true);
@@ -145,7 +143,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   useEffect(() => {
     // If forceLightMode is enabled, skip scroll detection
     if (forceLightMode) return;
-    
+
     const handleScroll = () => {
       // Use requestAnimationFrame for smooth, real-time updates
       requestAnimationFrame(() => {
@@ -209,12 +207,12 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
     // Initial check immediately to set correct state on load
     handleScroll();
-    
+
     // Also check after a short delay to ensure refs are attached
     const initialTimeout = setTimeout(() => {
       handleScroll();
     }, 100);
-    
+
     // Check again after navbar becomes visible (after 2 seconds)
     const visibleTimeout = setTimeout(() => {
       handleScroll();
@@ -223,20 +221,20 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
     // Listen to scroll with improved throttling to prevent jank
     let ticking = false;
     let lastScrollY = window.scrollY;
-    
+
     const throttledScroll = () => {
       if (!ticking) {
         requestAnimationFrame(() => {
           // Only update if scroll position actually changed significantly
           const currentScrollY = window.scrollY;
           const scrollDelta = Math.abs(currentScrollY - lastScrollY);
-          
+
           // Only process if scroll delta is meaningful (prevents micro-movements)
           if (scrollDelta > 0.5 || currentScrollY === 0) {
             handleScroll();
             lastScrollY = currentScrollY;
           }
-          
+
           ticking = false;
         });
         ticking = true;
@@ -245,31 +243,23 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
     window.addEventListener("scroll", throttledScroll, { passive: true });
     window.addEventListener("resize", handleScroll, { passive: true });
-    
-    // Also listen to Lenis scroll if available - with throttling
-    if (lenis) {
-      lenis.on('scroll', throttledScroll);
-    }
-    
+
     return () => {
       clearTimeout(initialTimeout);
       clearTimeout(visibleTimeout);
       window.removeEventListener("scroll", throttledScroll);
       window.removeEventListener("resize", handleScroll);
-      if (lenis) {
-        lenis.off('scroll', throttledScroll);
-      }
     };
-  }, [lenis, forceLightMode]);
+  }, [forceLightMode]);
 
   // Scroll spy - detect which section is in view
   useEffect(() => {
     const sections = ["services", "work", "pricing", "about", "contact"];
-    
+
     const updateActiveLink = () => {
       const scrollY = window.scrollY;
       const offset = 200; // Offset pour déclencher avant le haut de la section
-      
+
       // Si on est tout en haut, pas de section active
       if (scrollY < 100) {
         setActiveLink(null);
@@ -286,7 +276,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
         const rect = element.getBoundingClientRect();
         const elementTop = scrollY + rect.top;
-        
+
         // La section est active si son haut est au-dessus du point de déclenchement
         // et qu'elle est la plus haute parmi celles qui remplissent cette condition
         if (elementTop <= scrollY + offset && elementTop > maxTop) {
@@ -341,19 +331,19 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   const scrollToContact = () => {
     setIsMenuOpen(false);
-    lenis?.scrollTo("#contact", {
-      offset: -100,
-      duration: 1.5,
-    });
+    const element = document.querySelector("#contact");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
     setActiveLink(href);
-    lenis?.scrollTo(href, {
-      offset: -100,
-      duration: 1.5,
-    });
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   const navLinks = [
@@ -369,20 +359,19 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       <motion.nav
         ref={navbarRef}
         initial={{ opacity: 0, y: -100 }}
-        animate={{ 
-          opacity: isVisible ? 1 : 0, 
-          y: isVisible ? 0 : -100 
+        animate={{
+          opacity: isVisible ? 1 : 0,
+          y: isVisible ? 0 : -100
         }}
-        transition={{ 
-          duration: 0.8, 
+        transition={{
+          duration: 0.8,
           ease: [0.4, 0, 0.2, 1] as const,
           delay: 0
         }}
-        className={`fixed top-[30px] md:top-[73px] left-[30px] md:left-[73px] right-[30px] md:right-[73px] z-[100] ${
-          isMobile ? 'glass-pill' : ''
-        } ${isMobile && isOverDark ? 'glass-pill-dark' : isMobile ? 'glass-pill-light' : ''}`}
-        style={{ 
-          willChange: 'auto', 
+        className={`fixed top-[30px] md:top-[73px] left-[30px] md:left-[73px] right-[30px] md:right-[73px] z-[100] ${isMobile ? 'glass-pill' : ''
+          } ${isMobile && isOverDark ? 'glass-pill-dark' : isMobile ? 'glass-pill-light' : ''}`}
+        style={{
+          willChange: 'auto',
           maxWidth: 'calc(100% - 60px)',
           position: 'fixed',
           top: isMobile ? '30px' : undefined,
@@ -401,9 +390,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   alt="Studi.ox"
                   width={160}
                   height={28}
-                  className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
-                    logoIsOverDark && !isMenuOpen ? "opacity-0" : "opacity-100"
-                  }`}
+                  className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${logoIsOverDark && !isMenuOpen ? "opacity-0" : "opacity-100"
+                    }`}
                   style={{ transform: 'translateZ(0)', width: 'auto', height: 'auto' }}
                   priority
                 />
@@ -413,9 +401,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   alt="Studi.ox"
                   width={160}
                   height={28}
-                  className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${
-                    logoIsOverDark && !isMenuOpen ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`h-7 md:h-8 w-auto absolute top-0 left-0 transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-opacity group-hover:opacity-0 ${logoIsOverDark && !isMenuOpen ? "opacity-100" : "opacity-0"
+                    }`}
                   style={{ transform: 'translateZ(0)', width: 'auto', height: 'auto' }}
                   priority
                 />
@@ -426,7 +413,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   width={160}
                   height={28}
                   className="h-7 md:h-8 w-auto absolute top-0 left-0 transition-opacity duration-500 ease-in-out will-change-opacity opacity-0 group-hover:opacity-100"
-                  style={{ 
+                  style={{
                     transform: 'translateZ(0)',
                     width: 'auto',
                     height: 'auto',
@@ -458,7 +445,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   ))}
                 </div>
               </div>
-        </div>
+            </div>
 
             {/* Right Side - Desktop: Lang + Contact | Mobile: Hamburger */}
             <div className="flex items-center gap-3">
@@ -467,37 +454,34 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 <div ref={langRef} className="lang-switch-minimal flex items-center gap-2">
                   <button
                     onClick={() => onLanguageChange("en")}
-                    className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-auto ${
-                      language === "en" 
-                        ? langIsOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
-                        : langIsOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
-                    }`}
+                    className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-auto ${language === "en"
+                      ? langIsOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
+                      : langIsOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
+                      }`}
                     style={{ transform: 'translateZ(0)' }}
                     aria-label="Switch to English"
                   >
                     EN
                   </button>
                   <span className={`text-sm transition-colors duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-auto ${langIsOverDark ? "text-[#F0EEE9]/30" : "text-[var(--color-charcoal)]/20"}`} style={{ transform: 'translateZ(0)' }}>|</span>
-            <button
-              onClick={() => onLanguageChange("fr")}
-                    className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-auto ${
-                language === "fr"
-                        ? langIsOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
-                        : langIsOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
-              }`}
+                  <button
+                    onClick={() => onLanguageChange("fr")}
+                    className={`cursor-pointer font-heading text-sm font-semibold tracking-wide transition-colors duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] will-change-auto ${language === "fr"
+                      ? langIsOverDark ? "text-[#F0EEE9]" : "text-[var(--color-charcoal)]"
+                      : langIsOverDark ? "text-[#F0EEE9]/50" : "text-[var(--color-charcoal)]/40"
+                      }`}
                     style={{ transform: 'translateZ(0)' }}
                     aria-label="Passer en français"
-            >
-              FR
-            </button>
+                  >
+                    FR
+                  </button>
                 </div>
 
                 <button
                   ref={contactRef}
                   onClick={scrollToContact}
-                  className={`cursor-pointer glass-pill-link glass-pill-link-standalone text-sm px-6 py-2.5 ${
-                    contactIsOverDark ? 'glass-pill-link-standalone-dark' : 'glass-pill-link-standalone-light'
-                  } ${activeLink === "#contact" ? "active" : ""}`}
+                  className={`cursor-pointer glass-pill-link glass-pill-link-standalone text-sm px-6 py-2.5 ${contactIsOverDark ? 'glass-pill-link-standalone-dark' : 'glass-pill-link-standalone-light'
+                    } ${activeLink === "#contact" ? "active" : ""}`}
                 >
                   {messages.contact}
                 </button>
@@ -515,32 +499,29 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                       rotate: isMenuOpen ? 45 : 0,
                       y: isMenuOpen ? 8 : 0,
                     }}
-                    className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
-                    }`}
+                    className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
+                      }`}
                   />
                   <motion.span
                     animate={{
                       opacity: isMenuOpen ? 0 : 1,
                       scaleX: isMenuOpen ? 0 : 1,
                     }}
-                    className={`block h-0.5 w-full transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
-              }`}
+                    className={`block h-0.5 w-full transition-colors duration-500 ease-in-out ${isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
+                      }`}
                   />
                   <motion.span
                     animate={{
                       rotate: isMenuOpen ? -45 : 0,
                       y: isMenuOpen ? -8 : 0,
                     }}
-                    className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${
-                      isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
-                    }`}
+                    className={`block h-0.5 w-full origin-center transition-colors duration-500 ease-in-out ${isMenuOpen ? "bg-[var(--color-charcoal)]" : isOverDark ? "bg-[#F0EEE9]" : "bg-[var(--color-charcoal)]"
+                      }`}
                   />
                 </div>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
         </div>
       </motion.nav>
 
@@ -586,7 +567,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 >
                   {messages.contact}
                 </motion.button>
-      </nav>
+              </nav>
 
               {/* Bottom: Language Switch */}
               <motion.div
@@ -599,22 +580,20 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                 <div className="flex items-center justify-center gap-6">
                   <button
                     onClick={() => onLanguageChange("en")}
-                    className={`text-lg font-heading font-medium transition-colors ${
-                      language === "en"
-                        ? "text-[var(--color-charcoal)]"
-                        : "text-[var(--color-charcoal)]/40"
-                    }`}
+                    className={`text-lg font-heading font-medium transition-colors ${language === "en"
+                      ? "text-[var(--color-charcoal)]"
+                      : "text-[var(--color-charcoal)]/40"
+                      }`}
                   >
                     English
                   </button>
                   <span className="text-[var(--color-charcoal)]/20">|</span>
                   <button
                     onClick={() => onLanguageChange("fr")}
-                    className={`text-lg font-heading font-medium transition-colors ${
-                      language === "fr"
-                        ? "text-[var(--color-charcoal)]"
-                        : "text-[var(--color-charcoal)]/40"
-                    }`}
+                    className={`text-lg font-heading font-medium transition-colors ${language === "fr"
+                      ? "text-[var(--color-charcoal)]"
+                      : "text-[var(--color-charcoal)]/40"
+                      }`}
                   >
                     Français
                   </button>

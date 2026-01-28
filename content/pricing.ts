@@ -2,63 +2,69 @@ import { PricingCopy } from "@/types/copy";
 
 export const pricingCopy: PricingCopy = {
   heading: {
-    fr: "Nos offres.",
-    en: "Our offers.",
+    fr: "Votre site ne convertit pas ? On règle ça en 5 jours.",
+    en: "Your site isn't converting? We fix that in 5 days.",
   },
   intro: {
-    fr: "Trois niveaux d'accompagnement pour clarifier et professionnaliser votre image, du diagnostic rapide à la refonte complète.",
-    en: "Three levels of support to clarify and professionalize your brand, from quick audit to full redesign.",
+    fr: "Et si vous êtes satisfait, on peut aller plus loin ensemble.",
+    en: "And if you're satisfied, we can go further together.",
   },
   tiers: [
     {
-      id: "audit",
-      title: { fr: "Diagnostic", en: "Audit" },
-      promise: {
-        fr: "En 3 jours, un regard expert et une direction claire pour décider sereinement.",
-        en: "In 3 days, an expert review and a clear direction to decide with confidence.",
-      },
-      duration: { fr: "3–5 jours", en: "3–5 days" },
-      priceRange: { fr: "À partir de 500 € HT", en: "From €500 excl. VAT" },
-      deliverables: {
-        fr: [
-          "Audit visuel de l'identité et du site",
-          "Moodboard / piste créative",
-          "Restitution 1:1 (30–45 min)",
-        ],
-        en: [
-          "Visual audit of brand & website",
-          "Moodboard / creative direction",
-          "1:1 handoff (30–45 min)",
-        ],
-      },
-      primaryCta: { fr: "Réserver un diagnostic", en: "Book an audit" },
-    },
-    {
       id: "signature",
       featured: true,
-      title: { fr: "Refonte 360°", en: "360° Redesign" },
+      title: { fr: "Landing page déléguée", en: "Delegated landing page" },
       promise: {
-        fr: "Identité, UX/UI et supports clés pour une image claire, cohérente et crédible.",
-        en: "Identity, UX/UI and key assets for a clear, consistent and credible brand.",
+        fr: "Une page claire et structurée pour présenter votre offre, sans y passer du temps.",
+        en: "A clear and structured page to present your offer, without spending time on it.",
       },
-      duration: { fr: "4–6 semaines", en: "4–6 weeks" },
+      duration: { fr: "5 jours", en: "5 days" },
       priceRange: {
-        fr: "À partir de 5 000 € HT",
-        en: "From €5,000 excl. VAT",
+        fr: "800 € HT",
+        en: "€800 excl. VAT",
       },
       deliverables: {
         fr: [
-          "Identité visuelle & charte",
-          "Maquettes UI (pages clés)",
-          "Kit de communication prêt à l'emploi",
+          "1 landing page complète (desktop)",
+          "Structure claire (message, offre, CTA)",
+          "Design professionnel",
+          "1 aller-retour maximum",
+          "Livrée prête à publier",
         ],
         en: [
-          "Visual identity & guidelines",
-          "UI mockups (key pages)",
-          "Ready-to-use communication kit",
+          "1 complete landing page (desktop)",
+          "Clear structure (message, offer, CTA)",
+          "Professional design",
+          "Maximum 1 round of revisions",
+          "Delivered ready to publish",
         ],
       },
-      primaryCta: { fr: "Discuter de votre projet", en: "Discuss your project" },
+      primaryCta: { fr: "Discuter de ma landing page", en: "Discuss my landing page" },
+    },
+    {
+      id: "audit",
+      title: { fr: "Refonte site", en: "Website redesign" },
+      promise: {
+        fr: "Quand une simple landing ne suffit plus.",
+        en: "When a simple landing page is not enough.",
+      },
+      duration: { fr: "4–6 semaines", en: "4–6 weeks" },
+      priceRange: { fr: "À partir de 5 000 € HT", en: "From €5,000 excl. VAT" },
+      deliverables: {
+        fr: [
+          "Audit visuel et structurel",
+          "Refonte des pages clés",
+          "Intégration responsive",
+          "Livraison clé en main",
+        ],
+        en: [
+          "Visual and structural audit",
+          "Redesign of key pages",
+          "Responsive integration",
+          "Turnkey delivery",
+        ],
+      },
+      primaryCta: { fr: "Discuter de mon projet", en: "Discuss my project" },
     },
     {
       id: "retainer",
@@ -66,32 +72,37 @@ export const pricingCopy: PricingCopy = {
         fr: "Direction continue",
         en: "Continuous direction",
       },
+      categoryLabel: {
+        fr: "Clients existants",
+        en: "Existing clients",
+      },
       promise: {
-        fr: "Votre directeur artistique à la demande pour maintenir la cohérence dans le temps.",
-        en: "Your on-demand art director to maintain consistency over time.",
+        fr: "Pour maintenir un site propre et cohérent dans le temps.",
+        en: "To maintain a clean and consistent site over time.",
       },
       duration: { fr: "Abonnement mensuel", en: "Monthly retainer" },
-      priceRange: { fr: "À partir de 450 € HT", en: "From €450 excl. VAT" },
+      priceRange: { fr: "À partir de 450 € HT / mois", en: "From €450 excl. VAT / month" },
       deliverables: {
         fr: [
-          "5–10h design / mois",
-          "Déclinaisons & nouveaux assets",
-          "Optimisations UI continues",
+          "5 à 10h / mois",
+          "Ajustements et nouveaux assets",
+          "Support prioritaire",
         ],
         en: [
-          "5–10h design / month",
-          "New assets & variations",
-          "Ongoing UI improvements",
+          "5 to 10h / month",
+          "Adjustments and new assets",
+          "Priority support",
         ],
       },
       primaryCta: {
-        fr: "Devenir client partenaire",
-        en: "Become a partner client",
+        fr: "",
+        en: "",
       },
+      hideCta: true,
     },
   ],
   legalNote: {
-    fr: "Tarifs indicatifs. Un devis précis est fourni après échange et cadrage.",
-    en: "Indicative ranges. A precise quote is provided after discovery and scoping.",
+    fr: "Pas de refonte lourde. Un livrable clair. On commence simple.",
+    en: "No heavy redesign. A clear deliverable. We start simple.",
   },
 };
