@@ -33,6 +33,61 @@ export const projects: Record<string, {
     fr: string;
   };
 }> = {
+  "totalenergies-lubrifiants": {
+    title: "TotalEnergies",
+    category: "Full Stack • UX/UI • WebDesign",
+    tags: {
+      en: ["Full stack Next.JS web calendar for internal communication and physical event management"],
+      fr: ["Calendrier web full stack Next.JS pour la gestion de la communication interne et des évènements physiques"],
+    },
+    description: {
+      en: "Design and development of an internal web calendar for the TotalEnergies Lubrifiants BU to manage team communications and physical events (seminars, etc.).",
+      fr: "Conception et développement d'un calendrier web interne pour la BU TotalEnergies Lubrifiants afin de gérer la communication d'équipe et les évènements physiques (séminaires, etc.).",
+    },
+    details: {
+      en: {
+        overview: "A comprehensive internal solution to plan, organize, and track events for the TotalEnergies Lubrifiants BU. This full stack Next.JS project integrates UI/UX design, accessibility standards, and robust development.",
+        challenge: "Centralize internal communication by providing a unified platform for physical event management, requiring database management, authentication, and calendar export functionalities.",
+        solution: "We developed a full stack application using Next.JS, focusing on a clean, accessible design. Features include advanced filtering, simplified event creation/modification, global dashboard monitoring, and data exports.",
+        results: "An effective, centralized tool that simplifies event tracking for multiple active directions, improving internal communication and organizational efficiency.",
+      },
+      fr: {
+        overview: "Une solution interne complète pour planifier, organiser et suivre les événements de la BU TotalEnergies Lubrifiants. Ce projet full stack Next.JS intègre le design UI/UX, l'accessibilité et un développement robuste.",
+        challenge: "Centraliser la communication interne en fournissant une plateforme unifiée pour la gestion des événements physiques, nécessitant la gestion de base de données, l'authentification et l'exportation de calendriers.",
+        solution: "Nous avons développé une application full stack avec Next.JS, en nous concentrant sur un design épuré et accessible. Les fonctionnalités incluent le filtrage avancé, la création/modification simplifiée d'événements, un tableau de bord global et des exports de données.",
+        results: "Un outil centralisé et efficace qui simplifie le suivi des événements pour plusieurs directions actives, améliorant la communication interne et l'efficacité organisationnelle.",
+      },
+    },
+  },
+  "blobb-io": {
+    title: "Blobb.io",
+    category: "WebDesign • Branding",
+    tags: {
+      en: ["Website redesign and brand image improvement"],
+      fr: ["Refonte site internet et amélioration image de marque"],
+    },
+    description: {
+      en: "Website redesign and brand image improvement for Blobb.io, a platform for turnkey Bitcoin mining and custom infrastructure projects.",
+      fr: "Refonte du site internet et amélioration de l'image de marque pour Blobb.io, plateforme de minage de Bitcoin clé en main et de projets d'infrastructure sur-mesure.",
+    },
+    details: {
+      en: {
+        overview: "Blobb.io provides turnkey Bitcoin mining solutions and custom energy infrastructures. The project involved a complete redesign of their website and an enhancement of their brand image to match their premium services.",
+        challenge: "To modernize the visual identity and build a high-performance website that clearly communicates complex Bitcoin mining and infrastructure services to both professionals and investors.",
+        solution: "We designed a modern, sleek interface with a strong visual hierarchy. The new branding emphasizes clarity, professionalism, and trustworthiness, optimizing the user journey for all target audiences.",
+        results: "A strengthened, professional brand identity and an optimized website that effectively communicates Blobb.io's value proposition, increasing user trust and engagement.",
+      },
+      fr: {
+        overview: "Blobb.io propose des solutions de minage de Bitcoin clé en main et des infrastructures énergétiques sur-mesure. Le projet a consisté en une refonte complète de leur site internet et une amélioration de leur image de marque pour s'aligner sur leurs services premium.",
+        challenge: "Moderniser l'identité visuelle et créer un site internet performant qui communique clairement des services complexes de minage et d'infrastructure à la fois aux professionnels et aux investisseurs.",
+        solution: "Nous avons conçu une interface moderne et épurée avec une forte hiérarchie visuelle. La nouvelle image de marque met l'accent sur la clarté, le professionnalisme et la confiance, optimisant le parcours utilisateur pour tous les publics cibles.",
+        results: "Une identité de marque renforcée et professionnelle et un site web optimisé qui communique efficacement la proposition de valeur de Blobb.io, augmentant la confiance et l'engagement des utilisateurs.",
+      },
+    },
+    links: [
+      { label: { en: "Visit Website", fr: "Visiter le site" }, url: "https://blobb.io" },
+    ],
+  },
   "sendo-market": {
     title: "Sendo.Market",
     category: "WEB3 • UX/UI • BRANDING",

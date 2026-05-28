@@ -4,6 +4,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Navbar, type NavbarMessages } from "../../components/Navbar";
 import { Footer, type FooterMessages } from "../../components/Footer";
@@ -182,6 +183,20 @@ const messages: Record<
       viewProject: "View Project",
       items: [
         {
+          id: "totalenergies-lubrifiants",
+          title: "TotalEnergies",
+          category: "Full Stack • UX/UI • WebDesign",
+          tags: ["Full stack Next.JS web calendar for internal communication and physical event management"],
+          image: "/images/backgrounds/totalenergies-banner.jpg",
+        },
+        {
+          id: "blobb-io",
+          title: "Blobb.io",
+          category: "WebDesign • Branding",
+          tags: ["Website redesign and brand image improvement for Blobb.io, a platform for turnkey Bitcoin mining and custom infrastructure projects."],
+          image: "/images/backgrounds/blobb-mockup.jpg",
+        },
+        {
           id: "sendo-market",
           title: "Sendo.Market",
           category: "WEB3 • UX/UI • BRANDING • VIDEO MAKING",
@@ -264,6 +279,20 @@ const messages: Record<
       cta: "Voir tous les projets",
       viewProject: "Voir le projet",
       items: [
+        {
+          id: "totalenergies-lubrifiants",
+          title: "TotalEnergies",
+          category: "Full Stack • UX/UI • WebDesign",
+          tags: ["Calendrier web full stack Next.JS pour la gestion de la communication interne et des évènements physiques"],
+          image: "/images/backgrounds/totalenergies-banner.jpg",
+        },
+        {
+          id: "blobb-io",
+          title: "Blobb.io",
+          category: "WebDesign • Branding",
+          tags: ["Refonte du site internet et amélioration de l'image de marque pour Blobb.io, plateforme de minage de Bitcoin clé en main."],
+          image: "/images/backgrounds/blobb-mockup.jpg",
+        },
         {
           id: "sendo-market",
           title: "Sendo.Market",
@@ -491,6 +520,43 @@ export default function ProjectPage() {
                   allowFullScreen
                   className="rounded-2xl"
                 />
+              </motion.div>
+            )}
+
+            {slug === "totalenergies-lubrifiants" && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-8 rounded-2xl overflow-hidden relative aspect-[16/10] md:aspect-[16/9]"
+              >
+                <Image
+                  src="/images/backgrounds/totalenergies-banner.jpg"
+                  alt="TotalEnergies Mockup Banner"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  quality={90}
+                />
+              </motion.div>
+            )}
+
+            {slug === "blobb-io" && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-8 rounded-2xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] relative aspect-[16/10] md:aspect-[16/9]"
+              >
+                <Image
+                  src="/images/backgrounds/blobb-mockup.jpg"
+                  alt="Blobb.io Mockup"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  quality={90}
+                />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,122,48,0.1),transparent_50%)]" />
               </motion.div>
             )}
 

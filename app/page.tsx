@@ -129,6 +129,20 @@ const messages: Record<
           image: "/images/backgrounds/ebook-mockup.png",
         },
         {
+          id: "totalenergies-lubrifiants",
+          title: "TotalEnergies",
+          category: "Full Stack • UX/UI • WebDesign",
+          tags: ["Full stack Next.JS web calendar for internal communication and physical event management"],
+          image: "/images/backgrounds/totalenergies-banner.jpg",
+        },
+        {
+          id: "blobb-io",
+          title: "Blobb.io",
+          category: "WebDesign • Branding",
+          tags: ["Website redesign and brand image improvement for Blobb.io, a platform for turnkey Bitcoin mining and custom infrastructure projects."],
+          image: "/images/backgrounds/blobb-mockup.jpg",
+        },
+        {
           id: "sendo-market",
           title: "Sendo.Market",
           category: "WEB3 • UX/UI • BRANDING • VIDEO MAKING",
@@ -348,6 +362,20 @@ const messages: Record<
           tags: ["Découvrez pourquoi le design est essentiel en 2026 et comment il peut transformer votre entreprise"],
           downloadUrl: "/src/Pourquoi_le_design_est_une_necessite_en_2026.pdf",
           image: "/images/backgrounds/ebook-mockup.png",
+        },
+        {
+          id: "totalenergies-lubrifiants",
+          title: "TotalEnergies",
+          category: "Full Stack • UX/UI • WebDesign",
+          tags: ["Calendrier web full stack Next.JS pour la gestion de la communication interne et des évènements physiques"],
+          image: "/images/backgrounds/totalenergies-banner.jpg",
+        },
+        {
+          id: "blobb-io",
+          title: "Blobb.io",
+          category: "WebDesign • Branding",
+          tags: ["Refonte du site internet et amélioration de l'image de marque pour Blobb.io, plateforme de minage de Bitcoin clé en main."],
+          image: "/images/backgrounds/blobb-mockup.jpg",
         },
         {
           id: "sendo-market",
