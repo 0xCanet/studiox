@@ -141,6 +141,7 @@ const messages: Record<
       challenge: string;
       solution: string;
       results: string;
+      brandKit: string;
       otherProjects: string;
       projectNotFound: string;
       backToHome: string;
@@ -182,6 +183,20 @@ const messages: Record<
       cta: "View all projects",
       viewProject: "View Project",
       items: [
+        {
+          id: "enjeux",
+          title: "Enjeux",
+          category: "Branding • UX/UI • WebDesign • AI Product",
+          tags: ["Complete brand identity, mascot system and website design for an autonomous AI agent dedicated to physiotherapists."],
+          image: "/images/backgrounds/enjeux-mockup.png",
+        },
+        {
+          id: "illoozz",
+          title: "Illoozz",
+          category: "Branding • UX/UI • WebDesign • Gaming Product",
+          tags: ["Complete art direction and product website design for a collectible mystery box experience."],
+          image: "/images/backgrounds/illoozz-mockup.png",
+        },
         {
           id: "totalenergies-lubrifiants",
           title: "TotalEnergies",
@@ -239,6 +254,7 @@ const messages: Record<
       challenge: "Challenge",
       solution: "Solution",
       results: "Results",
+      brandKit: "Brand kit",
       otherProjects: "Other projects.",
       projectNotFound: "Project not found",
       backToHome: "Back to home",
@@ -279,6 +295,20 @@ const messages: Record<
       cta: "Voir tous les projets",
       viewProject: "Voir le projet",
       items: [
+        {
+          id: "enjeux",
+          title: "Enjeux",
+          category: "Branding • UX/UI • WebDesign • Produit IA",
+          tags: ["Identité de marque complète, système mascotte et webdesign d'un agent IA autonome dédié aux kinésithérapeutes."],
+          image: "/images/backgrounds/enjeux-mockup.png",
+        },
+        {
+          id: "illoozz",
+          title: "Illoozz",
+          category: "Branding • UX/UI • WebDesign • Produit gaming",
+          tags: ["Direction artistique complète et design produit d'une expérience mystery box collectible."],
+          image: "/images/backgrounds/illoozz-mockup.png",
+        },
         {
           id: "totalenergies-lubrifiants",
           title: "TotalEnergies",
@@ -336,6 +366,7 @@ const messages: Record<
       challenge: "Défi",
       solution: "Solution",
       results: "Résultats",
+      brandKit: "Brand kit",
       otherProjects: "Nos autres projets.",
       projectNotFound: "Projet introuvable",
       backToHome: "Retour à l'accueil",
@@ -490,6 +521,40 @@ export default function ProjectPage() {
                   </a>
                   );
                 })}
+              </motion.div>
+            )}
+
+            {project.image && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.4 }}
+                className="mt-8 rounded-2xl overflow-hidden bg-[#0E0E0E] relative aspect-[16/10] md:aspect-[16/9]"
+              >
+                <Image
+                  src={project.image}
+                  alt={`${project.title} project mockup`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  quality={90}
+                  priority
+                />
+              </motion.div>
+            )}
+
+            {project.brandKitPdf && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+                className="mt-12"
+              >
+                <h2 className="section-title text-[#0E0E0E] mb-6 font-heading font-bold">
+                  {t.project.brandKit}
+                  <span className="text-accent">.</span>
+                </h2>
+                <PDFViewer fileUrl={project.brandKitPdf} />
               </motion.div>
             )}
 
@@ -799,4 +864,3 @@ export default function ProjectPage() {
     </div>
   );
 }
-

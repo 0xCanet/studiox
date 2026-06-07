@@ -27,12 +27,76 @@ export const projects: Record<string, {
     label: string | { en: string; fr: string };
     url: string;
   }[];
+  image?: string;
+  brandKitPdf?: string;
   video?: string;
   videoDescription?: {
     en: string;
     fr: string;
   };
 }> = {
+  "enjeux": {
+    title: "Enjeux",
+    category: "Branding • UX/UI • WebDesign • AI Product",
+    tags: {
+      en: ["Complete brand identity, mascot system and website design for an autonomous AI agent dedicated to physiotherapists."],
+      fr: ["Identité de marque complète, système mascotte et webdesign d'un agent IA autonome dédié aux kinésithérapeutes."],
+    },
+    description: {
+      en: "End-to-end product and visual design for Enjeux, the first autonomous AI agent for physiotherapists in France: brand identity, mascot design, art direction, interface storytelling and a conversion-focused website.",
+      fr: "Conception produit et direction artistique de A à Z pour Enjeux, le premier agent IA autonome pour kinés en France : identité, mascotte, storytelling d'interface et site orienté conversion.",
+    },
+    details: {
+      en: {
+        overview: "Enjeux helps physiotherapists automate patient follow-up through questionnaires, AI reports and smart alerts. The mission covered the full brand system and website experience: logo, logomark, mascot, character design, color palette, typography and interface narrative.",
+        challenge: "The product had to make medical AI feel clear, trustworthy and immediately useful. The challenge was to combine clinical credibility with a friendly AI personality, while explaining automation, GDPR constraints and healthcare data flows without creating a cold or overly technical experience.",
+        solution: "We designed a premium medical-tech identity built around primary blue #2883FF, deep navy #041A38, light interface neutrals and blue shades #3977CA / #60A5FA. Space Grotesk drives expressive headers, Inter keeps body content highly readable, and the robot mascot makes the AI agent tangible across onboarding, patient follow-up, alerts and product storytelling.",
+        results: "A focused launch experience and complete brand kit that positions Enjeux as a credible AI product for healthcare professionals. The system gives the team a consistent visual language for the website, demos, investor material, future product screens and mascot-led communication.",
+      },
+      fr: {
+        overview: "Enjeux aide les kinés à automatiser le suivi patient grâce aux questionnaires, rapports IA et alertes intelligentes. La mission a couvert tout le système de marque et l'expérience du site : logo, logomark, mascotte, character design, palette, typographies et récit d'interface.",
+        challenge: "Il fallait rendre l'IA médicale claire, crédible et immédiatement utile. Le défi : associer la rigueur attendue dans la santé à une personnalité IA plus accessible, tout en expliquant l'automatisation, les contraintes RGPD et les flux de données sans tomber dans une expérience froide ou trop technique.",
+        solution: "Nous avons construit une identité medical-tech premium autour du bleu primaire #2883FF, du navy profond #041A38, de neutres clairs et des nuances #3977CA / #60A5FA. Space Grotesk porte les titres, Inter assure la lisibilité des contenus, et la mascotte robot rend l'agent IA tangible dans l'onboarding, le suivi patient, les alertes et le storytelling produit.",
+        results: "Une expérience de lancement lisible et un brand kit complet, qui positionnent Enjeux comme un produit IA crédible pour les professionnels de santé. Le système donne une base cohérente pour le site, les démos, les supports investisseurs, les futurs écrans produit et la communication portée par la mascotte.",
+      },
+    },
+    links: [
+      { label: { en: "Visit Website", fr: "Visiter le site" }, url: "https://enjeux.vercel.app/" },
+      { label: { en: "View Brand Kit", fr: "Voir le brand kit" }, url: "/src/Enjeux_AI_Branding_Kit.pdf" },
+    ],
+    image: "/images/backgrounds/enjeux-mockup.png",
+    brandKitPdf: "/src/Enjeux_AI_Branding_Kit.pdf",
+  },
+  "illoozz": {
+    title: "Illoozz",
+    category: "Branding • UX/UI • WebDesign • Gaming Product",
+    tags: {
+      en: ["Complete art direction and product website design for a collectible mystery box experience."],
+      fr: ["Direction artistique complète et design produit d'une expérience mystery box collectible."],
+    },
+    description: {
+      en: "Creation of the full visual direction and product website for Illoozz, a gaming mystery box experience combining collectible packs, transparent probabilities, blockchain verification and marketplace mechanics.",
+      fr: "Création de toute la direction artistique et du site produit d'Illoozz, une expérience mystery box gaming mêlant packs collectibles, probabilités transparentes, vérification blockchain et mécanique marketplace.",
+    },
+    details: {
+      en: {
+        overview: "Illoozz is a collectible mystery box web app with pack opening, transparent probabilities, blockchain verification and marketplace flows. The work focused on making the experience feel playful, premium and product-ready from the first screen.",
+        challenge: "The main challenge was to balance excitement and trust: the interface needed the energy of a gaming product while making probabilities, blockchain verification and purchase flows legible enough to feel credible.",
+        solution: "We created a dark arcade-inspired art direction with red and gold highlights, pixel display typography, a persistent navigation rail, live product KPIs, pack cards and clear probability sections. The UI turns the central mystery box interaction into the emotional anchor of the product.",
+        results: "A distinctive, memorable product experience with a strong visual universe, clear conversion paths for pack opening, and reassurance modules around transparency, verification and marketplace utility.",
+      },
+      fr: {
+        overview: "Illoozz est une webapp de mystery box collectible avec ouverture de packs, probabilités transparentes, vérification blockchain et parcours marketplace. Le travail a consisté à rendre l'expérience ludique, premium et prête produit dès le premier écran.",
+        challenge: "Le principal défi était d'équilibrer excitation et confiance : l'interface devait avoir l'énergie d'un produit gaming tout en rendant les probabilités, la vérification blockchain et les parcours d'achat suffisamment lisibles et crédibles.",
+        solution: "Nous avons créé une direction artistique dark arcade, avec accents rouges et dorés, typographie pixel, navigation latérale persistante, KPIs live, cartes de packs et sections de probabilités claires. L'interaction autour de la mystery box devient l'ancrage émotionnel du produit.",
+        results: "Une expérience produit distinctive et mémorable, avec un univers visuel fort, des chemins de conversion clairs pour l'ouverture de packs et des modules de réassurance autour de la transparence, de la vérification et de l'utilité marketplace.",
+      },
+    },
+    links: [
+      { label: { en: "Visit Website", fr: "Visiter le site" }, url: "https://illoozz.com/" },
+    ],
+    image: "/images/backgrounds/illoozz-mockup.png",
+  },
   "totalenergies-lubrifiants": {
     title: "TotalEnergies",
     category: "Full Stack • UX/UI • WebDesign",
@@ -237,4 +301,3 @@ export const projects: Record<string, {
     },
   },
 };
-

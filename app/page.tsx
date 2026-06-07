@@ -129,6 +129,20 @@ const messages: Record<
           image: "/images/backgrounds/ebook-mockup.png",
         },
         {
+          id: "enjeux",
+          title: "Enjeux",
+          category: "BRANDING • UX/UI • WEBDESIGN • AI PRODUCT",
+          tags: ["Complete brand identity, mascot system and website design for an autonomous AI agent dedicated to physiotherapists."],
+          image: "/images/backgrounds/enjeux-mockup.png",
+        },
+        {
+          id: "illoozz",
+          title: "Illoozz",
+          category: "BRANDING • UX/UI • WEBDESIGN • GAMING PRODUCT",
+          tags: ["Complete art direction and product website design for a collectible mystery box experience."],
+          image: "/images/backgrounds/illoozz-mockup.png",
+        },
+        {
           id: "totalenergies-lubrifiants",
           title: "TotalEnergies",
           category: "Full Stack • UX/UI • WebDesign",
@@ -362,6 +376,20 @@ const messages: Record<
           tags: ["Découvrez pourquoi le design est essentiel en 2026 et comment il peut transformer votre entreprise"],
           downloadUrl: "/src/Pourquoi_le_design_est_une_necessite_en_2026.pdf",
           image: "/images/backgrounds/ebook-mockup.png",
+        },
+        {
+          id: "enjeux",
+          title: "Enjeux",
+          category: "BRANDING • UX/UI • WEBDESIGN • PRODUIT IA",
+          tags: ["Identité de marque complète, système mascotte et webdesign d'un agent IA autonome dédié aux kinésithérapeutes."],
+          image: "/images/backgrounds/enjeux-mockup.png",
+        },
+        {
+          id: "illoozz",
+          title: "Illoozz",
+          category: "BRANDING • UX/UI • WEBDESIGN • PRODUIT GAMING",
+          tags: ["Direction artistique complète et design produit d'une expérience mystery box collectible."],
+          image: "/images/backgrounds/illoozz-mockup.png",
         },
         {
           id: "totalenergies-lubrifiants",

@@ -24,7 +24,9 @@ export async function generateMetadata({
   const category = project.category;
 
   let imageUrl = `${baseUrl}/images/backgrounds/scorage-banner.png`;
-  if (slug === "scorage") {
+  if (project.image) {
+    imageUrl = `${baseUrl}${project.image}`;
+  } else if (slug === "scorage") {
     imageUrl = `${baseUrl}/images/backgrounds/scorage-banner.png`;
   } else if (slug === "totem") {
     imageUrl = `${baseUrl}/images/backgrounds/totem-mockup.png`;
@@ -81,4 +83,3 @@ export default function ProjectLayout({
 }) {
   return children;
 }
-
