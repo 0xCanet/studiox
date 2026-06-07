@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 interface TopographyBgProps {
   intensity?: "subtle" | "medium";
@@ -12,17 +12,17 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
   const shouldReduceMotion = useReducedMotion();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
+      if (frameRef.current) return;
+      frameRef.current = requestAnimationFrame(() => {
+        setMousePosition({
+          x: (e.clientX / window.innerWidth - 0.5) * 20,
+          y: (e.clientY / window.innerHeight - 0.5) * 20,
+        });
+        frameRef.current = null;
       });
       setIsHovering(true);
     };
@@ -39,6 +39,7 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseleave", handleMouseLeave);
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
     };
   }, [shouldReduceMotion, intensity]);
 
@@ -46,7 +47,7 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
   const strokeWidth = intensity === "subtle" ? 0.5 : 0.75;
 
   // Generate topographic contour lines (simplified pattern) - only on client
-  const paths = isMounted ? Array.from({ length: 15 }, (_, i) => {
+  const paths = useMemo(() => Array.from({ length: 15 }, (_, i) => {
     const baseY = (i * 100) / 15;
     const amplitude = 15 + Math.sin(i * 0.7) * 12;
     const frequency = 0.015 + (i % 4) * 0.008;
@@ -60,7 +61,7 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
       path += ` L ${x} ${pointY}`;
     }
     return path;
-  }) : [];
+  }), []);
 
   return (
     <div className={`absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
@@ -106,4 +107,3 @@ export function TopographyBg({ intensity = "subtle", className = "" }: Topograph
     </div>
   );
 }
-

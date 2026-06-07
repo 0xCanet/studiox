@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { LoadingBarTags } from "./LoadingBarTags";
 import { RandomCharReveal } from "./RandomCharReveal";
 
@@ -20,6 +20,7 @@ interface HeroProps {
 }
 
 export function Hero({ messages, onContactClick }: HeroProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [heroScrollY, setHeroScrollY] = useState(0);
@@ -227,9 +228,13 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
   // Determine content positioning strategy based on viewport height and content size
   useEffect(() => {
+    let initialFrame: number | null = null;
+
     if (!isMobile || viewportHeight === 0) {
-      setContentPosition('bottom');
-      return;
+      initialFrame = requestAnimationFrame(() => setContentPosition('bottom'));
+      return () => {
+        if (initialFrame) cancelAnimationFrame(initialFrame);
+      };
     }
 
     const calculateContentPosition = () => {
@@ -256,7 +261,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     };
 
     // Initial calculation with estimate
-    calculateContentPosition();
+    initialFrame = requestAnimationFrame(calculateContentPosition);
 
     // Wait for content to be rendered before recalculating with actual height
     const timers = [
@@ -312,6 +317,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     window.addEventListener('orientationchange', calculateContentPosition);
 
     return () => {
+      if (initialFrame) cancelAnimationFrame(initialFrame);
       timers.forEach(timer => clearTimeout(timer));
       window.removeEventListener('resize', calculateContentPosition);
       window.removeEventListener('orientationchange', calculateContentPosition);
@@ -319,11 +325,22 @@ export function Hero({ messages, onContactClick }: HeroProps) {
   }, [isMobile, viewportHeight, navbarHeight, animationPhase]);
 
   useEffect(() => {
+    if (shouldReduceMotion) {
+      document.documentElement.classList.remove('scrollbar-hidden');
+      const frame = requestAnimationFrame(() => {
+        setVideoVisible(true);
+        setVideoZoom(1);
+        setContainerZoom(1);
+        setAnimationPhase("content");
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+
     const htmlElement = document.documentElement;
     htmlElement.classList.add('scrollbar-hidden');
 
     // Phase 1: Video appears and zooms out over 2 seconds
-    setVideoVisible(true);
+    const videoVisibleFrame = requestAnimationFrame(() => setVideoVisible(true));
 
     // Container zoom out animation over 2 seconds (more dramatic)
     const containerZoomStartTime = Date.now();
@@ -379,12 +396,13 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     return () => {
       clearInterval(containerZoomInterval);
       clearInterval(zoomInterval);
+      cancelAnimationFrame(videoVisibleFrame);
       clearTimeout(scrollbarTimeout);
       clearTimeout(navbarTimeout);
       clearTimeout(contentTimeout);
       document.documentElement.classList.remove('scrollbar-hidden');
     };
-  }, []);
+  }, [shouldReduceMotion]);
 
   // Native scroll handling for parallax - Apply parallax on both mobile and desktop
   // Use ref to store previous value for smooth interpolation
@@ -515,45 +533,19 @@ export function Hero({ messages, onContactClick }: HeroProps) {
           </motion.div>
 
           <motion.div
-            className="absolute inset-0 pointer-events-none"
+            className="absolute inset-0 pointer-events-none z-[9]"
             initial={{ opacity: 0 }}
             animate={{
-              opacity: videoVisible ? 1 : 0,
+              opacity: videoVisible && isHovering && !isMobile ? 1 : 0,
             }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
             style={{
-              transform: heroScrollY > 0
-                ? `translateY(${heroScrollY * 0.4}px) scale(${videoZoom * (1 + heroScrollY * 0.0002)})`
-                : `scale(${videoZoom})`,
-              transformOrigin: "center center",
-              maskImage: isHovering && !isMobile
-                ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
-                : "transparent",
-              WebkitMaskImage: isHovering && !isMobile
-                ? `radial-gradient(circle 500px at ${mousePosition.x}px ${mousePosition.y}px, black 0%, black 25%, rgba(0,0,0,0.98) 30%, rgba(0,0,0,0.95) 35%, rgba(0,0,0,0.9) 40%, rgba(0,0,0,0.8) 45%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.15) 80%, rgba(0,0,0,0.05) 90%, transparent 100%)`
-                : "transparent",
-              transition: "mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), -webkit-mask-image 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-              willChange: heroScrollY > 0 ? "mask-image, -webkit-mask-image, transform" : "mask-image, -webkit-mask-image"
+              background: `radial-gradient(circle 420px at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,122,48,0.22) 0%, rgba(240,238,233,0.14) 28%, rgba(240,238,233,0.03) 58%, transparent 76%)`,
+              filter: "blur(18px)",
+              mixBlendMode: "screen",
+              willChange: "opacity, background",
             }}
-          >
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{
-                transform: 'translateZ(0)',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                willChange: 'auto'
-              }}
-              aria-label="Hero background video"
-            >
-              <source src="/src/video_01.mp4" type="video/mp4" />
-            </video>
-          </motion.div>
+          />
 
           <div
             className="absolute inset-0 pointer-events-none z-7"
@@ -589,6 +581,10 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               willChange: 'auto'
             }}
           />
+
+          <div className="hero-kinetic-grid" aria-hidden="true" />
+          <div className="hero-scanline" aria-hidden="true" />
+          <div className="hero-scroll-bloom" aria-hidden="true" />
         </div>
 
         <div
@@ -649,7 +645,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                 }}>
                   <LoadingBarTags
                     tags={taglineTags}
-                    duration={animationDuration}
+                    duration={shouldReduceMotion ? 0 : animationDuration}
                     delay={0}
                     className="w-full mb-4 md:mb-6"
                   />
@@ -659,7 +655,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                   <RandomCharReveal
                     key="h1-french"
                     text={messages.title}
-                    duration={animationDuration}
+                    duration={shouldReduceMotion ? 0 : animationDuration}
                     delay={0}
                     as="h1"
                     className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
@@ -671,7 +667,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                   <RandomCharReveal
                     key="h1-english"
                     text={messages.title}
-                    duration={animationDuration}
+                    duration={shouldReduceMotion ? 0 : animationDuration}
                     delay={0}
                     as="h1"
                     className="text-[#F0EEE9] text-balance mb-3 md:mb-6 hero-h1 text-4xl md:text-5xl lg:text-6xl xl:text-7xl"
@@ -684,7 +680,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
                 <RandomCharReveal
                   key="h2"
                   text={messages.subtitle}
-                  duration={animationDuration}
+                  duration={shouldReduceMotion ? 0 : animationDuration}
                   delay={0}
                   as="h2"
                   className="font-body text-[#F0EEE9]/80 max-w-5xl mb-8 md:mb-10 hero-h2"

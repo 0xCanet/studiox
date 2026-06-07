@@ -10,6 +10,7 @@ import { AboutSection, type AboutMessages } from "./components/AboutSection";
 import { ContactSection, type ContactMessages } from "./components/ContactSection";
 import { Footer, type FooterMessages } from "./components/Footer";
 import { ConsentBanner } from "./components/ConsentBanner";
+import { SmoothScrollEffects } from "./components/SmoothScrollEffects";
 import { pricingCopy } from "@/content/pricing";
 import { replaceVariablesInObject } from "./lib/i18n-utils";
 
@@ -581,6 +582,8 @@ export default function HomePage() {
         onLanguageChange={setLanguage}
         messages={t.navbar}
       />
+
+      <SmoothScrollEffects />
 
       <main id="main">
         <Hero messages={t.hero} onContactClick={() => setIsContactModalOpen(true)} />

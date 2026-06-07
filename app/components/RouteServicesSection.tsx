@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { Section } from "./Section";
 import { Container } from "./Container";
@@ -42,7 +42,6 @@ interface ServiceCardProps {
 
 function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: ServiceCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [parallaxY, setParallaxY] = useState(0);
 
   // Parallax désactivé pour les cards individuelles - géré globalement
   // pour éviter les problèmes de performance
@@ -53,7 +52,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         ref={cardRef}
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px" }}
+        viewport={{ once: false, margin: "-8% 0px" }}
         transition={{ duration: 0.5 }}
         className="w-full"
       >
@@ -67,10 +66,10 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                   loop
                   muted
                   playsInline
-                  preload="metadata"
+                  preload="none"
                   className="w-full h-full object-cover"
                   style={{
-                    imageRendering: "pixelated" as any,
+                    imageRendering: "pixelated",
                     filter: "sepia(0.2)",
                   }}
                   aria-label={`${service.label} animation`}
@@ -85,7 +84,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                   loading="lazy"
                   decoding="async"
                   style={{
-                    imageRendering: "pixelated" as any,
+                    imageRendering: "pixelated",
                   }}
                 />
               )
@@ -120,7 +119,8 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
       ref={cardRef}
       initial={{ opacity: 0, scale: 0.85, y: 30 }}
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px" }}
+      viewport={{ once: false, margin: "-8% 0px" }}
+      whileHover={{ y: -8, scale: 1.02 }}
       transition={{
         duration: 0.6,
         ease: [0.4, 0, 0.2, 1],
@@ -155,9 +155,10 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                 loop
                 muted
                 playsInline
+                preload="none"
                 className="w-full h-full object-cover"
                 style={{
-                  imageRendering: "pixelated" as any,
+                  imageRendering: "pixelated",
                   filter: "sepia(0.2)",
                 }}
               >
@@ -171,7 +172,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                 loading="lazy"
                 decoding="async"
                 style={{
-                  imageRendering: "pixelated" as any,
+                  imageRendering: "pixelated",
                 }}
               />
             )
@@ -286,6 +287,7 @@ function Pin({ service, animationDelay }: PinProps) {
 // MAIN COMPONENT
 // ============================================
 export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
+  const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
   const [backgroundScrollY, setBackgroundScrollY] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -414,17 +416,6 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Get pin position relative to container for better positioning
-  const getPinPositionRelative = (service: ServiceRouteItem) => {
-    if (!mapContainerRef.current || isMobile) return { x: 0, y: 0 };
-
-    const containerRect = mapContainerRef.current.getBoundingClientRect();
-    const x = containerRect.width * service.xDesktop / 100;
-    const y = containerRect.height * service.yDesktop / 100;
-
-    return { x, y };
-  };
-
   // Sort services by orderMobile for mobile layout
   const sortedServices = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
 
@@ -448,10 +439,12 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
           preload="metadata"
           className="absolute inset-0 w-full h-full object-cover"
           style={{
-            opacity: 0.6,
-            transform: `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
+            opacity: shouldReduceMotion ? 0.45 : 0.6,
+            transform: shouldReduceMotion
+              ? "none"
+              : `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
             transformOrigin: "center center",
-            willChange: "transform",
+            willChange: shouldReduceMotion ? "auto" : "transform",
           }}
           aria-label="Services section background video"
         />
@@ -492,6 +485,14 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
             className="relative w-full"
             style={{ aspectRatio: "16/9", minHeight: "700px" }}
           >
+            <motion.div
+              className="route-glow-path"
+              initial={{ opacity: 0, scaleX: 0.18 }}
+              whileInView={{ opacity: 1, scaleX: 1 }}
+              viewport={{ once: false, amount: 0.5 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 1.2, ease: [0.22, 1, 0.36, 1] }}
+              aria-hidden="true"
+            />
             {/* Pins and Cards */}
             {messages.items.map((service, index) => {
               const sortedByOrder = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
@@ -521,7 +522,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
         {/* Mobile: Vertical Timeline */}
         <div className="lg:hidden space-y-8">
-          {sortedServices.map((service, index) => (
+          {sortedServices.map((service) => (
             <ServiceCard
               key={service.id}
               service={service}

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 export interface NavbarMessages {
   logo: string;
@@ -43,8 +44,8 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   // Show navbar after 2 seconds (after video animation) - skip delay if forceLightMode
   useEffect(() => {
     if (forceLightMode) {
-      setIsVisible(true);
-      return;
+      const frame = requestAnimationFrame(() => setIsVisible(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const timer = setTimeout(() => {
@@ -120,23 +121,31 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   // Initial detection on mount - before refs are available
   useEffect(() => {
+    let frame = 0;
+
     // If forceLightMode is enabled, set all states to light immediately
     if (forceLightMode) {
-      setLogoIsOverDark(false);
-      setNavPillIsOverDark(false);
-      setContactIsOverDark(false);
-      setLangIsOverDark(false);
-      setIsOverDark(false);
-      return;
+      frame = requestAnimationFrame(() => {
+        setLogoIsOverDark(false);
+        setNavPillIsOverDark(false);
+        setContactIsOverDark(false);
+        setLangIsOverDark(false);
+        setIsOverDark(false);
+      });
+      return () => cancelAnimationFrame(frame);
     }
 
     // On initial load, we're always over the hero (dark background)
     // Set all states to dark immediately
-    setLogoIsOverDark(true);
-    setNavPillIsOverDark(true);
-    setContactIsOverDark(true);
-    setLangIsOverDark(true);
-    setIsOverDark(true);
+    frame = requestAnimationFrame(() => {
+      setLogoIsOverDark(true);
+      setNavPillIsOverDark(true);
+      setContactIsOverDark(true);
+      setLangIsOverDark(true);
+      setIsOverDark(true);
+    });
+
+    return () => cancelAnimationFrame(frame);
   }, [forceLightMode]);
 
   // Real-time independent detection for each element
@@ -331,18 +340,26 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   const scrollToContact = () => {
     setIsMenuOpen(false);
-    const element = document.querySelector("#contact");
+    const element = document.querySelector<HTMLElement>("#contact");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.studioxLenis) {
+        window.studioxLenis.scrollTo(element, { offset: -72, duration: 1.45 });
+      } else {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
     setActiveLink(href);
-    const element = document.querySelector(href);
+    const element = document.querySelector<HTMLElement>(href);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (window.studioxLenis) {
+        window.studioxLenis.scrollTo(element, { offset: -72, duration: 1.45 });
+      } else {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
@@ -382,7 +399,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
         <div className={`${isMobile ? '' : 'pb-4'}`}>
           <div className="flex items-center justify-between w-full">
             {/* Logo - switches color based on background */}
-            <a ref={logoRef} href="/" className="flex-shrink-0 relative z-10 group cursor-pointer">
+            <Link ref={logoRef} href="/" className="flex-shrink-0 relative z-10 group cursor-pointer">
               <div className="relative h-7 md:h-8" style={{ width: '160px' }}>
                 {/* Dark logo - visible when OUT of hero section OR menu is open */}
                 <Image
@@ -422,7 +439,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   priority
                 />
               </div>
-            </a>
+            </Link>
 
             {/* Center - Glass Pill Navigation (Desktop only) */}
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">

@@ -116,6 +116,108 @@ html {
   overscroll-behavior-x: none;
 }
 
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.wow-scroll-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  overflow: hidden;
+  mix-blend-mode: normal;
+}
+
+.wow-scroll-aura {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 122, 48, calc(0.1 + var(--scroll-velocity, 0) * 0.12)) 0%, rgba(255, 122, 48, 0.05) 22%, transparent 62%),
+    radial-gradient(circle at 35% 38%, rgba(240, 238, 233, 0.1), transparent 34%);
+  filter: blur(44px);
+  opacity: calc(0.28 + var(--scroll-velocity, 0) * 0.32);
+  transform:
+    translate3d(-50%, calc(-50% + (var(--scroll-progress, 0) * 36vh)), 0)
+    rotate(calc(var(--scroll-progress, 0) * 95deg));
+  will-change: transform, opacity;
+}
+
+.wow-progress-rail {
+  position: fixed;
+  right: 18px;
+  top: 18vh;
+  width: 2px;
+  height: 64vh;
+  border-radius: 999px;
+  background: rgba(14, 14, 14, 0.08);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(240, 238, 233, 0.26);
+}
+
+.wow-progress-fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  transform-origin: top center;
+  transform: scaleY(var(--scroll-progress, 0));
+  background: linear-gradient(180deg, rgba(255, 122, 48, 0.1), var(--color-accent), rgba(14, 14, 14, 0.28));
+  box-shadow: 0 0 18px rgba(255, 122, 48, 0.5);
+}
+
+.wow-particles {
+  position: absolute;
+  inset: 0;
+}
+
+.wow-particles span {
+  --delay: calc(var(--particle) * -0.72s);
+  position: absolute;
+  left: var(--particle-x);
+  top: 110vh;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 122, 48, 0.42);
+  box-shadow: 0 0 14px rgba(255, 122, 48, 0.55);
+  animation: particle-drift 8s linear infinite;
+  animation-delay: var(--delay);
+  opacity: 0.5;
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.75);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: translate3d(calc((var(--particle) - 7) * 10px), -128vh, 0) scale(1.2);
+    opacity: 0;
+  }
+}
+
 /* Hide scrollbar during animation - class added on mount, removed after 2s */
 html.scrollbar-hidden {
   /* Keep content scrollable but completely hide scrollbar during zoom animation */
@@ -202,8 +304,7 @@ html.scrollbar-hidden *::-webkit-scrollbar-track {
 
   /* Compensate scrollbar width to recenter content */
   body {
-    margin-left: 4px !important
-      /* Shift content right by half scrollbar width to center visually */
+    scrollbar-gutter: stable;
   }
 }
 
@@ -417,6 +518,56 @@ p {
   color: var(--color-accent) !important;
 }
 
+.hero-kinetic-grid,
+.hero-scanline,
+.hero-scroll-bloom {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+.hero-kinetic-grid {
+  background-image:
+    linear-gradient(rgba(240, 238, 233, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(240, 238, 233, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at 55% 58%, black 0%, rgba(0, 0, 0, 0.7) 24%, transparent 68%);
+  opacity: calc(0.22 + var(--scroll-velocity, 0) * 0.28);
+  transform: translate3d(0, calc(var(--scroll-progress, 0) * -90px), 0) perspective(900px) rotateX(58deg) scale(1.24);
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+}
+
+.hero-scanline {
+  height: 24%;
+  top: auto;
+  bottom: 18%;
+  background: linear-gradient(180deg, transparent, rgba(255, 122, 48, 0.12), rgba(240, 238, 233, 0.1), transparent);
+  filter: blur(14px);
+  opacity: calc(0.26 + var(--scroll-velocity, 0) * 0.4);
+  animation: hero-scanline 5.8s ease-in-out infinite;
+}
+
+.hero-scroll-bloom {
+  background:
+    radial-gradient(circle at 18% 82%, rgba(255, 122, 48, 0.18), transparent 24%),
+    radial-gradient(circle at 82% 18%, rgba(240, 238, 233, 0.1), transparent 22%);
+  opacity: calc(0.34 + var(--scroll-velocity, 0) * 0.24);
+  transform: scale(calc(1 + var(--scroll-progress, 0) * 0.04));
+}
+
+@keyframes hero-scanline {
+  0%,
+  100% {
+    transform: translate3d(0, 12px, 0);
+  }
+
+  50% {
+    transform: translate3d(0, -18px, 0);
+  }
+}
+
 .btn-contact {
   background-color: var(--color-accent);
   color: var(--color-white);
@@ -616,6 +767,161 @@ section {
 .service-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(14, 14, 14, 0.1);
+}
+
+.project-depth-card {
+  contain: paint;
+  transform: translateZ(0);
+  box-shadow: 0 10px 30px rgba(14, 14, 14, 0.08);
+  transition:
+    box-shadow 450ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 450ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .project-depth-card {
+  box-shadow:
+    0 22px 50px rgba(14, 14, 14, 0.16),
+    0 0 0 1px rgba(255, 122, 48, 0.22);
+}
+
+.project-card-sheen {
+  position: absolute;
+  inset: -40% -70%;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(240, 238, 233, 0.22) 48%,
+    rgba(255, 122, 48, 0.16) 54%,
+    transparent 66%
+  );
+  opacity: 0;
+  transform: translateX(-34%) rotate(8deg);
+  transition:
+    opacity 420ms ease,
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .project-card-sheen {
+  opacity: 1;
+  transform: translateX(34%) rotate(8deg);
+}
+
+.portrait-depth {
+  box-shadow:
+    0 18px 46px rgba(14, 14, 14, 0.14),
+    0 0 0 1px rgba(255, 122, 48, 0.08);
+}
+
+.portrait-depth::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 68% 18%, rgba(255, 122, 48, 0.24), transparent 28%),
+    linear-gradient(180deg, transparent 42%, rgba(14, 14, 14, 0.16) 100%);
+  opacity: 0.72;
+  transition: opacity 350ms ease;
+}
+
+.portrait-depth:hover::after {
+  opacity: 0.95;
+}
+
+.about-pillar::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0.35rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 6px rgba(255, 122, 48, 0.1);
+  transform: scale(0.9);
+  transition: transform 300ms ease, box-shadow 300ms ease;
+}
+
+.about-pillar:hover::before {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 10px rgba(255, 122, 48, 0.14);
+}
+
+.stat-orbit {
+  position: relative;
+}
+
+.stat-orbit::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0.2rem;
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(255, 122, 48, 0.18);
+  border-radius: 50%;
+  transform: translateX(-50%) rotate(18deg);
+  pointer-events: none;
+}
+
+.route-glow-path {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  z-index: 12;
+  height: 2px;
+  border-radius: 999px;
+  transform-origin: left center;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 122, 48, 0.22) 12%,
+    rgba(255, 122, 48, 0.9) 52%,
+    rgba(255, 122, 48, 0.18) 88%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 18px rgba(255, 122, 48, 0.34),
+    0 0 44px rgba(255, 122, 48, 0.16);
+}
+
+.route-glow-path::before,
+.route-glow-path::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  box-shadow: 0 0 18px rgba(255, 122, 48, 0.65);
+  transform: translateY(-50%);
+}
+
+.route-glow-path::before {
+  left: 18%;
+}
+
+.route-glow-path::after {
+  right: 22%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .project-card-sheen,
+  .route-glow-path {
+    display: none;
+  }
 }
 
 /* ============================================

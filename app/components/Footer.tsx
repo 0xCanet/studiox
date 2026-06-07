@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { Container } from "./Container";
 
@@ -27,9 +28,13 @@ interface FooterProps {
 export function Footer({ messages }: FooterProps) {
   const handleQuickLinkClick = (href: string) => {
     if (href.startsWith("#")) {
-      const element = document.querySelector(href);
+      const element = document.querySelector<HTMLElement>(href);
       if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (window.studioxLenis) {
+          window.studioxLenis.scrollTo(element, { offset: -72, duration: 1.45 });
+        } else {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
     }
   };
@@ -46,7 +51,7 @@ export function Footer({ messages }: FooterProps) {
         <div className="flex flex-col gap-8 md:gap-12">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
             <div className="flex-shrink-0">
-              <a
+              <Link
                 href="/"
                 className="inline-block group mb-3"
               >
@@ -58,7 +63,7 @@ export function Footer({ messages }: FooterProps) {
                   className="h-7 md:h-8 w-auto transition-opacity duration-300 group-hover:opacity-70"
                   priority
                 />
-              </a>
+              </Link>
               <p className="text-muted text-sm font-body max-w-xs">
                 <TextWithOrangeDots>{messages.tagline}</TextWithOrangeDots>
               </p>

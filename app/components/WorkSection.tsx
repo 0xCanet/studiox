@@ -138,9 +138,9 @@ const ProjectCard = memo(function ProjectCard({
   project, 
   viewProjectText,
   downloadText,
-  isComingSoon 
-}: { 
-  project: WorkItem; 
+  isComingSoon
+}: {
+  project: WorkItem;
   viewProjectText: string;
   downloadText?: string;
   isComingSoon: boolean;
@@ -148,21 +148,21 @@ const ProjectCard = memo(function ProjectCard({
   const cardContent = (
     <>
       {/* Project Card */}
-      <div className="relative rounded-2xl overflow-hidden bg-surface aspect-[16/10] md:aspect-[16/9]">
+      <div className="project-depth-card relative rounded-2xl overflow-hidden bg-surface aspect-[16/10] md:aspect-[16/9]">
         {/* Video or Image */}
         {project.video ? (
           <div className="absolute inset-0 overflow-hidden">
-                    <video
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="metadata"
-                      className="absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:blur-lg group-hover:brightness-[0.8] group-hover:sepia-[0.3] group-hover:saturate-[1.5] group-hover:hue-rotate-[-5deg]"
-                      aria-label={`${project.title} project video`}
-                    >
-                      <source src={project.video} type="video/mp4" />
-                    </video>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:blur-lg group-hover:brightness-[0.8] group-hover:sepia-[0.3] group-hover:saturate-[1.5] group-hover:hue-rotate-[-5deg]"
+              aria-label={`${project.title} project video`}
+            >
+              <source src={project.video} type="video/mp4" />
+            </video>
           </div>
         ) : project.image ? (
           <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]">
@@ -182,6 +182,8 @@ const ProjectCard = memo(function ProjectCard({
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,122,48,0.1),transparent_50%)]" />
           </div>
         )}
+
+        <div className="project-card-sheen" aria-hidden="true" />
 
         {/* Hover Overlay - Orange tint for video */}
         {project.video ? (
@@ -221,11 +223,11 @@ const ProjectCard = memo(function ProjectCard({
       </div>
 
       {/* Project Info */}
-      <motion.div 
+      <motion.div
         className="mt-4 md:mt-5"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "0px" }}
+        viewport={{ once: false, margin: "-8% 0px" }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
         <div className="flex items-center gap-3 mb-2">
@@ -262,8 +264,8 @@ const ProjectCard = memo(function ProjectCard({
   // Handle PDF download
   if (project.downloadUrl) {
     return (
-      <a 
-        href={project.downloadUrl} 
+      <a
+        href={project.downloadUrl}
         download
         className="block cursor-pointer group"
         target="_blank"
@@ -317,7 +319,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px" }}
+            viewport={{ once: false, margin: "-8% 0px" }}
             transition={{ duration: 0.7 }}
             className="flex flex-col md:flex-row md:items-end md:justify-between mt-8 md:mt-12 mb-12 md:mb-16"
           >
@@ -331,7 +333,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
                 <span className="text-accent">.</span>
               </h2>
             </div>
-            <a
+            <Link
               href="/#work"
               className="btn btn-secondary mt-6 md:mt-0 w-fit"
             >
@@ -349,7 +351,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
                   d="M17 8l4 4m0 0l-4 4m4-4H3"
                 />
               </svg>
-            </a>
+            </Link>
           </motion.div>
         )}
 
@@ -358,7 +360,7 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "0px" }}
+          viewport={{ once: false, margin: "-8% 0px", amount: 0.12 }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
         >
           {messages.items.map((project, index) => {
@@ -368,6 +370,8 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
                 <motion.div
                   key={project.id}
                   variants={itemVariants}
+                  whileHover={{ y: -8, scale: 1.01 }}
+                  transition={{ type: "spring", stiffness: 260, damping: 24 }}
                   className="md:col-span-2"
                 >
                   <EbookCard
@@ -378,11 +382,13 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
                 </motion.div>
               );
             }
-            
+
             return (
               <motion.div
                 key={project.id}
                 variants={itemVariants}
+                whileHover={project.id === "coming-soon" ? undefined : { y: -8, scale: 1.01 }}
+                transition={{ type: "spring", stiffness: 260, damping: 24 }}
                 className={`group ${index === 0 && !project.downloadUrl ? "md:col-span-2" : ""} ${project.id === "coming-soon" ? "opacity-60" : ""}`}
               >
                 <ProjectCard
@@ -399,4 +405,3 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
     </Section>
   );
 }
-

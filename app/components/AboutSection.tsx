@@ -46,19 +46,23 @@ export function AboutSection({ messages }: AboutSectionProps) {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px" }}
+            viewport={{ once: false, margin: "-8% 0px" }}
             transition={{ duration: 0.7 }}
           >
-            <div className="relative w-full aspect-[3/4] max-w-md lg:max-w-lg mx-auto lg:mx-0 rounded-2xl overflow-hidden">
+            <motion.div
+              className="portrait-depth relative w-full aspect-[3/4] max-w-md lg:max-w-lg mx-auto lg:mx-0 rounded-2xl overflow-hidden"
+              whileHover={{ y: -6, rotate: -0.4, scale: 1.01 }}
+              transition={{ type: "spring", stiffness: 220, damping: 24 }}
+            >
               <Image
                 src="/images/backgrounds/pp_jessy_orange.png"
                 alt={messages.founder.portraitAlt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
-                priority
+                loading="lazy"
               />
-            </div>
+            </motion.div>
             <div className="mt-6 text-center lg:text-left">
               <h3 className="font-heading font-bold text-xl text-text mb-1">
                 {messages.founder.name}
@@ -73,7 +77,7 @@ export function AboutSection({ messages }: AboutSectionProps) {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px" }}
+            viewport={{ once: false, margin: "-8% 0px" }}
             transition={{ duration: 0.7, delay: 0.2 }}
             className="space-y-8"
           >
@@ -103,9 +107,9 @@ export function AboutSection({ messages }: AboutSectionProps) {
                     key={pillar.id}
                     initial={{ opacity: 0, x: 20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false, margin: "-8% 0px" }}
                     transition={{ duration: 0.5, delay: index * 0.15 }}
-                    className="relative pl-6 border-l-2 border-accent/30 hover:border-accent transition-colors"
+                    className="about-pillar relative pl-6 border-l-2 border-accent/30 hover:border-accent transition-colors"
                   >
                     <h4 className="font-heading font-semibold text-lg text-text mb-2">
                       {pillar.title}
@@ -125,9 +129,9 @@ export function AboutSection({ messages }: AboutSectionProps) {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: false, margin: "-8% 0px" }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="text-center"
+                  className="stat-orbit text-center"
                 >
                   <div className="font-heading font-bold text-3xl md:text-4xl text-accent mb-1">
                     {stat.value}
