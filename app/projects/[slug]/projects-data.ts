@@ -178,8 +178,8 @@ export const projects: Record<string, {
       },
     },
     links: [
-      { label: { en: "Visit Website", fr: "Visiter le site" }, url: "#" },
-      { label: { en: "Case Study", fr: "Étude de cas" }, url: "#" },
+      { label: { en: "Visit Website", fr: "Visiter le site" }, url: "https://frontend-sendo-nxqk.vercel.app/" },
+      { label: { en: "View Repository", fr: "Voir le repo" }, url: "https://github.com/Sendo-labs" },
     ],
     video: "/src/sendo-market-video.mp4",
     videoDescription: {
