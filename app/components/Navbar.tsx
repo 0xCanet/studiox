@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface NavbarMessages {
   logo: string;
@@ -17,14 +18,31 @@ export interface NavbarMessages {
   contact: string;
 }
 
+export interface NavbarLink {
+  href: string;
+  label: string;
+}
+
 interface NavbarProps {
   language: "en" | "fr";
   onLanguageChange: (lang: "en" | "fr") => void;
   messages: NavbarMessages;
   forceLightMode?: boolean;
+  navLinks?: NavbarLink[];
+  darkSectionIds?: string[];
+  contactHref?: string;
 }
 
-export function Navbar({ language, onLanguageChange, messages, forceLightMode = false }: NavbarProps) {
+export function Navbar({
+  language,
+  onLanguageChange,
+  messages,
+  forceLightMode = false,
+  navLinks,
+  darkSectionIds,
+  contactHref = "#contact",
+}: NavbarProps) {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeLink, setActiveLink] = useState<string | null>(null);
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
@@ -40,6 +58,38 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
   const navPillRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLButtonElement>(null);
   const langRef = useRef<HTMLDivElement>(null);
+  const resolvedNavLinks = useMemo<NavbarLink[]>(
+    () => navLinks ?? [
+      { href: "#services", label: messages.links.services },
+      { href: "#work", label: messages.links.work },
+      { href: "#pricing", label: messages.links.pricing },
+      { href: "#about", label: messages.links.about },
+      { href: "#contact", label: messages.links.letsTalk },
+    ],
+    [
+      navLinks,
+      messages.links.services,
+      messages.links.work,
+      messages.links.pricing,
+      messages.links.about,
+      messages.links.letsTalk,
+    ]
+  );
+  const resolvedDarkSectionIds = useMemo(
+    () => darkSectionIds ?? ["hero", "pricing"],
+    [darkSectionIds]
+  );
+  const scrollSpySections = useMemo(() => {
+    const anchorIds = resolvedNavLinks
+      .map((link) => link.href.startsWith("#") ? link.href.slice(1) : null)
+      .filter((sectionId): sectionId is string => Boolean(sectionId));
+
+    if (contactHref.startsWith("#")) {
+      anchorIds.push(contactHref.slice(1));
+    }
+
+    return Array.from(new Set(anchorIds));
+  }, [resolvedNavLinks, contactHref]);
 
   // Show navbar after 2 seconds (after video animation) - skip delay if forceLightMode
   useEffect(() => {
@@ -69,55 +119,35 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
     };
   }, []);
 
-  // Helper function to check if we're over any dark section (Hero or Pricing)
-  const isOverDarkSection = (yPosition?: number): boolean => {
+  // Helper function to check if we're over any dark section (Hero, Pricing, or custom page sections)
+  const isOverDarkSection = useCallback((yPosition?: number): boolean => {
     // If forceLightMode is enabled, always return false (light mode)
     if (forceLightMode) return false;
 
     const threshold = yPosition ?? 150; // Distance from top of viewport to trigger transition
-    const heroSection = document.getElementById("hero");
-    const pricingSection = document.getElementById("pricing");
 
-    // Check if we're over the hero section (dark)
-    if (heroSection) {
-      const heroRect = heroSection.getBoundingClientRect();
-      if (heroRect.bottom > threshold) return true;
-    }
+    return resolvedDarkSectionIds.some((sectionId) => {
+      const section = document.getElementById(sectionId);
+      if (!section) return false;
 
-    // Check if we're over the pricing section (dark)
-    if (pricingSection) {
-      const pricingRect = pricingSection.getBoundingClientRect();
-      if (pricingRect.top < threshold && pricingRect.bottom > threshold) return true;
-    }
-
-    // Default to light if not over any dark section
-    return false;
-  };
+      const rect = section.getBoundingClientRect();
+      return rect.top < threshold && rect.bottom > threshold;
+    });
+  }, [forceLightMode, resolvedDarkSectionIds]);
 
   // Detect background color at a specific point - real-time detection
-  const detectBackgroundAtPoint = (x: number, y: number): boolean => {
+  const detectBackgroundAtPoint = useCallback((_x: number, y: number): boolean => {
     // If forceLightMode is enabled, always return false (light mode)
     if (forceLightMode) return false;
 
-    // Hero section and Pricing section are dark, all other sections are light (#F0EEE9)
-    const heroSection = document.getElementById("hero");
-    const pricingSection = document.getElementById("pricing");
+    return resolvedDarkSectionIds.some((sectionId) => {
+      const section = document.getElementById(sectionId);
+      if (!section) return false;
 
-    // Check if the Y position is within the hero section
-    if (heroSection) {
-      const heroRect = heroSection.getBoundingClientRect();
-      if (y >= heroRect.top && y <= heroRect.bottom) return true;
-    }
-
-    // Check if the Y position is within the pricing section
-    if (pricingSection) {
-      const pricingRect = pricingSection.getBoundingClientRect();
-      if (y >= pricingRect.top && y <= pricingRect.bottom) return true;
-    }
-
-    // Default to light if not over any dark section
-    return false;
-  };
+      const rect = section.getBoundingClientRect();
+      return y >= rect.top && y <= rect.bottom;
+    });
+  }, [forceLightMode, resolvedDarkSectionIds]);
 
   // Initial detection on mount - before refs are available
   useEffect(() => {
@@ -259,11 +289,11 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       window.removeEventListener("scroll", throttledScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, [forceLightMode]);
+  }, [forceLightMode, detectBackgroundAtPoint, isOverDarkSection]);
 
   // Scroll spy - detect which section is in view
   useEffect(() => {
-    const sections = ["services", "work", "pricing", "about", "contact"];
+    const sections = scrollSpySections;
 
     const updateActiveLink = () => {
       const scrollY = window.scrollY;
@@ -324,7 +354,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updateActiveLink);
     };
-  }, []);
+  }, [scrollSpySections]);
 
   // Lock body scroll when menu is open
   useEffect(() => {
@@ -340,7 +370,12 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   const scrollToContact = () => {
     setIsMenuOpen(false);
-    const element = document.querySelector<HTMLElement>("#contact");
+    if (!contactHref.startsWith("#")) {
+      router.push(contactHref);
+      return;
+    }
+
+    const element = document.querySelector<HTMLElement>(contactHref);
     if (element) {
       if (window.studioxLenis) {
         window.studioxLenis.scrollTo(element, { offset: -72, duration: 1.45 });
@@ -352,6 +387,12 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
 
   const handleNavClick = (href: string) => {
     setIsMenuOpen(false);
+    if (!href.startsWith("#")) {
+      setActiveLink(null);
+      router.push(href);
+      return;
+    }
+
     setActiveLink(href);
     const element = document.querySelector<HTMLElement>(href);
     if (element) {
@@ -362,14 +403,6 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
       }
     }
   };
-
-  const navLinks = [
-    { href: "#services", label: messages.links.services },
-    { href: "#work", label: messages.links.work },
-    { href: "#pricing", label: messages.links.pricing },
-    { href: "#about", label: messages.links.about },
-    { href: "#contact", label: messages.links.letsTalk },
-  ];
 
   return (
     <>
@@ -445,7 +478,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
             <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
               <div ref={navPillRef} className={`glass-pill ${navPillIsOverDark ? 'glass-pill-dark' : 'glass-pill-light'}`}>
                 <div className="flex items-center gap-1.5">
-                  {navLinks.map((link) => (
+                  {resolvedNavLinks.map((link) => (
                     <a
                       key={link.href}
                       href={link.href}
@@ -555,7 +588,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
             <div className="flex flex-col h-full pt-24 px-6">
               {/* Navigation Links */}
               <nav className="flex-1 flex flex-col justify-center">
-                {navLinks.map((link, index) => (
+                {resolvedNavLinks.map((link, index) => (
                   <motion.a
                     key={link.href}
                     href={link.href}
@@ -579,7 +612,7 @@ export function Navbar({ language, onLanguageChange, messages, forceLightMode = 
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -30 }}
-                  transition={{ duration: 0.3, delay: navLinks.length * 0.1 }}
+                  transition={{ duration: 0.3, delay: resolvedNavLinks.length * 0.1 }}
                   className="mobile-nav-link text-left text-accent"
                 >
                   {messages.contact}
