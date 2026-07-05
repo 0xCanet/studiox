@@ -37,14 +37,25 @@ export function LoadingBarTags({
       timeoutRef.current = null;
     }
 
-    // Initialize: each tag starts with 0 revealed characters
-    setRevealedChars(tags.map(() => 0));
-    // Initialize random characters for each position of each tag
-    setDisplayChars(
-      tags.map((tag) =>
-        Array.from({ length: tag.length }, () => generateRandomChar())
-      )
-    );
+    if (duration <= 0) {
+      const frame = requestAnimationFrame(() => {
+        setRevealedChars(tags.map((tag) => tag.length));
+        setDisplayChars(tags.map((tag) => tag.split("")));
+      });
+      intervalRef.current = frame;
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const initFrame = requestAnimationFrame(() => {
+      // Initialize: each tag starts with 0 revealed characters
+      setRevealedChars(tags.map(() => 0));
+      // Initialize random characters for each position of each tag
+      setDisplayChars(
+        tags.map((tag) =>
+          Array.from({ length: tag.length }, () => generateRandomChar())
+        )
+      );
+    });
 
     timeoutRef.current = setTimeout(() => {
       const startTime = performance.now();
@@ -96,6 +107,7 @@ export function LoadingBarTags({
     }, delay);
 
     return () => {
+      cancelAnimationFrame(initFrame);
       if (intervalRef.current !== null) {
         cancelAnimationFrame(intervalRef.current);
         intervalRef.current = null;
@@ -165,4 +177,3 @@ export function LoadingBarTags({
     </div>
   );
 }
-

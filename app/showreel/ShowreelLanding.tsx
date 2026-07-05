@@ -9,6 +9,7 @@ import { Footer, type FooterMessages } from "../components/Footer";
 import { ConsentBanner } from "../components/ConsentBanner";
 import { SmoothScrollEffects } from "../components/SmoothScrollEffects";
 import { TextWithOrangeDots } from "../components/TextWithOrangeDots";
+import { useIsMobileDevice } from "../lib/useIsMobileDevice";
 
 type Language = "en" | "fr";
 
@@ -712,6 +713,7 @@ function LightroomCard({
 
 export function ShowreelLanding() {
   const shouldReduceMotion = useReducedMotion();
+  const isMobileDevice = useIsMobileDevice();
   const heroVideoRef = useRef<HTMLVideoElement>(null);
   const [language, setLanguage] = useState<Language>("fr");
   const [heroMuted, setHeroMuted] = useState(true);
@@ -774,18 +776,26 @@ export function ShowreelLanding() {
 
       <main id="main">
         <section id="hero" className="relative h-screen min-h-[680px] overflow-hidden bg-[#0E0E0E]">
-          <video
-            ref={heroVideoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 h-full w-full object-cover"
-            aria-label="Showreel background video"
-          >
-            <source src="/src/sendo-market-video.mp4" type="video/mp4" />
-          </video>
+          {isMobileDevice ? (
+            <div
+              className="absolute inset-0 h-full w-full bg-cover bg-center"
+              style={{ backgroundImage: "url('/images/backgrounds/bg_img_s2.png')" }}
+              aria-hidden="true"
+            />
+          ) : (
+            <video
+              ref={heroVideoRef}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full object-cover"
+              aria-label="Showreel background video"
+            >
+              <source src="/src/sendo-market-video.mp4" type="video/mp4" />
+            </video>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-[#0E0E0E]/42 to-[#0E0E0E]/12" />
           <div className="absolute inset-x-0 top-0 z-10 h-32 bg-[#0E0E0E]" />
           <div className="absolute inset-x-0 top-0 z-10 h-80 bg-gradient-to-b from-[#0E0E0E] via-[#0E0E0E]/86 to-transparent" />
@@ -832,15 +842,17 @@ export function ShowreelLanding() {
                 >
                   {t.heroSecondary}
                 </button>
-                <button
-                  type="button"
-                  onClick={toggleHeroSound}
-                  aria-pressed={!heroMuted}
-                  className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-standalone-dark gap-2 px-5 py-2.5 text-sm"
-                >
-                  <SoundIcon muted={heroMuted} />
-                  {heroMuted ? t.heroSoundOn : t.heroSoundOff}
-                </button>
+                {!isMobileDevice && (
+                  <button
+                    type="button"
+                    onClick={toggleHeroSound}
+                    aria-pressed={!heroMuted}
+                    className="cursor-pointer glass-pill-link glass-pill-link-standalone glass-pill-link-standalone-dark gap-2 px-5 py-2.5 text-sm"
+                  >
+                    <SoundIcon muted={heroMuted} />
+                    {heroMuted ? t.heroSoundOn : t.heroSoundOff}
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>
