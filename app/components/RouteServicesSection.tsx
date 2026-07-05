@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { Section } from "./Section";
 import { Container } from "./Container";
@@ -58,18 +57,37 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         className="w-full"
       >
         <div className="glass-pill-light rounded-2xl" style={{ padding: '24px' }}>
-          {/* Visual */}
+          {/* Video */}
           <div className="w-full aspect-video rounded-lg overflow-hidden mb-6">
             {service.animationSrc ? (
-              <div className="flex h-full w-full items-center justify-center bg-[#0E0E0E]">
-                <Image
-                  src="/logos/studiox-brandmark-orange.png"
-                  alt=""
-                  width={56}
-                  height={56}
-                  className="h-14 w-14 opacity-80"
+              service.animationSrc.endsWith(".webm") || service.animationSrc.endsWith(".mp4") ? (
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  className="w-full h-full object-cover"
+                  style={{
+                    imageRendering: "pixelated",
+                    filter: "sepia(0.2)",
+                  }}
+                  aria-label={`${service.label} animation`}
+                >
+                  <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
+                </video>
+              ) : (
+                <img
+                  src={service.animationSrc}
+                  alt={`${service.label} animation`}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  style={{
+                    imageRendering: "pixelated",
+                  }}
                 />
-              </div>
+              )
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/10 flex items-center justify-center">
                 <div className="text-[#0E0E0E]/20 font-body text-sm text-center px-4">
@@ -129,7 +147,7 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         }}
       >
         {/* Small video thumbnail - reduced size */}
-        <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden mb-4" style={{ maxHeight: '120px' }}>
+        <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-4" style={{ maxHeight: '120px' }}>
           {service.animationSrc ? (
             service.animationSrc.endsWith(".webm") || service.animationSrc.endsWith(".mp4") ? (
               <video
@@ -147,12 +165,12 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
                 <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
               </video>
             ) : (
-              <Image
+              <img
                 src={service.animationSrc}
                 alt={`${service.label} animation`}
-                fill
-                sizes="280px"
-                className="object-cover"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
                 style={{
                   imageRendering: "pixelated",
                 }}
@@ -333,8 +351,9 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
   // Detect mobile
   useEffect(() => {
     const checkMobile = () => {
+      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
       const isSmallScreen = window.innerWidth < 1024;
-      setIsMobile(isSmallScreen);
+      setIsMobile(isSmallScreen && isTouchDevice);
     };
 
     checkMobile();
@@ -363,12 +382,6 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
   // Parallax effect using native scroll with throttling
   useEffect(() => {
-    if (isMobile || shouldReduceMotion) {
-      prevBackgroundScrollYRef.current = 0;
-      const frame = requestAnimationFrame(() => setBackgroundScrollY(0));
-      return () => cancelAnimationFrame(frame);
-    }
-
     let ticking = false;
 
     const handleScroll = () => {
@@ -401,7 +414,7 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile, shouldReduceMotion]);
+  }, []);
 
   // Sort services by orderMobile for mobile layout
   const sortedServices = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
@@ -416,36 +429,25 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     >
       {/* Background Video with Parallax */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        {isMobile ? (
-          <div
-            className="absolute inset-0 h-full w-full bg-cover bg-center"
-            style={{
-              backgroundImage: "url('/images/backgrounds/bg_img_s2.png')",
-              opacity: 0.58,
-            }}
-            aria-hidden="true"
-          />
-        ) : (
-          <motion.video
-            src="/src/video-bg-service.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            controls={false}
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{
-              opacity: shouldReduceMotion ? 0.45 : 0.6,
-              transform: shouldReduceMotion
-                ? "none"
-                : `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
-              transformOrigin: "center center",
-              willChange: shouldReduceMotion ? "auto" : "transform",
-            }}
-            aria-label="Services section background video"
-          />
-        )}
+        <motion.video
+          src="/src/video-bg-service.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          controls={false}
+          preload="metadata"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            opacity: shouldReduceMotion ? 0.45 : 0.6,
+            transform: shouldReduceMotion
+              ? "none"
+              : `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
+            transformOrigin: "center center",
+            willChange: shouldReduceMotion ? "auto" : "transform",
+          }}
+          aria-label="Services section background video"
+        />
       </div>
 
       {/* Overlay for content readability - en dessous du tracé pour le laisser visible */}

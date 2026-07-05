@@ -5,7 +5,6 @@ import { motion, useReducedMotion, Variants } from "framer-motion";
 import { PricingCopy } from "@/types/copy";
 import { Container } from "./Container";
 import { Section } from "./Section";
-import { useIsMobileDevice } from "../lib/useIsMobileDevice";
 
 /**
  * PricingSection Component
@@ -64,7 +63,6 @@ export function PricingSection({
   intensity = "subtle",
 }: PricingSectionProps) {
   const shouldReduceMotion = useReducedMotion();
-  const isMobileDevice = useIsMobileDevice();
   const [pricingScrollY, setPricingScrollY] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
@@ -102,12 +100,6 @@ export function PricingSection({
 
   // Parallax scroll effect with zoom using native scroll with throttling
   useEffect(() => {
-    if (isMobileDevice || shouldReduceMotion) {
-      prevPricingScrollYRef.current = 0;
-      const frame = requestAnimationFrame(() => setPricingScrollY(0));
-      return () => cancelAnimationFrame(frame);
-    }
-
     let ticking = false;
 
     const handleScroll = () => {
@@ -140,7 +132,7 @@ export function PricingSection({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobileDevice, shouldReduceMotion]);
+  }, []);
 
   return (
     <Section
@@ -154,7 +146,7 @@ export function PricingSection({
       <div
         className="relative bg-neutral-950 overflow-hidden rounded-none md:rounded-[32px] mx-0 md:mx-6"
       >
-        {/* Media Background */}
+        {/* Video Background */}
         <div
           ref={videoRef}
           className="absolute inset-0 z-0"
@@ -163,45 +155,29 @@ export function PricingSection({
               ? `translateY(${pricingScrollY * 0.4}px) scale(${1.1 * (1 + pricingScrollY * 0.0002)})`
               : `scale(1.1)`,
             transformOrigin: "center center",
-            willChange: isMobileDevice ? 'auto' : 'transform',
+            willChange: 'transform',
           }}
         >
-          {isMobileDevice ? (
-            <div
-              className="absolute inset-0 h-full w-full bg-cover bg-center"
-              style={{
-                backgroundImage: "url('/images/backgrounds/bg_s2.jpg')",
-                filter: "grayscale(100%)",
-              }}
-              aria-hidden="true"
-            />
-          ) : (
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{
-                transform: 'translateZ(0)',
-                backfaceVisibility: 'hidden',
-                WebkitBackfaceVisibility: 'hidden',
-                filter: "grayscale(100%) blur(0.5px)",
-                WebkitFilter: "grayscale(100%) blur(0.5px)",
-              }}
-              aria-label="Pricing section background video"
-            >
-              <source src="/src/video-pricing.mp4" type="video/mp4" />
-            </video>
-          )}
-          {/* Dark overlay for better text readability */}
-          <div
-            className="absolute inset-0"
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 w-full h-full object-cover"
             style={{
-              backgroundColor: intensity === "medium" ? "rgba(10, 10, 10, 0.68)" : "rgba(10, 10, 10, 0.6)",
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              filter: "grayscale(100%) blur(0.5px)",
+              WebkitFilter: "grayscale(100%) blur(0.5px)",
             }}
-          />
+            aria-label="Pricing section background video"
+          >
+            <source src="/src/video-pricing.mp4" type="video/mp4" />
+          </video>
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-neutral-950/60" />
         </div>
 
         {/* Content wrapper with max-width constraint like other sections */}
@@ -341,6 +317,7 @@ function PricingCard({
             lang={lang}
             onPrimary={onPrimary}
             isFeatured={isFeatured}
+            shouldReduceMotion={shouldReduceMotion}
           />
         </div>
       </div>
@@ -353,6 +330,7 @@ interface CardContentProps {
   lang: "fr" | "en";
   onPrimary: () => void;
   isFeatured: boolean;
+  shouldReduceMotion: boolean;
 }
 
 function CardContent({
@@ -360,6 +338,7 @@ function CardContent({
   lang,
   onPrimary,
   isFeatured,
+  shouldReduceMotion,
 }: CardContentProps) {
   return (
     <div className="flex flex-col h-full">
@@ -426,6 +405,7 @@ function CardContent({
           <PrimaryButton
             onClick={onPrimary}
             label={tier.primaryCta[lang]}
+            shouldReduceMotion={shouldReduceMotion}
             isFeatured={isFeatured}
           />
         </div>
@@ -437,12 +417,14 @@ function CardContent({
 interface PrimaryButtonProps {
   onClick: () => void;
   label: string;
+  shouldReduceMotion: boolean;
   isFeatured: boolean;
 }
 
 function PrimaryButton({
   onClick,
   label,
+  shouldReduceMotion,
   isFeatured,
 }: PrimaryButtonProps) {
   // Style orange pour featured, style secondaire (transparent avec bordure) pour les autres
@@ -495,3 +477,4 @@ function PrimaryButton({
     </button>
   );
 }
+

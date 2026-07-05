@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { TextWithOrangeDots } from "./TextWithOrangeDots";
 
 interface RandomCharRevealProps {
   text: string;
@@ -45,11 +46,15 @@ export function RandomCharReveal({
   className = "",
   as = "span",
   highlightWord,
+  highlightColor = "var(--color-accent)",
+  initialText,
 }: RandomCharRevealProps) {
   const [revealedLength, setRevealedLength] = useState(0);
   const [displayChars, setDisplayChars] = useState<string[]>([]);
   const animationFrameRef = useRef<number | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const isH1 = as === "h1";
 
   useEffect(() => {
     // Cleanup
@@ -62,28 +67,17 @@ export function RandomCharReveal({
       timeoutRef.current = null;
     }
 
-    if (duration <= 0) {
-      const frame = requestAnimationFrame(() => {
-        setRevealedLength(text.split("").filter(char => shouldReplaceChar(char)).length);
-        setDisplayChars(text.split(""));
-      });
-      animationFrameRef.current = frame;
-      return () => cancelAnimationFrame(frame);
-    }
-
-    const initFrame = requestAnimationFrame(() => {
-      // Initialize: random chars matching case/style, preserve spaces/punctuation
-      setRevealedLength(0);
-
-      const initialChars = text.split("").map((finalChar) => {
-        if (!shouldReplaceChar(finalChar)) {
-          return finalChar;
-        }
-        return generateRandomChar(finalChar);
-      });
-
-      setDisplayChars(initialChars);
+    // Initialize: random chars matching case/style, preserve spaces/punctuation
+    setRevealedLength(0);
+    
+    const initialChars = text.split("").map((finalChar) => {
+      if (!shouldReplaceChar(finalChar)) {
+        return finalChar;
+      }
+      return generateRandomChar(finalChar);
     });
+    
+    setDisplayChars(initialChars);
 
     // Count replaceable chars for timing
     const replaceableCharsCount = text.split("").filter(char => shouldReplaceChar(char)).length;
@@ -137,7 +131,6 @@ export function RandomCharReveal({
     }, delay);
 
     return () => {
-      cancelAnimationFrame(initFrame);
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
@@ -222,3 +215,4 @@ export function RandomCharReveal({
     </Component>
   );
 }
+

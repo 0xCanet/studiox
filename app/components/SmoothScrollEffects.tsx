@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import type { CSSProperties } from "react";
 import { useReducedMotion } from "framer-motion";
 import Lenis from "lenis";
-import { useIsMobileDevice } from "../lib/useIsMobileDevice";
 
 declare global {
   interface Window {
@@ -16,14 +15,12 @@ const particles = Array.from({ length: 14 }, (_, index) => index);
 
 export function SmoothScrollEffects() {
   const shouldReduceMotion = useReducedMotion();
-  const isMobileDevice = useIsMobileDevice();
 
   useEffect(() => {
     const root = document.documentElement;
 
-    if (shouldReduceMotion || isMobileDevice) {
+    if (shouldReduceMotion) {
       root.style.setProperty("--scroll-progress", "0");
-      root.style.setProperty("--scroll-velocity", "0");
       root.dataset.smoothScroll = "reduced";
       return;
     }
@@ -112,9 +109,9 @@ export function SmoothScrollEffects() {
       root.style.removeProperty("--scroll-progress");
       root.style.removeProperty("--scroll-velocity");
     };
-  }, [shouldReduceMotion, isMobileDevice]);
+  }, [shouldReduceMotion]);
 
-  if (shouldReduceMotion || isMobileDevice) return null;
+  if (shouldReduceMotion) return null;
 
   return (
     <div className="wow-scroll-layer" aria-hidden="true">

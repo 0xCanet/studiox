@@ -8,7 +8,6 @@ import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { useMemo } from "react";
 import { Container } from "./Container";
 import { Section } from "./Section";
-import { useIsMobileDevice } from "../lib/useIsMobileDevice";
 
 export interface WorkItem {
   id: string;
@@ -139,21 +138,19 @@ const ProjectCard = memo(function ProjectCard({
   project, 
   viewProjectText,
   downloadText,
-  isComingSoon,
-  isMobileDevice
+  isComingSoon
 }: {
   project: WorkItem;
   viewProjectText: string;
   downloadText?: string;
   isComingSoon: boolean;
-  isMobileDevice: boolean;
 }) {
   const cardContent = (
     <>
       {/* Project Card */}
       <div className="project-depth-card relative rounded-2xl overflow-hidden bg-surface aspect-[16/10] md:aspect-[16/9]">
         {/* Video or Image */}
-        {project.video && !isMobileDevice ? (
+        {project.video ? (
           <div className="absolute inset-0 overflow-hidden">
             <video
               autoPlay
@@ -167,29 +164,17 @@ const ProjectCard = memo(function ProjectCard({
               <source src={project.video} type="video/mp4" />
             </video>
           </div>
-        ) : project.image || project.video ? (
+        ) : project.image ? (
           <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]">
-            {project.image ? (
-              <Image
-                src={project.image}
-                alt={project.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                loading="lazy"
-                quality={85}
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[#0E0E0E]">
-                <Image
-                  src="/logos/studiox-brandmark-orange.png"
-                  alt=""
-                  width={96}
-                  height={96}
-                  className="h-16 w-16 opacity-80"
-                />
-              </div>
-            )}
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              loading="lazy"
+              quality={85}
+            />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,122,48,0.1),transparent_50%)]" />
           </div>
         ) : (
@@ -299,7 +284,6 @@ const ProjectCard = memo(function ProjectCard({
 });
 
 export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) {
-  const isMobileDevice = useIsMobileDevice();
   const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
@@ -412,7 +396,6 @@ export function WorkSection({ messages, hideHeader = false }: WorkSectionProps) 
                   viewProjectText={messages.viewProject}
                   downloadText={messages.downloadPDF}
                   isComingSoon={project.id === "coming-soon"}
-                  isMobileDevice={isMobileDevice}
                 />
               </motion.div>
             );
