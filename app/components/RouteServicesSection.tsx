@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { Section } from "./Section";
 import { Container } from "./Container";
+import { LazyVideo } from "./LazyVideo";
 
 // ============================================
 // DATA MODEL
@@ -28,6 +29,30 @@ export interface RouteServicesMessages {
 
 interface RouteServicesSectionProps {
   messages: RouteServicesMessages;
+}
+
+const mobileVideoBySrc: Record<string, string> = {
+  "/src/services-1.mp4": "/src/services-1-mobile.mp4",
+  "/src/service-2.mp4": "/src/service-2-mobile.mp4",
+  "/src/service-3.mp4": "/src/service-3-mobile.mp4",
+  "/src/service-4.mp4": "/src/service-4-mobile.mp4",
+};
+
+const posterBySrc: Record<string, string> = {
+  "/src/services-1.mp4": "/src/services-1-poster.jpg",
+  "/src/service-2.mp4": "/src/service-2-poster.jpg",
+  "/src/service-3.mp4": "/src/service-3-poster.jpg",
+  "/src/service-4.mp4": "/src/service-4-poster.jpg",
+};
+
+function getVideoSources(src: string) {
+  const mobileSrc = mobileVideoBySrc[src];
+  return mobileSrc
+    ? [
+        { src: mobileSrc, type: "video/mp4", media: "(max-width: 1023px)" },
+        { src, type: "video/mp4" },
+      ]
+    : [{ src, type: src.endsWith(".webm") ? "video/webm" : "video/mp4" }];
 }
 
 // ============================================
@@ -61,21 +86,23 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
           <div className="w-full aspect-video rounded-lg overflow-hidden mb-6">
             {service.animationSrc ? (
               service.animationSrc.endsWith(".webm") || service.animationSrc.endsWith(".mp4") ? (
-                <video
+                <LazyVideo
                   autoPlay
                   loop
                   muted
                   playsInline
                   preload="none"
+                  poster={posterBySrc[service.animationSrc]}
+                  sources={getVideoSources(service.animationSrc)}
+                  wrapperClassName="w-full h-full"
+                  rootMargin="240px 0px"
                   className="w-full h-full object-cover"
                   style={{
                     imageRendering: "pixelated",
                     filter: "sepia(0.2)",
                   }}
                   aria-label={`${service.label} animation`}
-                >
-                  <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
-                </video>
+                />
               ) : (
                 <img
                   src={service.animationSrc}
@@ -150,20 +177,22 @@ function ServiceCard({ service, isMobile, fixedPosition, parallaxOffset = 0 }: S
         <div className="w-full aspect-[4/3] rounded-lg overflow-hidden mb-4" style={{ maxHeight: '120px' }}>
           {service.animationSrc ? (
             service.animationSrc.endsWith(".webm") || service.animationSrc.endsWith(".mp4") ? (
-              <video
+              <LazyVideo
                 autoPlay
                 loop
                 muted
                 playsInline
                 preload="none"
+                poster={posterBySrc[service.animationSrc]}
+                sources={getVideoSources(service.animationSrc)}
+                wrapperClassName="w-full h-full"
+                rootMargin="360px 0px"
                 className="w-full h-full object-cover"
                 style={{
                   imageRendering: "pixelated",
                   filter: "sepia(0.2)",
                 }}
-              >
-                <source src={service.animationSrc} type={service.animationSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
-              </video>
+              />
             ) : (
               <img
                 src={service.animationSrc}
@@ -380,8 +409,15 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     };
   }, []);
 
-  // Parallax effect using native scroll with throttling
+  // Parallax effect using native scroll with throttling on desktop only.
   useEffect(() => {
+    const lowPowerMobile = shouldReduceMotion || window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
+    if (lowPowerMobile) {
+      prevBackgroundScrollYRef.current = 0;
+      const frame = requestAnimationFrame(() => setBackgroundScrollY(0));
+      return () => cancelAnimationFrame(frame);
+    }
+
     let ticking = false;
 
     const handleScroll = () => {
@@ -414,10 +450,11 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [shouldReduceMotion]);
 
   // Sort services by orderMobile for mobile layout
   const sortedServices = [...messages.items].sort((a, b) => a.orderMobile - b.orderMobile);
+  const lowPowerMotion = shouldReduceMotion || isMobile;
 
   return (
     <Section
@@ -429,25 +466,36 @@ export function RouteServicesSection({ messages }: RouteServicesSectionProps) {
     >
       {/* Background Video with Parallax */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        <motion.video
-          src="/src/video-bg-service.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          controls={false}
-          preload="metadata"
-          className="absolute inset-0 w-full h-full object-cover"
+        <motion.div
+          className="absolute inset-0"
           style={{
             opacity: shouldReduceMotion ? 0.45 : 0.6,
-            transform: shouldReduceMotion
+            transform: lowPowerMotion
               ? "none"
               : `translateY(${-backgroundScrollY * 0.5}px) scale(${1 + backgroundScrollY * 0.0003})`,
             transformOrigin: "center center",
-            willChange: shouldReduceMotion ? "auto" : "transform",
+            willChange: lowPowerMotion ? "auto" : "transform",
           }}
-          aria-label="Services section background video"
-        />
+        >
+          <LazyVideo
+            sources={[
+              { src: "/src/video-bg-service-mobile.mp4", type: "video/mp4", media: "(max-width: 1023px)" },
+              { src: "/src/video-bg-service.mp4", type: "video/mp4" },
+            ]}
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls={false}
+            preload="none"
+            poster="/src/video-bg-service-poster.jpg"
+            wrapperClassName="absolute inset-0"
+            rootMargin="0px 0px"
+            threshold={0.35}
+            className="absolute inset-0 w-full h-full object-cover"
+            aria-label="Services section background video"
+          />
+        </motion.div>
       </div>
 
       {/* Overlay for content readability - en dessous du tracé pour le laisser visible */}

@@ -5,6 +5,7 @@ import { motion, useReducedMotion, Variants } from "framer-motion";
 import { PricingCopy } from "@/types/copy";
 import { Container } from "./Container";
 import { Section } from "./Section";
+import { LazyVideo } from "./LazyVideo";
 
 /**
  * PricingSection Component
@@ -67,6 +68,7 @@ export function PricingSection({
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLDivElement>(null);
   const prevPricingScrollYRef = useRef(0);
+  const overlayOpacity = intensity === "medium" ? 0.68 : 0.6;
 
   // Container animation
   const containerVariants = {
@@ -98,8 +100,15 @@ export function PricingSection({
     },
   };
 
-  // Parallax scroll effect with zoom using native scroll with throttling
+  // Parallax scroll effect with zoom using native scroll with throttling on desktop only.
   useEffect(() => {
+    const lowPowerMobile = shouldReduceMotion || window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
+    if (lowPowerMobile) {
+      prevPricingScrollYRef.current = 0;
+      const frame = requestAnimationFrame(() => setPricingScrollY(0));
+      return () => cancelAnimationFrame(frame);
+    }
+
     let ticking = false;
 
     const handleScroll = () => {
@@ -132,7 +141,7 @@ export function PricingSection({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [shouldReduceMotion]);
 
   return (
     <Section
@@ -151,19 +160,28 @@ export function PricingSection({
           ref={videoRef}
           className="absolute inset-0 z-0"
           style={{
-            transform: pricingScrollY > 0
+            transform: shouldReduceMotion || pricingScrollY <= 0
+              ? `scale(1.1)`
+              : pricingScrollY > 0
               ? `translateY(${pricingScrollY * 0.4}px) scale(${1.1 * (1 + pricingScrollY * 0.0002)})`
               : `scale(1.1)`,
             transformOrigin: "center center",
-            willChange: 'transform',
+            willChange: shouldReduceMotion ? 'auto' : 'transform',
           }}
         >
-          <video
+          <LazyVideo
+            sources={[
+              { src: "/src/video-pricing-mobile.mp4", type: "video/mp4", media: "(max-width: 1023px)" },
+              { src: "/src/video-pricing.mp4", type: "video/mp4" },
+            ]}
             autoPlay
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="none"
+            poster="/src/video-pricing-poster.jpg"
+            wrapperClassName="absolute inset-0"
+            rootMargin="520px 0px"
             className="absolute inset-0 w-full h-full object-cover"
             style={{
               transform: 'translateZ(0)',
@@ -173,11 +191,9 @@ export function PricingSection({
               WebkitFilter: "grayscale(100%) blur(0.5px)",
             }}
             aria-label="Pricing section background video"
-          >
-            <source src="/src/video-pricing.mp4" type="video/mp4" />
-          </video>
+          />
           {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-neutral-950/60" />
+          <div className="absolute inset-0 bg-neutral-950" style={{ opacity: overlayOpacity }} />
         </div>
 
         {/* Content wrapper with max-width constraint like other sections */}
@@ -317,7 +333,6 @@ function PricingCard({
             lang={lang}
             onPrimary={onPrimary}
             isFeatured={isFeatured}
-            shouldReduceMotion={shouldReduceMotion}
           />
         </div>
       </div>
@@ -330,7 +345,6 @@ interface CardContentProps {
   lang: "fr" | "en";
   onPrimary: () => void;
   isFeatured: boolean;
-  shouldReduceMotion: boolean;
 }
 
 function CardContent({
@@ -338,7 +352,6 @@ function CardContent({
   lang,
   onPrimary,
   isFeatured,
-  shouldReduceMotion,
 }: CardContentProps) {
   return (
     <div className="flex flex-col h-full">
@@ -405,7 +418,6 @@ function CardContent({
           <PrimaryButton
             onClick={onPrimary}
             label={tier.primaryCta[lang]}
-            shouldReduceMotion={shouldReduceMotion}
             isFeatured={isFeatured}
           />
         </div>
@@ -417,14 +429,12 @@ function CardContent({
 interface PrimaryButtonProps {
   onClick: () => void;
   label: string;
-  shouldReduceMotion: boolean;
   isFeatured: boolean;
 }
 
 function PrimaryButton({
   onClick,
   label,
-  shouldReduceMotion,
   isFeatured,
 }: PrimaryButtonProps) {
   // Style orange pour featured, style secondaire (transparent avec bordure) pour les autres

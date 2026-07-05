@@ -18,11 +18,21 @@ export function SmoothScrollEffects() {
 
   useEffect(() => {
     const root = document.documentElement;
+    const lowPowerMobile = window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
 
-    if (shouldReduceMotion) {
+    if (shouldReduceMotion || lowPowerMobile) {
       root.style.setProperty("--scroll-progress", "0");
+      root.style.setProperty("--scroll-velocity", "0");
       root.dataset.smoothScroll = "reduced";
-      return;
+      if (window.studioxLenis) {
+        window.studioxLenis.destroy();
+        delete window.studioxLenis;
+      }
+      return () => {
+        delete root.dataset.smoothScroll;
+        root.style.removeProperty("--scroll-progress");
+        root.style.removeProperty("--scroll-velocity");
+      };
     }
 
     root.style.setProperty("--scroll-progress", "0");

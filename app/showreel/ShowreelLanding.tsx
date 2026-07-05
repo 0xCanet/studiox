@@ -9,6 +9,7 @@ import { Footer, type FooterMessages } from "../components/Footer";
 import { ConsentBanner } from "../components/ConsentBanner";
 import { SmoothScrollEffects } from "../components/SmoothScrollEffects";
 import { TextWithOrangeDots } from "../components/TextWithOrangeDots";
+import { LazyVideo } from "../components/LazyVideo";
 
 type Language = "en" | "fr";
 
@@ -17,6 +18,24 @@ interface LocalVideoItem {
   eyebrow: string;
   description: string;
   src: string;
+}
+
+const mobileLocalVideoBySrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-mobile.mp4",
+};
+
+const posterByVideoSrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-poster.jpg",
+};
+
+function getLocalVideoSources(src: string) {
+  const mobileSrc = mobileLocalVideoBySrc[src];
+  return mobileSrc
+    ? [
+        { src: mobileSrc, type: "video/mp4", media: "(max-width: 1023px)" },
+        { src, type: "video/mp4" },
+      ]
+    : [{ src, type: "video/mp4" }];
 }
 
 interface YouTubeVideoItem {
@@ -569,16 +588,19 @@ function LocalVideoPanel({ item }: { item: LocalVideoItem }) {
   return (
     <article className="group md:col-span-2">
       <div className="project-depth-card relative aspect-video overflow-hidden rounded-lg bg-[#0E0E0E]">
-        <video
+        <LazyVideo
           controls
+          autoPlay={false}
           muted
           playsInline
-          preload="metadata"
+          preload="none"
+          poster={posterByVideoSrc[item.src]}
+          sources={getLocalVideoSources(item.src)}
+          wrapperClassName="h-full w-full"
+          rootMargin="420px 0px"
           className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.015]"
           aria-label={item.title}
-        >
-          <source src={item.src} type="video/mp4" />
-        </video>
+        />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(255,122,48,0.2),transparent_38%)] opacity-70" />
       </div>
       <div className="mt-4 flex flex-col gap-2">
@@ -780,10 +802,12 @@ export function ShowreelLanding() {
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
+            poster="/src/sendo-market-video-poster.jpg"
             className="absolute inset-0 h-full w-full object-cover"
             aria-label="Showreel background video"
           >
+            <source src="/src/sendo-market-video-mobile-preview.mp4" type="video/mp4" media="(max-width: 1023px)" />
             <source src="/src/sendo-market-video.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E0E] via-[#0E0E0E]/42 to-[#0E0E0E]/12" />

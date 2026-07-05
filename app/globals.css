@@ -1781,6 +1781,32 @@ img {
 
 /* Improve touch targets on mobile */
 @media (max-width: 1023px) {
+  .wow-scroll-layer,
+  .hero-kinetic-grid,
+  .hero-scanline,
+  .hero-scroll-bloom,
+  .wow-particles {
+    display: none !important;
+  }
+
+  .glass-pill,
+  .glass-pill-light,
+  .glass-pill-dark,
+  .glass-pill-link,
+  .glass-pill-link-standalone,
+  .glass-pill-link-standalone-light,
+  .glass-pill-link-standalone-dark,
+  .glass-pill-link-orange {
+    animation: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    will-change: auto !important;
+  }
+
+  .project-depth-card {
+    box-shadow: 0 8px 20px rgba(14, 14, 14, 0.08);
+    will-change: auto;
+  }
 
   button,
   a,

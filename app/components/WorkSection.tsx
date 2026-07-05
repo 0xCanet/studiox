@@ -8,6 +8,7 @@ import { TextWithOrangeDots } from "./TextWithOrangeDots";
 import { useMemo } from "react";
 import { Container } from "./Container";
 import { Section } from "./Section";
+import { LazyVideo } from "./LazyVideo";
 
 export interface WorkItem {
   id: string;
@@ -32,6 +33,24 @@ export interface WorkMessages {
 interface WorkSectionProps {
   messages: WorkMessages;
   hideHeader?: boolean;
+}
+
+const mobileWorkVideoBySrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-mobile-preview.mp4",
+};
+
+const workPosterBySrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-poster.jpg",
+};
+
+function getWorkVideoSources(src: string) {
+  const mobileSrc = mobileWorkVideoBySrc[src];
+  return mobileSrc
+    ? [
+        { src: mobileSrc, type: "video/mp4", media: "(max-width: 1023px)" },
+        { src, type: "video/mp4" },
+      ]
+    : [{ src, type: "video/mp4" }];
 }
 
 // Special card component for ebook - more refined and distinct design
@@ -152,17 +171,19 @@ const ProjectCard = memo(function ProjectCard({
         {/* Video or Image */}
         {project.video ? (
           <div className="absolute inset-0 overflow-hidden">
-            <video
+            <LazyVideo
               autoPlay
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="none"
+              poster={workPosterBySrc[project.video]}
+              sources={getWorkVideoSources(project.video)}
+              wrapperClassName="absolute inset-0"
+              rootMargin="420px 0px"
               className="absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-in-out group-hover:blur-lg group-hover:brightness-[0.8] group-hover:sepia-[0.3] group-hover:saturate-[1.5] group-hover:hue-rotate-[-5deg]"
               aria-label={`${project.title} project video`}
-            >
-              <source src={project.video} type="video/mp4" />
-            </video>
+            />
           </div>
         ) : project.image ? (
           <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a]">

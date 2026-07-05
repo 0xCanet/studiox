@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,8 +12,27 @@ import { WorkSection, type WorkMessages } from "../../components/WorkSection";
 import { TextWithOrangeDots } from "../../components/TextWithOrangeDots";
 import { PDFViewer } from "../../components/PDFViewer";
 import { ConsentBanner } from "../../components/ConsentBanner";
+import { LazyVideo } from "../../components/LazyVideo";
 
-const formatDescriptionWithLinks = (text: string, language: Language): React.ReactNode => {
+const mobileProjectVideoBySrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-mobile.mp4",
+};
+
+const projectPosterBySrc: Record<string, string> = {
+  "/src/sendo-market-video.mp4": "/src/sendo-market-video-poster.jpg",
+};
+
+function getProjectVideoSources(src: string) {
+  const mobileSrc = mobileProjectVideoBySrc[src];
+  return mobileSrc
+    ? [
+        { src: mobileSrc, type: "video/mp4", media: "(max-width: 1023px)" },
+        { src, type: "video/mp4" },
+      ]
+    : [{ src, type: "video/mp4" }];
+}
+
+const formatDescriptionWithLinks = (text: string): React.ReactNode => {
   const parts: React.ReactNode[] = [];
   let keyIndex = 0;
   
@@ -480,7 +499,7 @@ export default function ProjectPage() {
               </h1>
               <div className="text-lg md:text-xl text-[#0E0E0E]/70 max-w-3xl leading-relaxed font-body">
                 {slug === "scorage" ? (
-                  formatDescriptionWithLinks(project.description[language], language)
+                  formatDescriptionWithLinks(project.description[language])
                 ) : (
                   <TextWithOrangeDots>{project.description[language]}</TextWithOrangeDots>
                 )}
@@ -668,15 +687,18 @@ export default function ProjectPage() {
                 transition={{ duration: 0.7, delay: 0.1 }}
                 className="rounded-2xl overflow-hidden bg-[#0E0E0E] mb-4"
               >
-                <video
+                <LazyVideo
+                  sources={getProjectVideoSources(project.video)}
                   autoPlay
                   loop
                   muted
                   playsInline
+                  preload="none"
+                  poster={projectPosterBySrc[project.video]}
+                  wrapperClassName="w-full h-full"
+                  rootMargin="420px 0px"
                   className="w-full h-full object-cover"
-                >
-                  <source src={project.video} type="video/mp4" />
-                </video>
+                />
               </motion.div>
 
               <motion.div

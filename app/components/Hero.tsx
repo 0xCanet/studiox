@@ -404,15 +404,22 @@ export function Hero({ messages, onContactClick }: HeroProps) {
     };
   }, [shouldReduceMotion]);
 
-  // Native scroll handling for parallax - Apply parallax on both mobile and desktop
+  // Native scroll handling for parallax on desktop only.
   // Use ref to store previous value for smooth interpolation
   const prevHeroScrollYRef = useRef(0);
 
   // Memoize tagline tags - all animations use same duration and start together
   const taglineTags = useMemo(() => messages.tagline.split(" • "), [messages.tagline]);
-  const animationDuration = 2200; // Reduced duration for more minimalist, subtle effect
+  const animationDuration = isMobile ? 900 : 2200; // Keep the reveal, but shorten CPU work on phones.
 
   useEffect(() => {
+    const lowPowerMobile = window.matchMedia("(max-width: 1023px), (pointer: coarse)").matches;
+    if (shouldReduceMotion || lowPowerMobile) {
+      prevHeroScrollYRef.current = 0;
+      const frame = requestAnimationFrame(() => setHeroScrollY(0));
+      return () => cancelAnimationFrame(frame);
+    }
+
     let ticking = false;
 
     const handleScroll = () => {
@@ -445,7 +452,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [shouldReduceMotion]);
 
 
   return (
@@ -518,7 +525,8 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
+              poster="/src/video_01-poster.jpg"
               className="absolute inset-0 w-full h-full object-cover"
               style={{
                 transform: 'translateZ(0)',
@@ -528,6 +536,7 @@ export function Hero({ messages, onContactClick }: HeroProps) {
               }}
               aria-label="Hero background video"
             >
+              <source src="/src/video_01-mobile.mp4" type="video/mp4" media="(max-width: 1023px)" />
               <source src="/src/video_01.mp4" type="video/mp4" />
             </video>
           </motion.div>
