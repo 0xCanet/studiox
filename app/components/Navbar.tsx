@@ -432,7 +432,7 @@ export function Navbar({
         <div className={`${isMobile ? '' : 'pb-4'}`}>
           <div className="flex items-center justify-between w-full">
             {/* Logo - switches color based on background */}
-            <Link ref={logoRef} href="/" className="flex-shrink-0 relative z-10 group cursor-pointer">
+            <Link ref={logoRef} href="/" className="relative z-10 flex h-10 flex-shrink-0 cursor-pointer items-center group lg:h-auto">
               <div className="relative h-7 md:h-8" style={{ width: '160px' }}>
                 {/* Dark logo - visible when OUT of hero section OR menu is open */}
                 <Image
