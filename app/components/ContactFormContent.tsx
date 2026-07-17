@@ -40,20 +40,16 @@ export function ContactFormContent({ messages, language = "en", isModal = false 
     const updateDate = () => {
       const date = new Date();
       date.setHours(0, 0, 0, 0);
-      setCurrentDate(date);
+      setCurrentDate((previousDate) =>
+        previousDate.getTime() === date.getTime() ? previousDate : date
+      );
     };
-    
-    // Update immediately if date changed
-    const checkDate = setInterval(() => {
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      if (now.getTime() !== currentDate.getTime()) {
-        updateDate();
-      }
-    }, 60000); // Check every minute
+
+    updateDate();
+    const checkDate = setInterval(updateDate, 60000); // Check every minute
 
     return () => clearInterval(checkDate);
-  }, [currentDate]);
+  }, []);
 
   // Use currentDate as today for dynamic updates
   const today = currentDate;
